@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\""
+  },
+  "dependencies": {
+    "mongoose": "^8.16.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
