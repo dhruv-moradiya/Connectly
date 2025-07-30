@@ -92,6 +92,12 @@ interface IChatRoom {
   }[];
 
   settings: ISettings;
+
+  pinnedMessageDetails: {
+    message: Types.ObjectId;
+    pinnedBy: Types.ObjectId;
+    pinnedAt: Date;
+  }[];
 }
 
 export type { IChatRoom, TAuditLogAction, AuditLogData, UserRole, ISettings };

@@ -83,6 +83,15 @@ const ChatRoomSchema = new Schema<IChatRoomDocument>(
       allowReactions: { type: Boolean, default: true },
       allowPinning: { type: Boolean, default: true },
     },
+
+    pinnedMessageDetails: [
+      {
+        message: { type: Schema.Types.ObjectId, ref: "Message" },
+        pinnedBy: { type: Schema.Types.ObjectId, ref: "User" },
+        pinnedAt: { type: Date, default: Date.now() },
+        _id: false,
+      },
+    ],
   },
   { timestamps: true }
 );

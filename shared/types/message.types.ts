@@ -51,10 +51,6 @@ interface IMessageSchema {
   replyTo: Types.ObjectId | null;
   favoriteBy: Types.ObjectId[];
 
-  isPinned: boolean;
-  pinnedAt: Date | null;
-  pinnedBy: Types.ObjectId | null;
-
   createdAt: Date;
   updatedAt: Date;
 }

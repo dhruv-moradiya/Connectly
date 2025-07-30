@@ -432,7 +432,15 @@ const getUserByUsernameQuery = asyncHandler(
         );
     }
 
-    const userNaverDidChatThatUsers = await ChatRoom.aggregate([
+    const chattedUserIds = await ChatRoom.aggregate([
+      {
+        $match: {
+          "participants.user": new mongoose.Types.ObjectId(req.user._id),
+        },
+      },
+      {
+        $unwind: "$participants",
+      },
       {
         $match: {
           "participants.user": {
@@ -441,37 +449,32 @@ const getUserByUsernameQuery = asyncHandler(
         },
       },
       {
-        $project: {
-          participants: 1,
+        $group: {
+          _id: null,
+          users: { $addToSet: "$participants.user" },
         },
       },
-      {
-        $unwind: "$participants",
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "participants.user",
-          foreignField: "_id",
-          as: "userData",
-        },
-      },
-      {
-        $unwind: "$userData",
-      },
+    ]);
+
+    const excludedIds = chattedUserIds[0]?.users || [];
+
+    const users = await User.aggregate([
       {
         $match: {
-          "userData.username": { $regex: username, $options: "i" },
-          "userData.isEmailVerified": true,
+          _id: {
+            $ne: new mongoose.Types.ObjectId(req.user._id),
+            $nin: excludedIds,
+          },
+          username: { $regex: username, $options: "i" },
+          isEmailVerified: true,
         },
       },
       {
-        $group: {
-          _id: "$userData._id",
-          username: { $first: "$userData.username" },
-          avatar: { $first: "$userData.avatar" },
-          bio: { $first: "$userData.bio" },
-          email: { $first: "$userData.email" },
+        $project: {
+          username: 1,
+          avatar: 1,
+          bio: 1,
+          email: 1,
         },
       },
       {
@@ -479,17 +482,9 @@ const getUserByUsernameQuery = asyncHandler(
       },
     ]);
 
-    console.log("userNaverDidChatThatUsers :>> ", userNaverDidChatThatUsers);
-
     return res
       .status(HttpStatus.OK)
-      .json(
-        new ApiResponse(
-          HttpStatus.OK,
-          "User fetched successfully",
-          userNaverDidChatThatUsers
-        )
-      );
+      .json(new ApiResponse(HttpStatus.OK, "User fetched successfully", users));
   }
 );
 

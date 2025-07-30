@@ -93,10 +93,6 @@ const MessageSchema = new Schema<IMessageSchemaDocument>(
     replyTo: { type: Schema.Types.ObjectId, ref: "Message", default: null },
 
     favoriteBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
-
-    isPinned: { type: Boolean, default: false },
-    pinnedAt: { type: Date, default: null },
-    pinnedBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
   { timestamps: true }
 );
