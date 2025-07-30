@@ -1,7 +1,9 @@
-// src/sockets/index.ts
 import type { Server } from "socket.io";
-import { socketAuthMiddleware } from "./auth.middleware";
-import { messageSocket } from "./message.socket";
+
+import { messageSocket } from "@/socket/message.socket";
+import { socketAuthMiddleware } from "@/socket/auth.socket";
+import { SocketEvents } from "@/constants";
+import { redisConnection } from "@/db/redis";
 
 export const initializeSocket = (io: Server) => {
   console.log("🚀 Socket server is running.");
@@ -23,6 +25,14 @@ export const initializeSocket = (io: Server) => {
     socket.emit("text", {
       message: "This is a text message",
       id: socket.id,
+    });
+
+    socket.on(SocketEvents.DISCONNECT, () => {
+      socket.disconnect();
+      redisConnection.del(`user:${socket.user.id}:online`);
+      console.log(
+        `⚡ User disconnected: ${socket.user.username} (${socket.id})`
+      );
     });
 
     // Debug/test emits

@@ -1,22 +1,23 @@
+// Import core modules and third-party libraries
 import http from "http";
 import cors from "cors";
-import express, {
-  type NextFunction,
-  type Request,
-  type Response,
-} from "express";
-
 import dotenv from "dotenv";
+import express from "express";
 import cookieParser from "cookie-parser";
+
+import { Queue } from "bullmq";
 import { Server } from "socket.io";
 
+// Load environment variables from .env file
 dotenv.config({
   path: ".env",
 });
 
+// Initialize Express app and HTTP server
 const app = express();
 const httpServer = http.createServer(app);
 
+// Initialize Socket.IO server with CORS configuration
 const io = new Server(httpServer, {
   cors: {
     origin: process.env.CORS_ORIGIN,
@@ -25,8 +26,10 @@ const io = new Server(httpServer, {
   },
 });
 
+// Make Socket.IO instance available in the app
 app.set("io", io);
 
+// Middleware setup
 app.use(
   cors({
     credentials: true,
@@ -34,37 +37,43 @@ app.use(
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   })
 );
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(express.json({ limit: "50mb" })); // Parse JSON bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use(cookieParser()); // Parse cookies
+
+// Import custom modules and routers
+import { initializeSocket } from "./socket";
+import { redisConnection } from "./db/redis";
 
 import userRouter from "./routes/user.route";
 import chatRouter from "./routes/chat.route";
 import messageRoute from "./routes/message.route";
-import { ApiError } from "./utils/ApiError";
-import { initializeSocket } from "./socket";
-import { messageQueue } from "./queues/message.queue";
-import { redisConnection } from "./db/redis";
-import { worker } from "./queues/worker";
-import { Queue } from "bullmq";
 
+import { messagesWorker } from "./queues/bullmq/messages.worker";
+import { globalErrorHandler } from "./middlewares/globalError.middleware";
+
+// Register API routes
 app.use("/api/user", userRouter);
 app.use("/api/chat", chatRouter);
 app.use("/api/message", messageRoute);
-app.set("messageWorker", worker);
 
-worker.on("completed", (job) => {
-  console.log(`✅ Job ${job.id} completed`);
+// Listen for job completion and failure events from the messages worker
+messagesWorker.on("completed", (job) => {
+  console.log(`Job ${job.id} completed successfully`);
 });
 
-worker.on("failed", (job, err) => {
-  console.error(`❌ Job ${job?.id} failed:`, err);
+messagesWorker.on("failed", (job, err) => {
+  if (job) {
+    console.error(`Job ${job.id} failed with error:`, err);
+  } else {
+    console.error(`A job failed with error:`, err);
+  }
 });
 
-console.log("🚀 Socket server is running.");
+// Initialize Socket.IO event handlers
 initializeSocket(io);
 
-// It will auto-connect internally on first command
+// Redis connection event handlers
 redisConnection.on("connect", () => {
   console.log("Redis connected successfully");
 });
@@ -73,6 +82,7 @@ redisConnection.on("error", (err) => {
   console.error("Redis connection error:", err);
 });
 
+// Function to reset the BullMQ message queue on server start
 const resetQueue = async () => {
   const queue = new Queue("message", { connection: redisConnection });
   await queue.drain(true); // removes all jobs
@@ -80,42 +90,11 @@ const resetQueue = async () => {
   console.log("🧹 Queue reset");
 };
 
+// Reset the queue before starting the app
 await resetQueue();
 
-// setTimeout(async () => {
-//   await messageQueue.add("message", {
-//     id: "123",
-//     roomId: "123",
-//     content: "hello world",
-//     timestamp: Date.now(),
-//   });
-//   console.log("🚀 Job added");
-// }, 4000);
+// Global error handler middleware
+app.use(globalErrorHandler);
 
-app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
-  let statusCode = 500;
-  let message = "Internal server error";
-
-  if (error instanceof ApiError) {
-    statusCode = error.statusCode;
-    message = error.message;
-  }
-
-  console.error("Global Error:", {
-    message: (error as Error).message,
-    stack: (error as Error).stack,
-  });
-
-  res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-    data: null,
-    ...(process.env.NODE_ENV !== "production" &&
-      {
-        // stack: (error as Error).stack,
-      }),
-  });
-});
-
+// Export the app and HTTP server for use elsewhere (e.g., server entry point)
 export { app, httpServer };

@@ -98,14 +98,14 @@ const HttpStatus = {
 
 const SocketEvents = {
   CONNECTED: "connected",
-  DISCONNECTED: "disconnected",
+  DISCONNECT: "disconnect",
   ERROR_CONNECTING: "error_connecting",
   INVALID_DATA: "invalid_data",
 
   JOIN_ROOM: "join_room",
   LEAVE_ROOM: "leave_room",
 
-  MESSAGE_SENT: "message_sent",
+  MESSAGE_SENT: "message_sent", // ✅
   MESSAGE_RECEIVED: "message_received",
   MESSAGE_DELETED: "message_deleted",
   MESSAGE_EDITED: "message_edited",

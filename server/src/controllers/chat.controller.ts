@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { type Request, type Response, type NextFunction } from "express";
 
-import { ApiError } from "@/utils/ApiError";
-import { ApiResponse } from "@/utils/ApiResponse";
+import { ApiError } from "@/utils/apiError";
+import { ApiResponse } from "@/utils/apiResponse";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { validateRequest } from "@/utils/validateRequest";
 

@@ -19,8 +19,13 @@ interface IMessageSchemaDocument extends IMessageSchema, Document {
 
 const MessageSchema = new Schema<IMessageSchemaDocument>(
   {
+    _id: {
+      type: String,
+      required: true,
+    },
     sender: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    room: { type: Schema.Types.ObjectId, ref: "ChatRoom", required: true },
+
+    chat: { type: Schema.Types.ObjectId, ref: "ChatRoom", required: true },
 
     content: { type: String, default: "" },
 
@@ -75,6 +80,7 @@ const MessageSchema = new Schema<IMessageSchemaDocument>(
       type: Boolean,
       default: false,
     },
+
     deletedFor: [{ type: Schema.Types.ObjectId, ref: "User" }],
 
     reactions: [
@@ -96,6 +102,13 @@ const MessageSchema = new Schema<IMessageSchemaDocument>(
 );
 
 MessageSchema.index({ sender: 1, room: 1 });
+
+MessageSchema.methods.toJSON = function () {
+  const message = this.toObject();
+
+  delete message.__v;
+  return message;
+};
 
 const MessageModel = mongoose.model<IMessageSchemaDocument>(
   "Message",

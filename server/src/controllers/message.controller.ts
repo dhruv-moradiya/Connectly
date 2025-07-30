@@ -1,6 +1,8 @@
 import { type Request, type Response, type NextFunction } from "express";
 import { asyncHandler } from "@/utils/asyncHandler";
-import { ApiResponse } from "@/utils/ApiResponse";
+import { ApiResponse } from "@/utils/apiResponse";
+import mongoose from "mongoose";
+import MessageModel from "@/models/message.model";
 
 const sendMessage = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -11,10 +13,62 @@ const sendMessage = asyncHandler(
 );
 
 const getMessages = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (
+    req: Request<{ chatId: string }, {}, {}>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { chatId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(chatId)) {
+      return res.json(
+        new ApiResponse(400, "Invalid Chat ID. Please provide a valid Chat ID.")
+      );
+    }
+
+    const messages = await MessageModel.aggregate([
+      {
+        $match: {
+          chat: new mongoose.Types.ObjectId(chatId),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "sender",
+          foreignField: "_id",
+          as: "sender",
+        },
+      },
+      {
+        $unwind: "$sender",
+      },
+      {
+        $project: {
+          _id: 1,
+          sender: {
+            _id: 1,
+            username: 1,
+            avatar: 1,
+          },
+          content: 1,
+          createdAt: 1,
+        },
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+    ]);
+
+    if (messages.length == 0) {
+      return res
+        .status(200)
+        .json(new ApiResponse(200, "No messages found for this chat."));
+    }
+
     return res
       .status(200)
-      .json(new ApiResponse(200, "Messages retrieved successfully."));
+      .json(new ApiResponse(200, "Messages retrieved successfully.", messages));
   }
 );
 

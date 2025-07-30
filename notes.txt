@@ -1,0 +1,38 @@
+When the user opens or focuses the room:
+
+await redis.set(`room:${roomId}:unread:${userId}`, 0);
+
+-----------
+
+| Purpose          | Key                         | Value     |
+| ---------------- | --------------------------- | --------- |
+| Online status    | `user:{userId}:online`      | `true`    |
+| Current room     | `user:{userId}:active_room` | `roomId`  |
+| Last active time | `user:{userId}:last_seen`   | timestamp |
+
+When user connects:
+await redis.set(`user:${userId}:online`, true);
+
+When user disconnects:
+await redis.del(`user:${userId}:online`);
+await redis.set(`user:${userId}:last_seen`, Date.now());
+
+When user enters a room:
+await redis.set(`user:${userId}:active_room`, roomId);
+
+When user leaves or navigates away:
+await redis.del(`user:${userId}:active_room`);
+
+How to detect both cases:
+const isOnline = await redis.get(`user:${userId}:online`);
+const activeRoom = await redis.get(`user:${userId}:active_room`);
+
+const shouldNotify = !isOnline || activeRoom !== currentRoomId;
+
+| Feature                | Redis Key                        | When to Update               |                         |                 |
+| ---------------------- | -------------------------------- | ---------------------------- | ----------------------- | --------------- |
+| Online status          | `user:{userId}:online`           | On socket connect/disconnect |                         |                 |
+| Active room            | `user:{userId}:active_room`      | On entering/exiting room     |                         |                 |
+| Unread message count   | `room:{roomId}:unread:{userId}`  | On message send / read       |                         |                 |
+| Notification condition | Compare `online` + `active_room` | On message send              |                         |                 |
+| Offline detection      | \`!online                        |                              | activeRoom !== roomId\` | On message send |

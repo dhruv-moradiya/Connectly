@@ -1,11 +1,11 @@
 import { createTransport } from "nodemailer";
-import { EMAIL_VERIFICATION_TEMPLATE } from "../constants/emailTemplates";
+import { EMAIL_VERIFICATION_TEMPLATE } from "@/constants/emailTemplates";
 
 const transposer = createTransport({
   service: "Gmail",
   auth: {
-    user: "dmoradiya443@gmail.com",
-    pass: "jwhwgxgsbitspbyk",
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
   },
 });
 

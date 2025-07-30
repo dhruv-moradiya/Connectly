@@ -19,7 +19,7 @@ const router = express.Router();
 
 router.post("/", verifyToken, sendMessage);
 
-router.get("/", verifyToken, getMessages);
+router.get("/:chatId", verifyToken, getMessages);
 
 router.patch("/", verifyToken, editMessage);
 

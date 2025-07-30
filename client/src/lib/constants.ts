@@ -1,7 +1,9 @@
 const ActionType = {
   CREATE_CONNECTION: "socket/createConnection",
   DISCONNECTED: "socket/disconnected",
+
   SEND_MESSAGE: "activeChat/sendMessage",
+
   NEW_FRIEND_REQUEST_RECEIVE: "friendRequest/newFriendRequestReceive",
   CURRENT_ACTIVE_CHAT: "activeChat/setActiveChat",
   ADD_REACTION: "activeChat/addReaction",
@@ -17,7 +19,7 @@ const SocketEvents = {
   LEAVE_ROOM: "leave_room",
 
   MESSAGE_SENT: "message_sent",
-  MESSAGE_RECEIVED: "message_received",
+  MESSAGE_RECEIVED: "message_received", // ✅
   MESSAGE_DELETED: "message_deleted",
   MESSAGE_EDITED: "message_edited",
   MESSAGE_PINNED: "message_pinned",

@@ -1,6 +1,7 @@
 import { ZodSchema } from "zod";
 import type { Socket } from "socket.io";
 import { SocketEvents } from "@/constants";
+import { formatErrorMessages } from ".";
 
 type ValidationResult<T> =
   | { success: true; data: T }
@@ -41,7 +42,9 @@ function validateSocketData<T>(
   const parsed = schema.safeParse(data);
   if (!parsed.success) {
     socket.emit(SocketEvents.INVALID_DATA, {
-      error: parsed.error.flatten().fieldErrors,
+      error: formatErrorMessages(
+        parsed.error.flatten().fieldErrors as Record<string, string[]>
+      ),
     });
     return false;
   } else {

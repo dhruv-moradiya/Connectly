@@ -9,6 +9,7 @@ import authReducer from "./auth/auth-slice";
 import userChatsReducer from "./chats/user-chats-slice";
 import { socketReducer } from "./socket/socket.slice";
 import { socketMiddleware } from "./socket/socket.middleware";
+import { activeChatReducer } from "./active-chat/active-chat-slice";
 
 const customMiddleware: Middleware = () => (next) => (action) => {
   return next(action);
@@ -18,6 +19,7 @@ const store = configureStore({
   reducer: {
     auth: authReducer,
     userChats: userChatsReducer,
+    activeChat: activeChatReducer,
     socket: socketReducer,
   },
   middleware: (getDefaultMiddleware) =>

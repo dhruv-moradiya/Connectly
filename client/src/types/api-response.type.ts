@@ -40,6 +40,12 @@ interface ICreateNewChat extends IBaseType {
   };
 }
 
+interface IMessages {
+  content: string;
+  _id: string;
+  sender: string;
+}
+
 export {
   type IUserPreview,
   type IGetCurrentUser,
@@ -47,4 +53,5 @@ export {
   type IChatPreview,
   type IGetUsersByUsernameQuery,
   type ICreateNewChat,
+  type IMessages,
 };

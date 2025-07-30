@@ -2,8 +2,11 @@ import { ActionType, SocketEvents } from "@/lib/constants";
 import type { Middleware } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
 import type { RootState } from "../index";
-import type { IUserPreview } from "@/types/api-response.type";
 import { chatCreatedReducer } from "../chats/user-chats-slice";
+import type {
+  TChatCreatedEventReceived,
+  TMessageReceivedEventReceived,
+} from "@/types/middleware.type";
 
 let socket: Socket | null = null;
 
@@ -33,34 +36,43 @@ const initializeSocket = (token: string) => {
   });
 };
 
-type TChatCreatedAction = {
-  data: {
-    _id: string;
-    name: string;
-    isGroup: boolean;
-    participants: IUserPreview[];
-    unreadCount: [];
-  };
-  message: string;
-};
-
 const socketMiddleware: Middleware = (store) => (next) => (action) => {
   const state: RootState = store.getState();
   const token = state.auth.user?.accessToken;
 
-  if (action && typeof action === "object" && "type" in action) {
+  if (
+    action &&
+    typeof action === "object" &&
+    "type" in action &&
+    "payload" in action
+  ) {
     switch (action.type) {
       case ActionType.CREATE_CONNECTION:
         if (!socket && token) {
           initializeSocket(token);
 
-          socket!.on(SocketEvents.CHAT_CREATED, (data: TChatCreatedAction) => {
-            console.log("📢 Chat created event received.", data);
-            store.dispatch(chatCreatedReducer(data.data));
-          });
+          socket!.on(
+            SocketEvents.CHAT_CREATED,
+            (data: TChatCreatedEventReceived) => {
+              console.log("📢 Chat created event received.", data);
+              store.dispatch(chatCreatedReducer(data.data));
+            }
+          );
+
+          socket!.on(
+            SocketEvents.MESSAGE_RECEIVED,
+            (data: TMessageReceivedEventReceived) => {
+              console.log("📢 Message received event received.", data);
+            }
+          );
         } else {
           console.warn("⚠️ Socket already exists or token is missing.");
         }
+        break;
+
+      case ActionType.SEND_MESSAGE:
+        socket!.emit(SocketEvents.MESSAGE_SENT, action.payload);
+
         break;
 
       default:

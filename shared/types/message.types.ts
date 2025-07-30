@@ -1,8 +1,9 @@
 import { Types } from "mongoose";
 
 interface IMessageSchema {
+  _id: string;
   sender: Types.ObjectId;
-  room: Types.ObjectId;
+  chat: Types.ObjectId;
   content: string;
 
   deliveryStatus: "sent" | "delivered" | "seen";

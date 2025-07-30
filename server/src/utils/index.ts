@@ -33,3 +33,14 @@ export function formatErrorMessages(errors: Record<string, string[]>): string {
     .flat() // Flattens arrays like ['OTP is required'], ['Email is required'] into one array
     .join(", "); // Joins all messages into a single string
 }
+
+export const generateRedisKeys = {
+  user: (userId: string) => `user:${userId}:online`,
+  roomMessages: (roomId: string) => `room:${roomId}:messages`,
+  unreadCount: (roomId: string, userId: string) =>
+    `room:${roomId}:unread:${userId}`,
+  typing: (roomId: string, userId: string) => `room:${roomId}:typing:${userId}`,
+  onlineStatus: (userId: string) => `user:${userId}:online`,
+  notifications: (userId: string) => `user:${userId}:notifications`,
+  socketMap: (socketId: string) => `socket:${socketId}:user`,
+};

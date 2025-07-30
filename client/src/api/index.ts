@@ -135,6 +135,15 @@ const createNewChat = async (data: {
   }
 };
 
+const getActiveChatMessages = async (chatId: string) => {
+  try {
+    const response = await apiClient.get(`/message/${chatId}`);
+    return response.data;
+  } catch (error) {
+    throw errorHandler(error);
+  }
+};
+
 export {
   registerUser,
   verifyOtp,
@@ -143,4 +152,5 @@ export {
   getUserChats,
   getUserByUsernameQuery,
   createNewChat,
+  getActiveChatMessages,
 };

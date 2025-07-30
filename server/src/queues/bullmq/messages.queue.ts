@@ -1,8 +1,8 @@
 import { redisConnection } from "@/db/redis";
 import { Queue } from "bullmq";
 
-const messageQueue = new Queue("message", {
+const messagesQueue = new Queue("messages", {
   connection: redisConnection,
 });
 
-export { messageQueue };
+export { messagesQueue };

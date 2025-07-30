@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { ApiError } from "@/utils/ApiError";
+import { ApiError } from "@/utils/apiError";
 import { type NextFunction, type Request, type Response } from "express";
 
 interface DecodedUser {
