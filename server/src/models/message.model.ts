@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
-import { type IMessageSchema } from "@shared/types/message.types";
+import { type IMessagechema } from "@shared/types/message.types";
 
-interface IMessageSchemaDocument extends IMessageSchema, Document {
+interface IMessagechemaDocument extends IMessagechema, Document {
   // deleteMessage: () => Promise<void>;
   // markAsSeen: (userId: Types.ObjectId) => Promise<void>;
   // addAttachment: (attachment: {
@@ -17,7 +17,7 @@ interface IMessageSchemaDocument extends IMessageSchema, Document {
   // addReply: (message: Types.ObjectId) => Promise<void>;
 }
 
-const MessageSchema = new Schema<IMessageSchemaDocument>(
+const MessageSchema = new Schema<IMessagechemaDocument>(
   {
     _id: {
       type: String,
@@ -106,7 +106,7 @@ MessageSchema.methods.toJSON = function () {
   return message;
 };
 
-const MessageModel = mongoose.model<IMessageSchemaDocument>(
+const MessageModel = mongoose.model<IMessagechemaDocument>(
   "Message",
   MessageSchema
 );

@@ -1,12 +1,10 @@
 const ActionType = {
   CREATE_CONNECTION: "socket/createConnection",
-  DISCONNECTED: "socket/disconnected",
 
   SEND_MESSAGE: "activeChat/sendMessage",
 
-  NEW_FRIEND_REQUEST_RECEIVE: "friendRequest/newFriendRequestReceive",
-  CURRENT_ACTIVE_CHAT: "activeChat/setActiveChat",
-  ADD_REACTION: "activeChat/addReaction",
+  SET_ACTIVE_CHAT: "activeChat/setActiveChat",
+  CLEAR_ACTIVE_CHAT: "activeChat/clearActiveChat",
 } as const;
 
 const SocketEvents = {
@@ -16,6 +14,8 @@ const SocketEvents = {
   INVALID_DATA: "invalid_data",
 
   JOIN_ROOM: "join_room",
+  JOIN_ROOM_ERROR: "join_room_error",
+  JOIN_ROOM_SUCCESS: "join_room_success",
   LEAVE_ROOM: "leave_room",
 
   MESSAGE_SENT: "message_sent",

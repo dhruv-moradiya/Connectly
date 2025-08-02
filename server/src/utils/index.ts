@@ -41,6 +41,7 @@ export const generateRedisKeys = {
     `room:${roomId}:unread:${userId}`,
   typing: (roomId: string, userId: string) => `room:${roomId}:typing:${userId}`,
   onlineStatus: (userId: string) => `user:${userId}:online`,
+  activeRomm: (userId: string) => `user:${userId}:active_room`,
   notifications: (userId: string) => `user:${userId}:notifications`,
   socketMap: (socketId: string) => `socket:${socketId}:user`,
 };

@@ -14,11 +14,44 @@ const sendMessage = asyncHandler(
 
 const getMessages = asyncHandler(
   async (
-    req: Request<{ chatId: string }, {}, {}>,
+    req: Request<
+      { chatId: string },
+      {},
+      {},
+      {
+        page: number;
+        limit: number;
+        sortBy: "createdAt" | "updatedAt";
+        sortOrder: "asc" | "desc";
+        search: string;
+      }
+    >,
     res: Response,
     next: NextFunction
   ) => {
     const { chatId } = req.params;
+    let {
+      page = "1",
+      limit = "40",
+      sortBy = "createdAt",
+      sortOrder = "desc",
+      search = "",
+    } = req.query;
+
+    page = parseInt(page as string, 10);
+    limit = parseInt(limit as string, 10);
+
+    if (isNaN(page) || page < 1) {
+      return next(
+        new ApiResponse(400, "Invalid Page. Please provide a valid Page.")
+      );
+    }
+
+    if (isNaN(limit) || limit < 1) {
+      return next(
+        new ApiResponse(400, "Invalid Limit. Please provide a valid Limit.")
+      );
+    }
 
     if (!mongoose.Types.ObjectId.isValid(chatId)) {
       return res.json(
@@ -26,37 +59,76 @@ const getMessages = asyncHandler(
       );
     }
 
+    const skip = (page - 1) * limit;
+
     const messages = await MessageModel.aggregate([
+      // Get the messages from the chat
       {
         $match: {
           chat: new mongoose.Types.ObjectId(chatId),
         },
       },
+      // Sort the messages
       {
-        $lookup: {
-          from: "users",
-          localField: "sender",
-          foreignField: "_id",
-          as: "sender",
+        $sort: {
+          [sortBy]: sortOrder === "asc" ? 1 : -1,
         },
       },
       {
-        $unwind: "$sender",
+        $facet: {
+          messages: [
+            {
+              $skip: skip,
+            },
+            {
+              $limit: limit,
+            },
+            {
+              $lookup: {
+                from: "users",
+                localField: "sender",
+                foreignField: "_id",
+                as: "sender",
+              },
+            },
+            {
+              $unwind: "$sender",
+            },
+            {
+              $project: {
+                _id: 1,
+                sender: {
+                  _id: 1,
+                  username: 1,
+                  avatar: 1,
+                },
+                content: 1,
+                createdAt: 1,
+              },
+            },
+          ],
+          totalMessages: [
+            {
+              $count: "total",
+            },
+          ],
+        },
+      },
+      {
+        $addFields: {
+          totalMessages: {
+            $ifNull: [{ $arrayElemAt: ["$totalMessages.total", 0] }, 0],
+          },
+        },
       },
       {
         $project: {
-          _id: 1,
-          sender: {
-            _id: 1,
-            username: 1,
-            avatar: 1,
+          messages: 1,
+          totalMessages: 1,
+          totalPages: {
+            $ceil: { $divide: ["$totalMessages", limit] },
           },
-          content: 1,
-          createdAt: 1,
         },
-      },
-      {
-        $sort: { createdAt: -1 },
       },
     ]);
 
@@ -68,7 +140,9 @@ const getMessages = asyncHandler(
 
     return res
       .status(200)
-      .json(new ApiResponse(200, "Messages retrieved successfully.", messages));
+      .json(
+        new ApiResponse(200, "Messages retrieved successfully.", messages[0])
+      );
   }
 );
 

@@ -1,5 +1,6 @@
 import type { TLoginSchemaType, TSignupSchemaType } from "@/lib/schema";
 import type {
+  IActiveChatMessages,
   ICreateNewChat,
   IGetCurrentUser,
   IGetUsersByUsernameQuery,
@@ -135,9 +136,19 @@ const createNewChat = async (data: {
   }
 };
 
-const getActiveChatMessages = async (chatId: string) => {
+const getActiveChatMessages = async ({
+  chatId,
+  page,
+  limit,
+}: {
+  chatId: string;
+  page: number;
+  limit: number;
+}) => {
   try {
-    const response = await apiClient.get(`/message/${chatId}`);
+    const response: AxiosResponse<IActiveChatMessages> = await apiClient.get(
+      `/message/${chatId}?page=${page}&limit=${limit}`
+    );
     return response.data;
   } catch (error) {
     throw errorHandler(error);

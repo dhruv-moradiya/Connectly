@@ -7,7 +7,7 @@ import { messagesQueue } from "@/queues/bullmq/messages.queue";
 
 import {
   messageSentSchema,
-  type IMessageSentBody,
+  type IMessageentBody,
 } from "@/schemas/socket.schema";
 
 import { generateRedisKeys } from "@/utils";
@@ -35,7 +35,7 @@ function emitSocketError(socket: Socket, message: string) {
 }
 
 // // * Cache message to Redis
-// const cacheMessage = (chatId: string, message: IMessageSentBody) => {
+// const cacheMessage = (chatId: string, message: IMessageentBody) => {
 //   const redisKey = generateRedisKeys.roomMessages(chatId);
 //   return redisConnection.lpush(redisKey, JSON.stringify(message));
 // };
@@ -44,7 +44,7 @@ function emitSocketError(socket: Socket, message: string) {
 async function notifyParticipants(
   io: Server,
   chatId: string,
-  message: IMessageSentBody,
+  message: IMessageentBody,
   socket: Socket
 ) {
   const participants = await safeExec(
@@ -54,15 +54,19 @@ async function notifyParticipants(
   );
   if (!participants?.length) return;
 
-  const ids = participants.map((p) => p.user.toString());
-  io.to(ids).emit(SocketEvents.MESSAGE_RECEIVED, message);
+  const ids = participants
+    .map((p) => p.user.toString())
+    .filter((id) => id !== socket.user._id);
+
+  socket.to(chatId).emit(SocketEvents.MESSAGE_RECEIVED, message);
+  // io.to(ids).emit(SocketEvents.MESSAGE_RECEIVED, message);
 }
 
 // * Main handler
 async function handleMessageSent(
   io: Server,
   socket: Socket,
-  data: IMessageSentBody
+  data: IMessageentBody
 ) {
   if (!validateSocketData(messageSentSchema, data, socket)) return;
 
@@ -73,12 +77,14 @@ async function handleMessageSent(
     "Error queuing message"
   );
 
+  socket.emit(SocketEvents.MESSAGE_SENT, data);
+
   await notifyParticipants(io, data.chatId, data, socket);
 }
 
 // * Socket registration
 const messageSocket = (io: Server, socket: Socket) => {
-  socket.on(SocketEvents.MESSAGE_SENT, (data: IMessageSentBody) => {
+  socket.on(SocketEvents.MESSAGE_SENT, (data: IMessageentBody) => {
     handleMessageSent(io, socket, data).catch((err) => {
       emitSocketError(socket, `Unexpected error: ${err.message}`);
     });

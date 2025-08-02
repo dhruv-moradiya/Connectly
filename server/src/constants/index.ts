@@ -103,6 +103,8 @@ const SocketEvents = {
   INVALID_DATA: "invalid_data",
 
   JOIN_ROOM: "join_room",
+  JOIN_ROOM_SUCCESS: "join_room_success",
+  JOIN_ROOM_ERROR: "join_room_error",
   LEAVE_ROOM: "leave_room",
 
   MESSAGE_SENT: "message_sent", // ✅

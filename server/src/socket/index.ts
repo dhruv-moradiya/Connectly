@@ -1,9 +1,45 @@
-import type { Server } from "socket.io";
+import mongoose from "mongoose";
+import type { Server, Socket } from "socket.io";
 
+import { SocketEvents } from "@/constants";
+import { generateRedisKeys } from "@/utils";
+import { redisConnection } from "@/db/redis";
+import { SocketResponse } from "@/utils/apiResponse";
 import { messageSocket } from "@/socket/message.socket";
 import { socketAuthMiddleware } from "@/socket/auth.socket";
-import { SocketEvents } from "@/constants";
-import { redisConnection } from "@/db/redis";
+
+const handleSocketJoinRoom = (socket: Socket) => {
+  socket.on(SocketEvents.JOIN_ROOM, ({ chatId }: { chatId: string }) => {
+    if (!mongoose.Types.ObjectId.isValid(chatId)) {
+      const data = new SocketResponse(
+        "Unable to join room — the provided chat ID is invalid.",
+        false,
+        null
+      );
+      socket.emit(SocketEvents.JOIN_ROOM_ERROR, data);
+      return;
+    } else {
+      socket.join(chatId);
+      const data = new SocketResponse(
+        `Successfully joined the chat room.`,
+        true,
+        { chatId }
+      );
+      socket.emit(SocketEvents.JOIN_ROOM_SUCCESS, data);
+
+      redisConnection.set(
+        generateRedisKeys.activeRomm(socket.user._id),
+        chatId
+      );
+    }
+  });
+};
+
+const handleSocketLeaveRoom = (socket: Socket) => {
+  socket.on(SocketEvents.LEAVE_ROOM, ({ chatId }) => {
+    socket.leave(chatId);
+  });
+};
 
 export const initializeSocket = (io: Server) => {
   console.log("🚀 Socket server is running.");
@@ -27,18 +63,16 @@ export const initializeSocket = (io: Server) => {
       id: socket.id,
     });
 
+    handleSocketJoinRoom(socket);
+
+    handleSocketLeaveRoom(socket);
+
     socket.on(SocketEvents.DISCONNECT, () => {
       socket.disconnect();
       redisConnection.del(`user:${socket.user.id}:online`);
       console.log(
         `⚡ User disconnected: ${socket.user.username} (${socket.id})`
       );
-    });
-
-    // Debug/test emits
-    io.emit("test_message", {
-      message: "Test broadcast",
-      id: socket.id,
     });
   });
 };

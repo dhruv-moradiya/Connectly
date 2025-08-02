@@ -71,7 +71,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, [dispatch, setOpen]);
 
   const { chats, isLoading } = useAppSelector((state) => state.userChats);
-  console.log("chats :>> ", chats);
 
   return (
     <Sidebar

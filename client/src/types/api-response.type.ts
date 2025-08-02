@@ -40,10 +40,30 @@ interface ICreateNewChat extends IBaseType {
   };
 }
 
-interface IMessages {
-  content: string;
+interface IMessage {
   _id: string;
-  sender: string;
+  content: string;
+  createdAt: string;
+  type:
+    | "text"
+    | "pinned_info"
+    | "event_schedule"
+    | "call_log"
+    | "reply"
+    | "system";
+  sender: {
+    _id: string;
+    username: string;
+    avatar: string;
+  };
+}
+
+interface IActiveChatMessages extends IBaseType {
+  data: {
+    messages: IMessage[];
+    totalMessages: number;
+    totalPages: number;
+  };
 }
 
 export {
@@ -53,5 +73,6 @@ export {
   type IChatPreview,
   type IGetUsersByUsernameQuery,
   type ICreateNewChat,
-  type IMessages,
+  type IActiveChatMessages,
+  type IMessage,
 };

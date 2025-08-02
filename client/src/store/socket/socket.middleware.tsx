@@ -2,17 +2,11 @@ import { ActionType, SocketEvents } from "@/lib/constants";
 import type { Middleware } from "@reduxjs/toolkit";
 import { io, Socket } from "socket.io-client";
 import type { RootState } from "../index";
-import { chatCreatedReducer } from "../chats/user-chats-slice";
-import type {
-  TChatCreatedEventReceived,
-  TMessageReceivedEventReceived,
-} from "@/types/middleware.type";
+
+import { registerSocketListeners } from "./socket-listeners";
 
 let socket: Socket | null = null;
 
-/**
- * Initializes the socket connection with auth token.
- */
 const initializeSocket = (token: string) => {
   if (socket) {
     console.warn("Socket already initialized.");
@@ -51,28 +45,33 @@ const socketMiddleware: Middleware = (store) => (next) => (action) => {
         if (!socket && token) {
           initializeSocket(token);
 
-          socket!.on(
-            SocketEvents.CHAT_CREATED,
-            (data: TChatCreatedEventReceived) => {
-              console.log("📢 Chat created event received.", data);
-              store.dispatch(chatCreatedReducer(data.data));
-            }
-          );
-
-          socket!.on(
-            SocketEvents.MESSAGE_RECEIVED,
-            (data: TMessageReceivedEventReceived) => {
-              console.log("📢 Message received event received.", data);
-            }
-          );
+          registerSocketListeners(store, socket as unknown as Socket);
         } else {
           console.warn("⚠️ Socket already exists or token is missing.");
         }
         break;
 
-      case ActionType.SEND_MESSAGE:
-        socket!.emit(SocketEvents.MESSAGE_SENT, action.payload);
+      case ActionType.SEND_MESSAGE: {
+        const data = {
+          chatId: state.activeChat.chatId,
+          content: action.payload.content,
+          _id: action.payload._id,
+        };
 
+        socket!.emit(SocketEvents.MESSAGE_SENT, data);
+        break;
+      }
+
+      case ActionType.SET_ACTIVE_CHAT:
+        socket!.emit(SocketEvents.JOIN_ROOM, {
+          chatId: action.payload,
+        });
+        break;
+
+      case ActionType.CLEAR_ACTIVE_CHAT:
+        socket!.emit(SocketEvents.LEAVE_ROOM, {
+          chatId: action.payload,
+        });
         break;
 
       default:

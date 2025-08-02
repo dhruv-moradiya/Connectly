@@ -27,4 +27,4 @@ const messageSentSchema = z.object({
 
 export { messageSentSchema };
 
-export type IMessageSentBody = z.infer<typeof messageSentSchema>;
+export type IMessageentBody = z.infer<typeof messageSentSchema>;

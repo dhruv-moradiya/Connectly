@@ -2,7 +2,7 @@ import { Worker } from "bullmq";
 import { redisConnection } from "@/db/redis";
 import MessageModel from "@/models/message.model";
 
-interface IMessageSaveInDBJobType {
+interface IMessageaveInDBJobType {
   _id: string;
   chatId: string;
   content: string;
@@ -12,7 +12,7 @@ interface IMessageSaveInDBJobType {
 const messagesWorker = new Worker(
   "messages",
   async (job) => {
-    const data: IMessageSaveInDBJobType = job.data;
+    const data: IMessageaveInDBJobType = job.data;
     const messageData = {
       _id: data._id,
       sender: data.sender,
@@ -20,10 +20,7 @@ const messagesWorker = new Worker(
       content: data.content,
     };
 
-    // const message = await MessageModel.create(messageData);
-    // console.log("message :>> ", message);
-
-    // console.log("messageData :>> ", messageData);
+    await MessageModel.create(messageData);
   },
   { connection: redisConnection }
 );

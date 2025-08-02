@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-interface IMessageSchema {
+interface IMessagechema {
   _id: string;
   sender: Types.ObjectId;
   chat: Types.ObjectId;
@@ -55,4 +55,4 @@ interface IMessageSchema {
   updatedAt: Date;
 }
 
-export type { IMessageSchema };
+export type { IMessagechema };

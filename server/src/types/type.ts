@@ -29,7 +29,7 @@ interface IOtpSchema extends Document {
   compareOtp: (otp: string) => Promise<boolean>;
 }
 
-interface IMessageSchema extends Document {
+interface IMessagechema extends Document {
   sender: Types.ObjectId;
   room: Types.ObjectId;
   content: string;
@@ -198,7 +198,7 @@ interface IChatRoom extends Document {
 export type {
   // IUserSchema,
   IOtpSchema,
-  IMessageSchema,
+  IMessagechema,
   IChatRoom,
   IRole,
   IUnreadCount,

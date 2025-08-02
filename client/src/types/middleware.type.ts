@@ -1,4 +1,20 @@
+import { Interface } from "readline";
 import type { IUserPreview } from "./api-response.type";
+
+interface IBaseSocketResponse {
+  success: boolean;
+  message: string;
+}
+
+interface IJoinRoomError extends IBaseSocketResponse {
+  data: null;
+}
+
+interface IJoinRoomSuccess extends IBaseSocketResponse {
+  data: {
+    chatId: string;
+  };
+}
 
 type TChatCreatedEventReceived = {
   data: {
@@ -18,4 +34,9 @@ type TMessageReceivedEventReceived = {
   chatId: string;
 };
 
-export type { TChatCreatedEventReceived, TMessageReceivedEventReceived };
+export type {
+  IJoinRoomError,
+  IJoinRoomSuccess,
+  TChatCreatedEventReceived,
+  TMessageReceivedEventReceived,
+};
