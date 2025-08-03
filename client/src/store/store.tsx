@@ -1,8 +1,9 @@
-import { configureStore, type Middleware } from "@reduxjs/toolkit";
+// store.ts
+import { configureStore } from "@reduxjs/toolkit";
 import {
-  type TypedUseSelectorHook,
   useDispatch,
   useSelector,
+  type TypedUseSelectorHook,
 } from "react-redux";
 
 import authReducer from "./auth/auth-slice";
@@ -10,10 +11,6 @@ import userChatsReducer from "./chats/user-chats-slice";
 import { socketReducer } from "./socket/socket.slice";
 import { socketMiddleware } from "./socket/socket.middleware";
 import { activeChatReducer } from "./active-chat/active-chat-slice";
-
-const customMiddleware: Middleware = () => (next) => (action) => {
-  return next(action);
-};
 
 const store = configureStore({
   reducer: {
@@ -23,7 +20,7 @@ const store = configureStore({
     socket: socketReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(customMiddleware).concat(socketMiddleware),
+    getDefaultMiddleware().concat(socketMiddleware),
 });
 
 export type AppDispatch = typeof store.dispatch;

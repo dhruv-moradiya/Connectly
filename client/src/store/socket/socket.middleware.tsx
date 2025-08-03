@@ -1,11 +1,12 @@
-import { ActionType, SocketEvents } from "@/lib/constants";
+// src/socket/socket.middleware.ts
 import type { Middleware } from "@reduxjs/toolkit";
-import { io, Socket } from "socket.io-client";
-import type { RootState } from "../index";
+import { ActionType, SocketEvents } from "@/lib/constants";
+import { io } from "socket.io-client";
 
-import { registerSocketListeners } from "./socket-listeners";
+import { emitToServer, registerSocketListeners } from "./socket-listeners";
+import type { SocketAction, TypedSocket } from "@/types/middleware.type";
 
-let socket: Socket | null = null;
+let socket: TypedSocket | null = null;
 
 const initializeSocket = (token: string) => {
   if (socket) {
@@ -30,56 +31,45 @@ const initializeSocket = (token: string) => {
   });
 };
 
-const socketMiddleware: Middleware = (store) => (next) => (action) => {
-  const state: RootState = store.getState();
-  const token = state.auth.user?.accessToken;
+function isSocketAction(action: unknown): action is SocketAction {
+  return action !== null && typeof action === "object" && "type" in action;
+}
 
-  if (
-    action &&
-    typeof action === "object" &&
-    "type" in action &&
-    "payload" in action
-  ) {
-    switch (action.type) {
-      case ActionType.CREATE_CONNECTION:
-        if (!socket && token) {
-          initializeSocket(token);
+export const socketMiddleware: Middleware =
+  (store) => (next) => (action: unknown) => {
+    const state = store.getState() as ReturnType<typeof store.getState>;
+    const token = state.auth.user?.accessToken;
 
-          registerSocketListeners(store, socket as unknown as Socket);
-        } else {
-          console.warn("⚠️ Socket already exists or token is missing.");
-        }
-        break;
+    if (isSocketAction(action)) {
+      switch (action.type) {
+        case ActionType.CREATE_CONNECTION:
+          if (!state.socket.isConnected && token) {
+            initializeSocket(token);
+            registerSocketListeners(store, socket as TypedSocket);
+          }
+          break;
 
-      case ActionType.SEND_MESSAGE: {
-        const data = {
-          chatId: state.activeChat.chatId,
-          content: action.payload.content,
-          _id: action.payload._id,
-        };
+        case ActionType.SEND_MESSAGE:
+          emitToServer(socket!, SocketEvents.MESSAGE_SENT, {
+            chatId: state.activeChat.chatId,
+            content: action.payload.content,
+            _id: action.payload._id,
+          });
+          break;
 
-        socket!.emit(SocketEvents.MESSAGE_SENT, data);
-        break;
+        case ActionType.SET_ACTIVE_CHAT:
+          emitToServer(socket!, SocketEvents.JOIN_ROOM, {
+            chatId: action.payload,
+          });
+          break;
+
+        case ActionType.CLEAR_ACTIVE_CHAT:
+          emitToServer(socket!, SocketEvents.LEAVE_ROOM, {
+            chatId: action.payload,
+          });
+          break;
       }
-
-      case ActionType.SET_ACTIVE_CHAT:
-        socket!.emit(SocketEvents.JOIN_ROOM, {
-          chatId: action.payload,
-        });
-        break;
-
-      case ActionType.CLEAR_ACTIVE_CHAT:
-        socket!.emit(SocketEvents.LEAVE_ROOM, {
-          chatId: action.payload,
-        });
-        break;
-
-      default:
-        break;
     }
-  }
 
-  return next(action);
-};
-
-export { socketMiddleware, socket };
+    return next(action);
+  };

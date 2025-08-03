@@ -11,7 +11,7 @@ import { SignUp } from "./pages/sign-up-page";
 import SignIn from "./pages/sign-in-page";
 import { Toaster } from "./components/ui/sonner";
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "./store";
+import { useAppDispatch, useAppSelector } from "./store/store";
 import { getCurrentUserThunk } from "./store/auth/auth-thunks";
 import {
   createConnection,

@@ -47,7 +47,7 @@ export const initializeSocket = (io: Server) => {
   io.use(socketAuthMiddleware);
 
   // Handle authenticated connections
-  io.on("connection", (socket) => {
+  io.on(SocketEvents.CONNECTION, (socket) => {
     console.log(`⚡ User connected: ${socket.user.username} (${socket.id})`);
 
     // Register event handlers

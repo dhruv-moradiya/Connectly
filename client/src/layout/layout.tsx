@@ -18,7 +18,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { useAppSelector } from "@/store";
+import { useAppSelector } from "@/store/store";
 import { Bell } from "lucide-react";
 import { Outlet } from "react-router-dom";
 

@@ -21,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAppDispatch, useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { emailVerifyThunk } from "@/store/auth/auth-thunks";
 
 const FormSchema = z.object({

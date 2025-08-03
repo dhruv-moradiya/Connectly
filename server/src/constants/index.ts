@@ -97,7 +97,7 @@ const HttpStatus = {
 } as const;
 
 const SocketEvents = {
-  CONNECTED: "connected",
+  CONNECTION: "connection",
   DISCONNECT: "disconnect",
   ERROR_CONNECTING: "error_connecting",
   INVALID_DATA: "invalid_data",

@@ -2,7 +2,7 @@ import { cn, getChatDisplayMeta } from "@/lib/utils";
 import { Link, useParams } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { IChatPreview } from "@/types/api-response.type";
-import { useAppSelector } from "@/store";
+import { useAppSelector } from "@/store/store";
 import {
   Menubar,
   MenubarContent,

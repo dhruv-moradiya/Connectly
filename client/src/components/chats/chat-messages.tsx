@@ -1,4 +1,4 @@
-import { useAppSelector } from "@/store";
+import { useAppSelector } from "@/store/store";
 import { useEffect, useRef } from "react";
 import ChatBubble from "./chat-bubble/chat-bubble";
 

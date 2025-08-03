@@ -8,8 +8,8 @@ const ActionType = {
 } as const;
 
 const SocketEvents = {
-  CONNECTED: "connected",
-  DISCONNECTED: "disconnected",
+  CONNECT: "connect",
+  DISCONNECT: "disconnect",
   ERROR_CONNECTING: "error_connecting",
   INVALID_DATA: "invalid_data",
 

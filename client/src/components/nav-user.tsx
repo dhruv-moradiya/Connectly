@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useAppSelector } from "@/store";
+import { useAppSelector } from "@/store/store";
 
 export function NavUser() {
   const { user } = useAppSelector((state) => state.auth);

@@ -22,7 +22,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
-import { useAppDispatch, useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { getUserChatsThunk } from "@/store/chats/user-chats-slice";
 import ChatItem from "./chat-item";
 import ChatsLoader from "./chats-loader";

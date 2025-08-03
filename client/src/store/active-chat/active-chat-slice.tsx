@@ -72,6 +72,9 @@ const activeChatSlice = createSlice({
     sendMessage(state, action: PayloadAction<IMessage>) {
       state.messages = [...state.messages, action.payload];
     },
+    messageReceivedReducer(state, action: PayloadAction<IMessage>) {
+      state.messages = [...state.messages, action.payload];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -92,6 +95,10 @@ const activeChatSlice = createSlice({
   },
 });
 
-export const { setActiveChat, clearActiveChat, sendMessage } =
-  activeChatSlice.actions;
+export const {
+  setActiveChat,
+  clearActiveChat,
+  sendMessage,
+  messageReceivedReducer,
+} = activeChatSlice.actions;
 export const activeChatReducer = activeChatSlice.reducer;

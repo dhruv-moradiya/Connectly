@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { memo, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { sendMessage } from "@/store/active-chat/active-chat-slice";
 import { cn } from "@/lib/utils";
 import { Mic, Plus, Send } from "lucide-react";

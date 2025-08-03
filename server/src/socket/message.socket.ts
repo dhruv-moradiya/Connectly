@@ -10,7 +10,6 @@ import {
   type IMessageentBody,
 } from "@/schemas/socket.schema";
 
-import { generateRedisKeys } from "@/utils";
 import { getRoomParticipants } from "@/utils/helperFunctions";
 import { validateSocketData } from "@/utils/validateRequest";
 
@@ -34,15 +33,8 @@ function emitSocketError(socket: Socket, message: string) {
   socket.emit("socket_error", { message });
 }
 
-// // * Cache message to Redis
-// const cacheMessage = (chatId: string, message: IMessageentBody) => {
-//   const redisKey = generateRedisKeys.roomMessages(chatId);
-//   return redisConnection.lpush(redisKey, JSON.stringify(message));
-// };
-
 // * Notify all participants in the chat room
 async function notifyParticipants(
-  io: Server,
   chatId: string,
   message: IMessageentBody,
   socket: Socket
@@ -54,12 +46,14 @@ async function notifyParticipants(
   );
   if (!participants?.length) return;
 
-  const ids = participants
-    .map((p) => p.user.toString())
-    .filter((id) => id !== socket.user._id);
-
-  socket.to(chatId).emit(SocketEvents.MESSAGE_RECEIVED, message);
-  // io.to(ids).emit(SocketEvents.MESSAGE_RECEIVED, message);
+  socket.to(chatId).emit(SocketEvents.MESSAGE_RECEIVED, {
+    ...message,
+    sender: {
+      _id: socket.user._id,
+      username: socket.user.username,
+      avatar: socket.user.avatar,
+    },
+  });
 }
 
 // * Main handler
@@ -77,9 +71,10 @@ async function handleMessageSent(
     "Error queuing message"
   );
 
-  socket.emit(SocketEvents.MESSAGE_SENT, data);
+  await notifyParticipants(data.chatId, data, socket);
 
-  await notifyParticipants(io, data.chatId, data, socket);
+  // To Current User Messgae sent
+  socket.emit(SocketEvents.MESSAGE_SENT, data);
 }
 
 // * Socket registration

@@ -1,4 +1,4 @@
-import { useAppDispatch } from "@/store";
+import { useAppDispatch } from "@/store/store";
 import {
   clearActiveChat,
   getActiveChatMessagesThunk,
