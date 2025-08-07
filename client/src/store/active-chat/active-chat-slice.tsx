@@ -25,6 +25,17 @@ const initialState: IActiveChatState = {
   error: null,
 };
 
+function updateMessageStatus(
+  state: IActiveChatState, // replace with actual type
+  action: PayloadAction<{ _id: string; status: "sent" | "delivered" | "seen" }>
+) {
+  state.messages = state.messages.map((message) =>
+    message._id === action.payload._id
+      ? { ...message, deliveryStatus: action.payload.status }
+      : message
+  );
+}
+
 /**
  * Thunk to fetch messages for active chat
  */
@@ -78,27 +89,27 @@ const activeChatSlice = createSlice({
       state.messages = [...state.messages, action.payload];
     },
 
-    messageSentSuccess(state, action: PayloadAction<{ _id: string }>) {
-      state.messages = state.messages.map((message) => {
-        if (message._id === action.payload._id) {
-          return {
-            ...message,
-            deliveryStatus: "sent",
-          };
-        }
-        return message;
+    messageSentSuccess: (state, action: PayloadAction<{ _id: string }>) => {
+      updateMessageStatus(state, {
+        ...action,
+        payload: { ...action.payload, status: "sent" },
       });
     },
 
-    messageSeenSuccess(state, action: PayloadAction<{ _id: string }>) {
-      state.messages = state.messages.map((message) => {
-        if (message._id === action.payload._id) {
-          return {
-            ...message,
-            deliveryStatus: "seen",
-          };
-        }
-        return message;
+    messageDeliveredSuccess: (
+      state,
+      action: PayloadAction<{ _id: string }>
+    ) => {
+      updateMessageStatus(state, {
+        ...action,
+        payload: { ...action.payload, status: "delivered" },
+      });
+    },
+
+    messageSeenSuccess: (state, action: PayloadAction<{ _id: string }>) => {
+      updateMessageStatus(state, {
+        ...action,
+        payload: { ...action.payload, status: "seen" },
       });
     },
   },
@@ -127,6 +138,7 @@ export const {
   sendMessage,
   messageReceivedReducer,
   messageSentSuccess,
+  messageDeliveredSuccess,
   messageSeenSuccess,
 } = activeChatSlice.actions;
 export const activeChatReducer = activeChatSlice.reducer;

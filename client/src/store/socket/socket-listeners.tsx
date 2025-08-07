@@ -12,6 +12,7 @@ import type { MiddlewareAPI } from "@reduxjs/toolkit";
 import { chatCreatedReducer } from "../chats/user-chats-slice";
 import { showToast } from "@/lib/utils";
 import {
+  messageDeliveredSuccess,
   messageReceivedReducer,
   messageSeenSuccess,
   messageSentSuccess,
@@ -29,13 +30,15 @@ const SOCKET_LISTENERS = (store: MiddlewareAPI) => ({
 
   [SocketEvents.MESSAGE_SENT]: (data: { _id: string }) => {
     store.dispatch(messageSentSuccess(data));
-    showToast("Message sent", "Message sent successfully", "success");
+  },
+
+  [SocketEvents.MESSAGE_DELIVERED]: (data: { _id: string }) => {
+    store.dispatch(messageDeliveredSuccess(data));
   },
 
   [SocketEvents.MESSAGE_SEEN]: (data: { _id: string }) => {
     console.log("✅ Message seen:", data);
     store.dispatch(messageSeenSuccess(data));
-    showToast("Message seen", "Message seen successfully", "success");
   },
 
   [SocketEvents.JOIN_ROOM_ERROR]: (data: IJoinRoomError) => {

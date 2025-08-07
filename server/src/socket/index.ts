@@ -52,7 +52,7 @@ export const initializeSocket = (io: Server) => {
     console.log(`⚡ User connected: ${socket.user.username} (${socket.id})`);
 
     // Register event handlers
-    messageSocket(io, socket);
+    messageSocket(socket);
 
     // Optional: send welcome or test event
     socket.emit("welcome", {

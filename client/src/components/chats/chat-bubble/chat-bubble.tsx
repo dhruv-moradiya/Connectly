@@ -51,7 +51,7 @@ const ChatBubbleDelevaryStatus = ({
     case "seen":
       return (
         <span className="text-[10px] text-muted ml-2 self-end justify-end translate-y-1">
-          <CheckCheck size={12} />
+          <CheckCheck size={12} className="text-blue-300" />
         </span>
       );
   }

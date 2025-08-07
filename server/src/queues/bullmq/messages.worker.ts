@@ -1,26 +1,46 @@
 import { Worker } from "bullmq";
 import { redisConnection } from "@/db/redis";
 import MessageModel from "@/models/message.model";
+import type { TMessageDeliveryStatus } from "@shared/types/message.types";
+import { updateDeliveryStatus } from "@/utils/helperFunctions";
 
-interface IMessageaveInDBJobType {
+interface IMessagesaveInDBJobType {
   _id: string;
   chatId: string;
   content: string;
   sender: string;
+  deliveryStatus: TMessageDeliveryStatus;
 }
 
 const messagesWorker = new Worker(
   "messages",
   async (job) => {
-    const data: IMessageaveInDBJobType = job.data;
-    const messageData = {
-      _id: data._id,
-      sender: data.sender,
-      chat: data.chatId,
-      content: data.content,
-    };
+    const {
+      _id,
+      sender,
+      chatId,
+      content,
+      deliveryStatus,
+    }: IMessagesaveInDBJobType = job.data;
 
-    await MessageModel.create(messageData);
+    switch (deliveryStatus) {
+      case "sent":
+        await MessageModel.create({
+          _id,
+          sender,
+          chat: chatId,
+          content,
+        });
+        break;
+
+      case "delivered":
+      case "seen":
+        await updateDeliveryStatus(_id, deliveryStatus);
+        break;
+
+      default:
+        console.warn(`Unknown delivery status: ${deliveryStatus}`);
+    }
   },
   { connection: redisConnection }
 );
