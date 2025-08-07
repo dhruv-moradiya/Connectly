@@ -16,4 +16,13 @@ interface IUserSchema {
   refreshToken: string;
 }
 
-export type { IUserSchema };
+interface IUserPreiveForCache {
+  _id: Types.ObjectId;
+  username: string;
+  email: string;
+  avatar: string;
+  bio: string;
+  isEmailVerified: boolean;
+}
+
+export type { IUserSchema, IUserPreiveForCache };

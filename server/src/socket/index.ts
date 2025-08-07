@@ -38,6 +38,7 @@ const handleSocketJoinRoom = (socket: Socket) => {
 const handleSocketLeaveRoom = (socket: Socket) => {
   socket.on(SocketEvents.LEAVE_ROOM, ({ chatId }) => {
     socket.leave(chatId);
+    redisConnection.del(generateRedisKeys.activeRomm(socket.user._id));
   });
 };
 
@@ -69,7 +70,8 @@ export const initializeSocket = (io: Server) => {
 
     socket.on(SocketEvents.DISCONNECT, () => {
       socket.disconnect();
-      redisConnection.del(`user:${socket.user.id}:online`);
+      redisConnection.del(generateRedisKeys.onlineStatus(socket.user._id));
+      redisConnection.del(generateRedisKeys.activeRomm(socket.user._id));
       console.log(
         `⚡ User disconnected: ${socket.user.username} (${socket.id})`
       );

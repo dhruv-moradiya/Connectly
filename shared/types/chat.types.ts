@@ -100,4 +100,25 @@ interface IChatRoom {
   }[];
 }
 
-export type { IChatRoom, TAuditLogAction, AuditLogData, UserRole, ISettings };
+interface IParticipant {
+  user: string;
+  role: "admin" | "member";
+  invitedBy?: string;
+}
+
+interface IChatRoomForCache {
+  _id: string;
+  name: string;
+  participants: IParticipant[];
+  createdBy: string;
+  isGroup: boolean;
+}
+
+export type {
+  IChatRoom,
+  TAuditLogAction,
+  AuditLogData,
+  UserRole,
+  ISettings,
+  IChatRoomForCache,
+};

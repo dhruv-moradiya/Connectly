@@ -35,7 +35,7 @@ export function formatErrorMessages(errors: Record<string, string[]>): string {
 }
 
 export const generateRedisKeys = {
-  user: (userId: string) => `user:${userId}:online`,
+  user: (userId: string) => `user:${userId}:details`,
   roomMessages: (roomId: string) => `room:${roomId}:messages`,
   unreadCount: (roomId: string, userId: string) =>
     `room:${roomId}:unread:${userId}`,
@@ -44,4 +44,6 @@ export const generateRedisKeys = {
   activeRomm: (userId: string) => `user:${userId}:active_room`,
   notifications: (userId: string) => `user:${userId}:notifications`,
   socketMap: (socketId: string) => `socket:${socketId}:user`,
+  roomParticipants: (roomId: string) => `room:${roomId}:participants`,
+  roomDetails: (roomId: string) => `room:${roomId}:details`,
 };

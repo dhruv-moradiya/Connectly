@@ -102,6 +102,7 @@ const getMessages = asyncHandler(
                   username: 1,
                   avatar: 1,
                 },
+                deliveryStatus: 1,
                 content: 1,
                 createdAt: 1,
               },

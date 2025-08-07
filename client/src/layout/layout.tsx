@@ -18,12 +18,18 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { useAppSelector } from "@/store/store";
+import {
+  createConnection,
+  disconnectConnection,
+} from "@/store/socket/socket.slice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { Bell } from "lucide-react";
 import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   const { isConnected } = useAppSelector((state) => state.socket);
+
+  const dispatch = useAppDispatch();
 
   return (
     <SidebarProvider
@@ -71,6 +77,14 @@ const Layout = () => {
                   ? "animate-pulse bg-green-600"
                   : "animate-none bg-red-600"
               )}
+              onClick={() => {
+                if (isConnected) {
+                  dispatch(disconnectConnection());
+                } else {
+                  console.log("Connecting...");
+                  dispatch(createConnection());
+                }
+              }}
             />
           </div>
         </header>

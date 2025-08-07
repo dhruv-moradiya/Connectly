@@ -71,6 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }, [dispatch, setOpen]);
 
   const { chats, isLoading } = useAppSelector((state) => state.userChats);
+  const { user } = useAppSelector((state) => state.auth);
 
   return (
     <Sidebar
@@ -141,7 +142,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <Sidebar collapsible="none" className="hidden flex-1 md:flex">
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
-            <div className="text-foreground text-base font-medium">Title</div>
+            <div className="text-foreground text-xs font-medium">
+              {user?._id}
+            </div>
             <Label className="flex items-center gap-2 text-sm">
               <span>Unread</span>
               <Switch className="shadow-none" />

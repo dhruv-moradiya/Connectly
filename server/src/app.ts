@@ -51,6 +51,7 @@ import messageRoute from "./routes/message.route";
 
 import { messagesWorker } from "./queues/bullmq/messages.worker";
 import { globalErrorHandler } from "./middlewares/globalError.middleware";
+import { getAllUserData } from "./controllers/user.controller";
 
 // Register API routes
 app.use("/api/user", userRouter);
@@ -87,6 +88,7 @@ const resetQueue = async () => {
   const queue = new Queue("message", { connection: redisConnection });
   await queue.drain(true); // removes all jobs
   await queue.obliterate({ force: true }); // wipes all data
+  await redisConnection.flushdb();
   console.log("🧹 Queue reset");
 };
 

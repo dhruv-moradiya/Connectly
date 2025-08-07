@@ -1,19 +1,15 @@
 import { Socket, type Server } from "socket.io";
-
 import { SocketEvents } from "@/constants";
-
-import { redisConnection } from "@/db/redis";
 import { messagesQueue } from "@/queues/bullmq/messages.queue";
-
 import {
   messageSentSchema,
   type IMessageentBody,
 } from "@/schemas/socket.schema";
-
-import { getRoomParticipants } from "@/utils/helperFunctions";
 import { validateSocketData } from "@/utils/validateRequest";
+import { redisConnection } from "@/db/redis";
+import { generateRedisKeys } from "@/utils";
 
-// * Utility: Execute async function safely with error handling
+// Utility: Execute async function safely with error handling
 async function safeExec<T>(
   fn: () => Promise<T>,
   socket: Socket,
@@ -27,25 +23,18 @@ async function safeExec<T>(
   }
 }
 
-// * Emit error to socket
+// Emit error to socket
 function emitSocketError(socket: Socket, message: string) {
   console.error(message);
   socket.emit("socket_error", { message });
 }
 
-// * Notify all participants in the chat room
+// Notify all participants in the chat room
 async function notifyParticipants(
   chatId: string,
   message: IMessageentBody,
   socket: Socket
 ) {
-  const participants = await safeExec(
-    () => getRoomParticipants(chatId),
-    socket,
-    "Error fetching room participants"
-  );
-  if (!participants?.length) return;
-
   socket.to(chatId).emit(SocketEvents.MESSAGE_RECEIVED, {
     ...message,
     sender: {
@@ -54,33 +43,69 @@ async function notifyParticipants(
       avatar: socket.user.avatar,
     },
   });
+
+  const isGroupChat = await redisConnection.hget(
+    generateRedisKeys.roomDetails(chatId),
+    "isGroup"
+  );
+
+  const currentUserId = socket.user._id;
+
+  if (isGroupChat === "false") {
+    const getParticipanrs = await redisConnection.hgetall(
+      generateRedisKeys.roomParticipants(chatId)
+    );
+    const otherUserIds = Object.keys(getParticipanrs).filter(
+      (id) => id !== currentUserId
+    )[0];
+
+    const isReceiverOnline = await redisConnection.get(
+      generateRedisKeys.onlineStatus(otherUserIds)
+    );
+
+    console.log("isReceiverOnline :>> ", isReceiverOnline);
+    console.log("isReceiverOnline :>> ", typeof isReceiverOnline);
+
+    if (isReceiverOnline === "true") {
+      console.log("Receiver is online");
+      const isReceiverInSameRoom = await redisConnection.get(
+        generateRedisKeys.activeRomm(otherUserIds)
+      );
+      console.log("chatId :>> ", chatId);
+      console.log("isReceiverInSameRoom :>> ", isReceiverInSameRoom);
+      if (isReceiverInSameRoom === chatId) {
+        console.log("Receiver is in same room");
+        socket.emit(SocketEvents.MESSAGE_SEEN, {
+          _id: message._id,
+        });
+      }
+    } else {
+      console.log("Receiver is offline");
+      // Send notification
+    }
+  }
 }
 
-// * Main handler
-async function handleMessageSent(
-  io: Server,
-  socket: Socket,
-  data: IMessageentBody
-) {
+// Main handler
+async function handleMessageSent(socket: Socket, data: IMessageentBody) {
   if (!validateSocketData(messageSentSchema, data, socket)) return;
 
-  // * Queue message for processing
+  // Queue message for processing
   await safeExec(
     () => messagesQueue.add("messages", { ...data, sender: socket.user._id }),
     socket,
     "Error queuing message"
   );
+  // To Current User Messgae sent successfully
+  socket.emit(SocketEvents.MESSAGE_SENT, data);
 
   await notifyParticipants(data.chatId, data, socket);
-
-  // To Current User Messgae sent
-  socket.emit(SocketEvents.MESSAGE_SENT, data);
 }
 
-// * Socket registration
+// Socket registration
 const messageSocket = (io: Server, socket: Socket) => {
   socket.on(SocketEvents.MESSAGE_SENT, (data: IMessageentBody) => {
-    handleMessageSent(io, socket, data).catch((err) => {
+    handleMessageSent(socket, data).catch((err) => {
       emitSocketError(socket, `Unexpected error: ${err.message}`);
     });
   });

@@ -488,6 +488,17 @@ const getUserByUsernameQuery = asyncHandler(
   }
 );
 
+const getAllUserData = async () => {
+  try {
+    const users = await User.find()
+      .select("username email avatar last_seen bio isEmailVerified")
+      .lean();
+    return users;
+  } catch (error) {
+    console.log("Error in getAllUserData:>> ", error);
+  }
+};
+
 export {
   createNewUser,
   loginUser,
@@ -496,4 +507,5 @@ export {
   refreshAccessToken,
   getCurrentUser,
   getUserByUsernameQuery,
+  getAllUserData,
 };

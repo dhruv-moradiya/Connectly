@@ -72,8 +72,34 @@ const activeChatSlice = createSlice({
     sendMessage(state, action: PayloadAction<IMessage>) {
       state.messages = [...state.messages, action.payload];
     },
+
+    // When we receive new message it will be added to the beginning of the list
     messageReceivedReducer(state, action: PayloadAction<IMessage>) {
       state.messages = [...state.messages, action.payload];
+    },
+
+    messageSentSuccess(state, action: PayloadAction<{ _id: string }>) {
+      state.messages = state.messages.map((message) => {
+        if (message._id === action.payload._id) {
+          return {
+            ...message,
+            deliveryStatus: "sent",
+          };
+        }
+        return message;
+      });
+    },
+
+    messageSeenSuccess(state, action: PayloadAction<{ _id: string }>) {
+      state.messages = state.messages.map((message) => {
+        if (message._id === action.payload._id) {
+          return {
+            ...message,
+            deliveryStatus: "seen",
+          };
+        }
+        return message;
+      });
     },
   },
   extraReducers: (builder) => {
@@ -100,5 +126,7 @@ export const {
   clearActiveChat,
   sendMessage,
   messageReceivedReducer,
+  messageSentSuccess,
+  messageSeenSuccess,
 } = activeChatSlice.actions;
 export const activeChatReducer = activeChatSlice.reducer;

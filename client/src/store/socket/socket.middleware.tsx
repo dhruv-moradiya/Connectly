@@ -42,32 +42,50 @@ export const socketMiddleware: Middleware =
 
     if (isSocketAction(action)) {
       switch (action.type) {
-        case ActionType.CREATE_CONNECTION:
+        case ActionType.CREATE_CONNECTION: {
           if (!state.socket.isConnected && token) {
             initializeSocket(token);
             registerSocketListeners(store, socket as TypedSocket);
           }
           break;
+        }
 
-        case ActionType.SEND_MESSAGE:
-          emitToServer(socket!, SocketEvents.MESSAGE_SENT, {
-            chatId: state.activeChat.chatId,
-            content: action.payload.content,
-            _id: action.payload._id,
-          });
+        case ActionType.SEND_MESSAGE: {
+          if (socket) {
+            emitToServer(socket, SocketEvents.MESSAGE_SENT, {
+              chatId: state.activeChat.chatId,
+              content: action.payload.content,
+              _id: action.payload._id,
+            });
+          }
           break;
+        }
 
-        case ActionType.SET_ACTIVE_CHAT:
-          emitToServer(socket!, SocketEvents.JOIN_ROOM, {
-            chatId: action.payload,
-          });
+        case ActionType.SET_ACTIVE_CHAT: {
+          if (socket) {
+            emitToServer(socket, SocketEvents.JOIN_ROOM, {
+              chatId: action.payload,
+            });
+          }
           break;
+        }
 
-        case ActionType.CLEAR_ACTIVE_CHAT:
-          emitToServer(socket!, SocketEvents.LEAVE_ROOM, {
-            chatId: action.payload,
-          });
+        case ActionType.CLEAR_ACTIVE_CHAT: {
+          if (socket) {
+            emitToServer(socket, SocketEvents.LEAVE_ROOM, {
+              chatId: state.activeChat.chatId,
+            });
+          }
           break;
+        }
+
+        case ActionType.DISCONNET_CONNECTION: {
+          if (state.socket.isConnected) {
+            socket?.disconnect();
+            socket = null;
+          }
+          break;
+        }
       }
     }
 

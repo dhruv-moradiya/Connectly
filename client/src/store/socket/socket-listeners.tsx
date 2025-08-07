@@ -5,29 +5,37 @@ import type {
   IJoinRoomSuccess,
   TChatCreatedEventReceived,
   TClientToServerEvents,
-  TMessageReceivedEventReceived,
   TServerToClientEvents,
   TypedSocket,
 } from "@/types/middleware.type";
 import type { MiddlewareAPI } from "@reduxjs/toolkit";
 import { chatCreatedReducer } from "../chats/user-chats-slice";
 import { showToast } from "@/lib/utils";
-import { messageReceivedReducer } from "../active-chat/active-chat-slice";
+import {
+  messageReceivedReducer,
+  messageSeenSuccess,
+  messageSentSuccess,
+} from "../active-chat/active-chat-slice";
 import type { IMessage } from "@/types/api-response.type";
 
 const SOCKET_LISTENERS = (store: MiddlewareAPI) => ({
   [SocketEvents.CHAT_CREATED]: (data: TChatCreatedEventReceived) => {
-    console.log("📢 Chat created:", data);
     store.dispatch(chatCreatedReducer(data.data));
   },
 
   [SocketEvents.MESSAGE_RECEIVED]: (data: IMessage) => {
-    console.log("📨 Message received:", data);
     store.dispatch(messageReceivedReducer(data));
   },
 
-  [SocketEvents.MESSAGE_SENT]: (data: TMessageReceivedEventReceived) => {
-    console.log("✅ Message sent:", data);
+  [SocketEvents.MESSAGE_SENT]: (data: { _id: string }) => {
+    store.dispatch(messageSentSuccess(data));
+    showToast("Message sent", "Message sent successfully", "success");
+  },
+
+  [SocketEvents.MESSAGE_SEEN]: (data: { _id: string }) => {
+    console.log("✅ Message seen:", data);
+    store.dispatch(messageSeenSuccess(data));
+    showToast("Message seen", "Message seen successfully", "success");
   },
 
   [SocketEvents.JOIN_ROOM_ERROR]: (data: IJoinRoomError) => {
@@ -36,6 +44,14 @@ const SOCKET_LISTENERS = (store: MiddlewareAPI) => ({
 
   [SocketEvents.JOIN_ROOM_SUCCESS]: (data: IJoinRoomSuccess) => {
     showToast("Join room success", data.message, "success");
+  },
+
+  [SocketEvents.LEAVE_ROOM_ERROR]: (data: string) => {
+    showToast("Leave room error", data, "error");
+  },
+
+  [SocketEvents.LEAVE_ROOM_SUCCESS]: (data: string) => {
+    showToast("Leave room success", data, "success");
   },
 
   // Add more events here...

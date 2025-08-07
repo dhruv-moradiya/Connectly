@@ -1,8 +1,10 @@
 import { type Socket } from "socket.io-client";
-import type { IUserPreview } from "./api-response.type";
+import type {
+  IUserPreview,
+  TMessageSenderDetails,
+  TMessageType,
+} from "./api-response.type";
 import type { ActionType, SocketEvents } from "@/lib/constants";
-import type { Middleware } from "@reduxjs/toolkit";
-import type { AppDispatch, RootState } from "@/store/store";
 
 type TServerToClientEvents = {
   welcome: (data: string) => void;
@@ -13,6 +15,8 @@ type TServerToClientEvents = {
   [SocketEvents.MESSAGE_SENT]: (data: TMessageReceivedEventReceived) => void;
   [SocketEvents.JOIN_ROOM_ERROR]: (data: IJoinRoomError) => void;
   [SocketEvents.JOIN_ROOM_SUCCESS]: (data: IJoinRoomSuccess) => void;
+  [SocketEvents.LEAVE_ROOM_ERROR]: (data: string) => void;
+  [SocketEvents.LEAVE_ROOM_SUCCESS]: (data: string) => void;
 };
 
 type TClientToServerEvents = {
@@ -57,14 +61,11 @@ type TChatCreatedEventReceived = {
 };
 
 type TMessageReceivedEventReceived = {
+  chatId: string;
   _id: string;
   content: string;
-  sender: {
-    _id: string;
-    username: string;
-    avatar: string;
-  };
-  chatId: string;
+  sender: TMessageSenderDetails;
+  type: TMessageType;
 };
 
 // socket-action-types.ts
@@ -77,6 +78,7 @@ export interface ActionPayloadMap {
   [ActionType.SET_ACTIVE_CHAT]: string;
   [ActionType.CLEAR_ACTIVE_CHAT]: string;
   [ActionType.CREATE_CONNECTION]: undefined;
+  [ActionType.DISCONNET_CONNECTION]: undefined;
 }
 
 export type SocketAction = {

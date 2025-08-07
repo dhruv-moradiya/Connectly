@@ -1,5 +1,6 @@
 const ActionType = {
   CREATE_CONNECTION: "socket/createConnection",
+  DISCONNET_CONNECTION: "socket/disconnectConnection",
 
   SEND_MESSAGE: "activeChat/sendMessage",
 
@@ -17,6 +18,8 @@ const SocketEvents = {
   JOIN_ROOM_ERROR: "join_room_error",
   JOIN_ROOM_SUCCESS: "join_room_success",
   LEAVE_ROOM: "leave_room",
+  LEAVE_ROOM_SUCCESS: "leave_room_success",
+  LEAVE_ROOM_ERROR: "leave_room_error",
 
   MESSAGE_SENT: "message_sent",
   MESSAGE_RECEIVED: "message_received", // ✅

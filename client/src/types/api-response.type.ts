@@ -40,22 +40,29 @@ interface ICreateNewChat extends IBaseType {
   };
 }
 
+type TMessageDeliveryStatus = "pending" | "sent" | "delivered" | "seen";
+
+type TMessageSenderDetails = {
+  _id: string;
+  username: string;
+  avatar: string;
+};
+
+type TMessageType =
+  | "text"
+  | "pinned_info"
+  | "event_schedule"
+  | "call_log"
+  | "reply"
+  | "system";
+
 interface IMessage {
   _id: string;
   content: string;
   createdAt: string;
-  type:
-    | "text"
-    | "pinned_info"
-    | "event_schedule"
-    | "call_log"
-    | "reply"
-    | "system";
-  sender: {
-    _id: string;
-    username: string;
-    avatar: string;
-  };
+  deliveryStatus: TMessageDeliveryStatus;
+  type: TMessageType;
+  sender: TMessageSenderDetails;
 }
 
 interface IActiveChatMessages extends IBaseType {
@@ -75,4 +82,7 @@ export {
   type ICreateNewChat,
   type IActiveChatMessages,
   type IMessage,
+  type TMessageDeliveryStatus,
+  type TMessageSenderDetails,
+  type TMessageType,
 };

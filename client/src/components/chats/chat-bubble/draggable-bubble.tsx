@@ -1,7 +1,7 @@
 import { useDraggableBubble } from "@/hooks/use-draggable-bubble";
 import { cn } from "@/lib/utils";
 import { CornerUpRight } from "lucide-react";
-import { useRef } from "react";
+import { useRef, type RefObject } from "react";
 import ChatBubbleMenu from "./chat-bubble-menu";
 
 interface DraggableBubbleProps {
@@ -13,7 +13,10 @@ const DraggableBubble = ({ isSender, children }: DraggableBubbleProps) => {
   const chatBubbleRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLDivElement>(null);
 
-  useDraggableBubble(chatBubbleRef, arrowRef);
+  useDraggableBubble(
+    chatBubbleRef as RefObject<HTMLDivElement>,
+    arrowRef as RefObject<HTMLDivElement>
+  );
 
   return (
     <div

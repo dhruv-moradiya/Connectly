@@ -678,6 +678,15 @@ const getCurrentUserChats = asyncHandler(
   }
 );
 
+const getRoomDetails = async () => {
+  try {
+    const rooms = await ChatRoom.find()
+      .select("_id name isGroup participants createdBy")
+      .lean();
+    return rooms;
+  } catch (error) {}
+};
+
 export {
   createNewChatBetweenTwoUsers,
   getAllChats,
@@ -692,4 +701,5 @@ export {
   getAllParticipants,
   getAuditLogs,
   getCurrentUserChats,
+  getRoomDetails,
 };
