@@ -82,6 +82,8 @@ const ChatRoomSchema = new Schema<IChatRoomDocument>(
       },
       allowReactions: { type: Boolean, default: true },
       allowPinning: { type: Boolean, default: true },
+      editGroupInfo: { type: Boolean, default: false },
+      sendNewMessages: { type: Boolean, default: true },
     },
 
     pinnedMessageDetails: [

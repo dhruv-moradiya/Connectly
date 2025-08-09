@@ -52,6 +52,8 @@ interface ISettings {
   invitePermission: "everyone" | "admins";
   allowReactions: boolean;
   allowPinning: boolean;
+  editGroupInfo: boolean;
+  sendNewMessages: boolean;
 }
 
 interface IChatRoom {
