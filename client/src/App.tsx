@@ -66,7 +66,13 @@ function App() {
     !["/auth/sign-in", "/auth/sign-up"].includes(location.pathname) &&
     !location.pathname.startsWith("/auth/email-verification")
   ) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <div className="size-16 animate-up-down">
+          <img src="/connectly-logo.png" />
+        </div>
+      </div>
+    );
   }
 
   return (

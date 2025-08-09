@@ -1,6 +1,6 @@
 import { AppSidebar } from "@/components/chat-sidebar/app-sidebar";
 import FriendRequestsDialog from "@/components/layout/friend-requests-dialog";
-import GroupChatForm from "@/components/layout/group-chat-form";
+import GroupChatForm from "@/components/layout/group-chat-form/group-chat-form";
 import SearchUsers from "@/components/layout/search-users";
 import {
   Breadcrumb,
