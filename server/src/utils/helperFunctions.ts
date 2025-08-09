@@ -45,17 +45,21 @@ async function handlePrivateChat(
   const senderId = socket.user._id;
 
   const receiverId = await getPrivateReceiverId(chatId, senderId);
+  console.log("receiverId :>> ", receiverId);
   if (!receiverId) return;
 
   const isOnline = await redisConnection.get(
     generateRedisKeys.onlineStatus(receiverId)
   );
+  console.log("isOnline :>> ", isOnline);
+
   if (isOnline !== "true") {
     console.log("Private: Receiver offline");
     // TODO: Push notification
     return;
   }
 
+  console.log("Private: Receiver online");
   const activeRoom = await redisConnection.get(
     generateRedisKeys.activeRomm(receiverId)
   );

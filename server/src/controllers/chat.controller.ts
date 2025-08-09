@@ -23,6 +23,30 @@ import {
 } from "@/schemas/schema";
 import ChatRoom from "@/models/chat.model";
 import User from "@/models/user.model";
+import type { IChatRoomForCache } from "@shared/types/chat.types";
+import { redisConnection } from "@/db/redis";
+import { generateRedisKeys } from "@/utils";
+
+async function cacheRooms(rooms: IChatRoomForCache[]) {
+  for (const room of rooms) {
+    const { _id, participants, ...roomDetails } = room;
+
+    // Cache room details (optional)
+    await redisConnection.hset(
+      generateRedisKeys.roomDetails(_id.toString()),
+      roomDetails
+    );
+
+    // Cache participants with role
+    for (const participant of participants) {
+      await redisConnection.hset(
+        generateRedisKeys.roomParticipants(_id.toString()),
+        participant.user.toString(), // Use user ID as field
+        JSON.stringify({ role: participant.role }) // Store role as JSON
+      );
+    }
+  }
+}
 
 // Request<Params = {}, ResBody = any, ReqBody = any, ReqQuery = ParsedQs, Locals = Record<string, any>>
 
@@ -109,6 +133,8 @@ const createNewChatBetweenTwoUsers = asyncHandler(
       createdBy: senderUserId,
     });
 
+    console.log("createdChat :>> ", createdChat);
+
     if (!createdChat) {
       return next(
         new ApiError(
@@ -117,6 +143,20 @@ const createNewChatBetweenTwoUsers = asyncHandler(
         )
       );
     }
+
+    // Cache chat room
+    cacheRooms([
+      {
+        _id: createdChat._id as string,
+        name: "",
+        isGroup: false,
+        participants: createdChat.participants.map((participant) => ({
+          user: participant.user.toString(),
+          role: participant.role,
+        })),
+        createdBy: createdChat.createdBy.toString(),
+      },
+    ]);
 
     const participantsData = await Promise.all(
       createdChat.participants.map((participant) =>

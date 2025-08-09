@@ -27,7 +27,7 @@ const ChatBubbleMenu = () => {
 
       <DropdownMenuContent
         side="top"
-        className="w-40 rounded-md bg-white dark:bg-muted p-1 animate-in fade-in zoom-in-95"
+        className="w-40 rounded-md bg-white dark:bg-muted p-1 animate-in fade-in zoom-in-95 z-50"
       >
         <DropdownMenuItem className="gap-2">
           <Reply className="w-4 h-4 text-gray-500" />
