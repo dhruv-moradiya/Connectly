@@ -6,6 +6,9 @@
   ],
   "scripts": {
     "build": "tsc -b packages/shared packages/server && npm --prefix packages/client run build",
+    "build:shared": "npm --prefix packages/shared run build",
+    "build:server": "npm --prefix packages/server run build",
+    "build:client": "npm --prefix packages/client run build",
     "clean": "rimraf packages/*/dist packages/client/dist",
     "dev:server": "npm --prefix packages/server run dev",
     "dev:client": "npm --prefix packages/client run dev"
@@ -15,6 +18,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.2.1",
+    "concurrently": "^8.2.2",
     "rimraf": "^5.0.5",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.2"

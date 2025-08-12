@@ -4,7 +4,7 @@ import mongoose, { Schema } from "mongoose";
 
 import { type IUserSchema } from "@monorepo/shared/src/types/user.types";
 
-interface IUserSchemaDocument extends IUserSchema, Document {
+export interface IUserSchemaDocument extends IUserSchema, Document {
   comparePassword(password: string): Promise<boolean>;
   generateAccessToken(): Promise<string>;
   generateRefreshToken(): Promise<string>;

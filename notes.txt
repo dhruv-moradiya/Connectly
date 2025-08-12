@@ -41,3 +41,6 @@ const shouldNotify = !isOnline || activeRoom !== currentRoomId;
 
 Bugs:
 No join_room event fire when user in room - refresh page 
+
+
+https://github.com/mendableai/open-lovable

@@ -25,7 +25,7 @@ export const validAuditActions: TAuditLogAction[] = [
   "created_group_chat",
 ];
 
-interface IChatRoomDocument extends IChatRoom, Document {}
+export interface IChatRoomDocument extends IChatRoom, Document {}
 
 const ParticipantSchema = new Schema(
   {

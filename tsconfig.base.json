@@ -13,8 +13,8 @@
     "types": ["node"]
   },
   "paths": {
-    "@shared/*": ["packages/shared/src/*"]
-    // "@server/*": ["packages/server/src/*"],
-    // "@client/*": ["packages/client/src/*"]
+    "@shared/*": ["packages/shared/src/*"],
+    "@server/*": ["packages/server/src/*"],
+    "@client/*": ["packages/client/src/*"]
   }
 }

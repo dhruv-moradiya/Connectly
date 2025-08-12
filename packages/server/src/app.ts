@@ -1,5 +1,6 @@
 // Import core modules and third-party libraries
 import http from "http";
+import path from "path";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
@@ -16,6 +17,8 @@ dotenv.config({
 // Initialize Express app and HTTP server
 const app = express();
 const httpServer = http.createServer(app);
+
+app.use(express.static(path.join(__dirname, "../../client/dist")));
 
 // Initialize Socket.IO server with CORS configuration
 const io = new Server(httpServer, {
@@ -51,6 +54,10 @@ import messageRoute from "./routes/message.route";
 
 import { messagesWorker } from "./queues/bullmq/messages.worker";
 import { globalErrorHandler } from "./middlewares/globalError.middleware";
+
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../../client/dist"));
+// });
 
 // Register API routes
 app.use("/api/user", userRouter);

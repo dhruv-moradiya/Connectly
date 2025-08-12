@@ -24,6 +24,7 @@ import {
   type ILoginUserBody,
   type IVerifyOtpBody,
 } from "@/schemas/schema";
+import { IUserPreiveForCache } from "@monorepo/shared/src/types/user.types";
 
 const generateAccessAndRefreshTokens = async (
   userId: mongoose.Types.ObjectId
@@ -488,7 +489,7 @@ const getUserByUsernameQuery = asyncHandler(
   }
 );
 
-const getAllUserData = async () => {
+const getAllUserData = async (): Promise<IUserPreiveForCache[]> => {
   try {
     const users = await User.find()
       .select("username email avatar last_seen bio isEmailVerified")
@@ -496,6 +497,7 @@ const getAllUserData = async () => {
     return users;
   } catch (error) {
     console.log("Error in getAllUserData:>> ", error);
+    throw error;
   }
 };
 

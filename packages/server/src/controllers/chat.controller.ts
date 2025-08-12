@@ -7,7 +7,7 @@ import { asyncHandler } from "@/utils/asyncHandler";
 import { validateRequest } from "@/utils/validateRequest";
 
 import { HttpStatus, SocketEvents } from "@/constants";
-import chatModel from "@/models/chat.model";
+import chatModel, { IChatRoomDocument } from "@/models/chat.model";
 
 import {
   addParticipantsSchema,
@@ -724,13 +724,15 @@ const getCurrentUserChats = asyncHandler(
   }
 );
 
-const getRoomDetails = async () => {
+const getRoomDetails = async (): Promise<IChatRoomDocument[]> => {
   try {
     const rooms = await ChatRoom.find()
       .select("_id name isGroup participants createdBy")
       .lean();
     return rooms;
-  } catch (error) {}
+  } catch (error) {
+    throw error;
+  }
 };
 
 export {

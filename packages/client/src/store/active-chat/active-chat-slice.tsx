@@ -73,7 +73,8 @@ const activeChatSlice = createSlice({
     setActiveChat(state, action: PayloadAction<string>) {
       state.chatId = action.payload;
     },
-    clearActiveChat(state, action: PayloadAction<string>) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    clearActiveChat(state, _action: PayloadAction<string>) {
       state.chatId = "";
       state.messages = [];
       state.currentPage = 1;
