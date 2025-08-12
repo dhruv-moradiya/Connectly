@@ -36,3 +36,8 @@ const shouldNotify = !isOnline || activeRoom !== currentRoomId;
 | Unread message count   | `room:{roomId}:unread:{userId}`  | On message send / read       |                         |                 |
 | Notification condition | Compare `online` + `active_room` | On message send              |                         |                 |
 | Offline detection      | \`!online                        |                              | activeRoom !== roomId\` | On message send |
+
+
+
+Bugs:
+No join_room event fire when user in room - refresh page 

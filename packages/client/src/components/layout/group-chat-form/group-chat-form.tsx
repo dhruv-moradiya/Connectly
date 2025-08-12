@@ -1,0 +1,165 @@
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { UsersRound } from "lucide-react";
+import { memo, useEffect, useState } from "react";
+import StepSelectMembers from "./step-select-members";
+import StepGroupInfo from "./step-group-info";
+import StepGroupSettings from "./step-group-settings";
+
+export type TFormData = {
+  groupName: string;
+  image: FileList | null;
+  selectedUsers: string[];
+  allowReactions: boolean;
+  allowMessagePinning: boolean;
+  editGroupInfo: boolean;
+  sendNewMessages: boolean;
+  invitePermissions: "everyone" | "admin";
+};
+
+export type TFormUser = {
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+};
+
+// Mock user data
+const users = [
+  {
+    id: "1",
+    name: "Luck",
+    email: "luck@gmail.com",
+    avatar:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx0kuLHyU-1CP7Tarm-mlm30SzMvvjm-XclfUJjZXgG2v-ZmO3_pKOakHuvHax45ZxkEA6UmOfDji4tfmE3LZa9lscqfceaB2r6Qmu3WKtkw",
+  },
+  {
+    id: "2",
+    name: "Jane Doe",
+    email: "jane@example.com",
+    avatar:
+      "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTxDSFN2ZuQxetzPn99Dykq0uuXYmFF7r7SGg8YVnY2GZGoXZ2GQg10NZDjK47EFO_OUJacvPgtAN6xacS39_-0lbIkb2ta0LV6onS1S2QL",
+  },
+  {
+    id: "3",
+    name: "John Smith",
+    email: "john@example.com",
+    avatar: "https://i.mydramalist.com/oQNyYk_5f.jpg",
+  },
+];
+
+function GroupChatForm() {
+  const [step, setStep] = useState<number>(1);
+  const [formData, setFormData] = useState<TFormData>({
+    allowMessagePinning: true,
+    allowReactions: true,
+    editGroupInfo: true,
+    groupName: "",
+    image: null,
+    invitePermissions: "everyone",
+    sendNewMessages: true,
+    selectedUsers: [],
+  });
+
+  const onSubmit = () => {
+    console.log(formData);
+  };
+
+  useEffect(() => {
+    setStep(1);
+  }, []);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon" className="size-7">
+          <UsersRound size={16} />
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-lg transition-all duration-300">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-semibold">
+            {step === 1
+              ? "Select Members"
+              : step === 2
+              ? "Group Info"
+              : "Group Settings"}
+          </DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground">
+            {step === 1
+              ? "Choose people to add to this group."
+              : step === 2
+              ? "Set a name and image for your group."
+              : "Adjust permissions and features for this group."}
+          </DialogDescription>
+        </DialogHeader>
+
+        {step === 1 && (
+          <StepSelectMembers
+            users={users}
+            selectedUserIds={formData.selectedUsers}
+            onChange={(users) =>
+              setFormData({ ...formData, selectedUsers: users })
+            }
+          />
+        )}
+
+        {step === 2 && (
+          <StepGroupInfo
+            users={users}
+            selectedUserIds={formData.selectedUsers}
+            formData={formData}
+            setFormData={setFormData}
+          />
+        )}
+
+        {step === 3 && (
+          <StepGroupSettings formData={formData} setFormData={setFormData} />
+        )}
+
+        {/* Footer Navigation */}
+        <div className="pt-4 flex justify-end gap-3">
+          {step > 1 && (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setStep(step - 1)}
+              className="transition-all duration-200 hover:scale-95"
+            >
+              Back
+            </Button>
+          )}
+
+          {step < 3 ? (
+            <Button
+              type="button"
+              onClick={() => setStep(step + 1)}
+              disabled={step === 1 && formData.selectedUsers.length === 0}
+              className="transition-all duration-200 hover:scale-105"
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              className="transition-all duration-200 hover:scale-105"
+              onClick={onSubmit}
+            >
+              Create
+            </Button>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export default memo(GroupChatForm);

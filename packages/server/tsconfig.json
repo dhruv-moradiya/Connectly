@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "rootDir": "src",
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": ["../shared/src/types", "../../node_modules/@types"]
+  },
+  "include": ["src", "src/types/**/*.d.ts", "../shared/src/types/**/*.d.ts"],
+  "files": ["../shared/src/types/express/index.d.ts"],
+  "references": [{ "path": "../shared" }]
+}

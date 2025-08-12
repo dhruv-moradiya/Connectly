@@ -1,11 +1,22 @@
 {
+  "private": true,
+  "name": "monorepo-root",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "start": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\""
+    "build": "tsc -b packages/shared packages/server && npm --prefix packages/client run build",
+    "clean": "rimraf packages/*/dist packages/client/dist",
+    "dev:server": "npm --prefix packages/server run dev",
+    "dev:client": "npm --prefix packages/client run dev"
   },
   "dependencies": {
     "mongoose": "^8.16.0"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@types/node": "^24.2.1",
+    "rimraf": "^5.0.5",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.9.2"
   }
 }
