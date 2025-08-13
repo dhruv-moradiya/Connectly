@@ -3,7 +3,7 @@ FROM node:20 AS builder
 WORKDIR /app
 
 # Copy root package.json
-COPY package.json package-lock.json ./
+COPY package.json ./
 
 # Copy everything
 COPY packages ./packages
