@@ -11,8 +11,8 @@ import {
   renameGroupChat,
   updateGroupChatDescription,
   updateParticipantRole,
-} from "@/controllers/chat.controller";
-import verifyToken from "@/middlewares/auth.middleware";
+} from "../controllers/chat.controller";
+import verifyToken from "../middlewares/auth.middleware";
 
 const router = express.Router();
 

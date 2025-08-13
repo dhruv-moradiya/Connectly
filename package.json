@@ -11,7 +11,8 @@
     "build:client": "npm --prefix packages/client run build",
     "clean": "rimraf packages/*/dist packages/client/dist",
     "dev:server": "npm --prefix packages/server run dev",
-    "dev:client": "npm --prefix packages/client run dev"
+    "dev:client": "npm --prefix packages/client run dev",
+    "server": "npm --prefix packages/server run start"
   },
   "dependencies": {
     "mongoose": "^8.16.0"

@@ -1,5 +1,5 @@
 import express from "express";
-import verifyToken from "@/middlewares/auth.middleware";
+import verifyToken from "../middlewares/auth.middleware";
 import {
   addFavoriteMessage,
   deleteMessage,
@@ -13,7 +13,7 @@ import {
   sendMessage,
   unpinMessage,
   uploadAttachment,
-} from "@/controllers/message.controller";
+} from "../controllers/message.controller";
 
 const router = express.Router();
 

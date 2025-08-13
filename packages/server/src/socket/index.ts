@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import type { Server, Socket } from "socket.io";
 
-import { SocketEvents } from "@/constants";
-import { generateRedisKeys } from "@/utils";
-import { redisConnection } from "@/db/redis";
-import { SocketResponse } from "@/utils/apiResponse";
-import { messageSocket } from "@/socket/message.socket";
-import { socketAuthMiddleware } from "@/socket/auth.socket";
+import { SocketEvents } from "../constants";
+import { generateRedisKeys } from "../utils";
+import { redisConnection } from "../db/redis";
+import { SocketResponse } from "../utils/apiResponse";
+import { messageSocket } from "../socket/message.socket";
+import { socketAuthMiddleware } from "../socket/auth.socket";
 
 const handleSocketJoinRoom = (socket: Socket) => {
   socket.on(SocketEvents.JOIN_ROOM, ({ chatId }: { chatId: string }) => {

@@ -1,8 +1,8 @@
 import { type Request, type Response, type NextFunction } from "express";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { ApiResponse } from "@/utils/apiResponse";
+import { asyncHandler } from "../utils/asyncHandler";
+import { ApiResponse } from "../utils/apiResponse";
 import mongoose from "mongoose";
-import MessageModel from "@/models/message.model";
+import MessageModel from "../models/message.model";
 
 const sendMessage = asyncHandler(
   async (_req: Request, res: Response, _next: NextFunction) => {

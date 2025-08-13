@@ -1,8 +1,8 @@
 import { Worker } from "bullmq";
-import { redisConnection } from "@/db/redis";
-import MessageModel from "@/models/message.model";
+import { redisConnection } from "../../db/redis";
+import MessageModel from "../../models/message.model";
 import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
-import { updateDeliveryStatus } from "@/utils/helperFunctions";
+import { updateDeliveryStatus } from "../../utils/helperFunctions";
 
 interface IMessagesaveInDBJobType {
   _id: string;

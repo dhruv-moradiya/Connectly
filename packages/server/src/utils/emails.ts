@@ -1,5 +1,5 @@
 import { createTransport } from "nodemailer";
-import { EMAIL_VERIFICATION_TEMPLATE } from "@/constants/emailTemplates";
+import { EMAIL_VERIFICATION_TEMPLATE } from "../constants/emailTemplates";
 
 const transposer = createTransport({
   service: "Gmail",

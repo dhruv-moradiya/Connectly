@@ -1,5 +1,5 @@
-import { redisConnection } from "@/db/redis";
-import { generateRedisKeys } from "@/utils";
+import { redisConnection } from "../db/redis";
+import { generateRedisKeys } from "../utils";
 import jwt from "jsonwebtoken";
 
 import { Socket } from "socket.io";

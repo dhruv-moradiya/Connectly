@@ -14,11 +14,11 @@ dotenv.config({
   path: ".env",
 });
 
+const environment = process.env.NODE_ENV || "development";
+
 // Initialize Express app and HTTP server
 const app = express();
 const httpServer = http.createServer(app);
-
-app.use(express.static(path.join(__dirname, "../../client/dist")));
 
 // Initialize Socket.IO server with CORS configuration
 const io = new Server(httpServer, {
@@ -54,10 +54,6 @@ import messageRoute from "./routes/message.route";
 
 import { messagesWorker } from "./queues/bullmq/messages.worker";
 import { globalErrorHandler } from "./middlewares/globalError.middleware";
-
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "../../client/dist"));
-// });
 
 // Register API routes
 app.use("/api/user", userRouter);
@@ -105,6 +101,17 @@ const resetQueue = async () => {
 
 // Global error handler middleware
 app.use(globalErrorHandler);
+
+// Serve static files in production
+if (environment === "production") {
+  const distPath = path.join(__dirname, "../../client/dist");
+
+  app.use(express.static(distPath));
+
+  app.get("/{*splat}", (req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
+  });
+}
 
 // Export the app and HTTP server for use elsewhere (e.g., server entry point)
 export { app, httpServer };

@@ -1,10 +1,10 @@
-import type { IMessageentBody } from "@/schemas/socket.schema";
+import type { IMessageentBody } from "../schemas/socket.schema";
 import { generateRedisKeys } from ".";
-import { redisConnection } from "@/db/redis";
+import { redisConnection } from "../db/redis";
 import type { Socket } from "socket.io";
-import { SocketEvents } from "@/constants";
-import MessageModel from "@/models/message.model";
-import { messagesQueue } from "@/queues/bullmq/messages.queue";
+import { SocketEvents } from "../constants";
+import MessageModel from "../models/message.model";
+import { messagesQueue } from "../queues/bullmq/messages.queue";
 import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
 
 interface IMessagesaveInDBJobType {

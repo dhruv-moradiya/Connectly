@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import { type Request, type Response, type NextFunction } from "express";
 
-import { ApiError } from "@/utils/apiError";
-import { ApiResponse } from "@/utils/apiResponse";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { validateRequest } from "@/utils/validateRequest";
+import { ApiError } from "../utils/apiError";
+import { ApiResponse } from "../utils/apiResponse";
+import { asyncHandler } from "../utils/asyncHandler";
+import { validateRequest } from "../utils/validateRequest";
 
-import { HttpStatus, SocketEvents } from "@/constants";
-import chatModel, { IChatRoomDocument } from "@/models/chat.model";
+import { HttpStatus, SocketEvents } from "../constants";
+import chatModel, { IChatRoomDocument } from "../models/chat.model";
 
 import {
   addParticipantsSchema,
@@ -20,12 +20,12 @@ import {
   type ICreateNewChatBetweenTwoUsersBody,
   type IRenameGroupChatBody,
   type IUpdateGroupChatDescriptionBody,
-} from "@/schemas/schema";
-import ChatRoom from "@/models/chat.model";
-import User from "@/models/user.model";
+} from "../schemas/schema";
+import ChatRoom from "../models/chat.model";
+import User from "../models/user.model";
 import type { IChatRoomForCache } from "@monorepo/shared/src/types/chat.types";
-import { redisConnection } from "@/db/redis";
-import { generateRedisKeys } from "@/utils";
+import { redisConnection } from "../db/redis";
+import { generateRedisKeys } from "../utils";
 
 async function cacheRooms(rooms: IChatRoomForCache[]) {
   for (const room of rooms) {

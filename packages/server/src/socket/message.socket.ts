@@ -1,16 +1,16 @@
 import { Socket } from "socket.io";
-import { SocketEvents } from "@/constants";
-import { messagesQueue } from "@/queues/bullmq/messages.queue";
+import { SocketEvents } from "../constants";
+import { messagesQueue } from "../queues/bullmq/messages.queue";
 import {
   messageSentSchema,
   type IMessageentBody,
-} from "@/schemas/socket.schema";
-import { validateSocketData } from "@/utils/validateRequest";
+} from "../schemas/socket.schema";
+import { validateSocketData } from "../utils/validateRequest";
 import {
   handleGroupChat,
   handlePrivateChat,
   isGroupChat,
-} from "@/utils/helperFunctions";
+} from "../utils/helperFunctions";
 
 // Utility: Execute async function safely with error handling
 async function safeExec<T>(

@@ -1,29 +1,29 @@
 import mongoose from "mongoose";
 import { type Request, type Response, type NextFunction } from "express";
 
-import ChatRoom from "@/models/chat.model";
-import User from "@/models/user.model";
-import Otp from "@/models/otp.model";
+import ChatRoom from "../models/chat.model";
+import User from "../models/user.model";
+import Otp from "../models/otp.model";
 
-import { HttpStatus, PROFILE_PICS } from "@/constants";
+import { HttpStatus, PROFILE_PICS } from "../constants";
 
-import { ApiError } from "@/utils/apiError";
-import { ApiResponse } from "@/utils/apiResponse";
-import { asyncHandler } from "@/utils/asyncHandler";
-import { validateRequest } from "@/utils/validateRequest";
-import { sendEmailVerificationEmail } from "@/utils/emails";
-import { formatErrorMessages, setAuthCookies } from "@/utils";
+import { ApiError } from "../utils/apiError";
+import { ApiResponse } from "../utils/apiResponse";
+import { asyncHandler } from "../utils/asyncHandler";
+import { validateRequest } from "../utils/validateRequest";
+import { sendEmailVerificationEmail } from "../utils/emails";
+import { formatErrorMessages, setAuthCookies } from "../utils";
 
 import {
   createNewUserSchema,
   loginUserSchema,
   verifyOtpSchema,
-} from "@/schemas/schema";
+} from "../schemas/schema";
 import {
   type ICreateNewUserBody,
   type ILoginUserBody,
   type IVerifyOtpBody,
-} from "@/schemas/schema";
+} from "../schemas/schema";
 import { IUserPreiveForCache } from "@monorepo/shared/src/types/user.types";
 
 const generateAccessAndRefreshTokens = async (

@@ -1,6 +1,6 @@
 import { ZodSchema } from "zod";
 import type { Socket } from "socket.io";
-import { SocketEvents } from "@/constants";
+import { SocketEvents } from "../constants";
 import { formatErrorMessages } from ".";
 
 type ValidationResult<T> =
