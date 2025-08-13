@@ -3,7 +3,7 @@ FROM node:20 AS builder
 WORKDIR /app
 
 # Copy root files
-COPY package.json package-lock.json tsconfig.json ./
+COPY package.json tsconfig.json ./
 
 # Copy entire monorepo (except node_modules via .dockerignore)
 COPY packages ./packages
@@ -19,7 +19,7 @@ FROM node:20 AS production
 WORKDIR /app
 
 # Copy only necessary files for production
-COPY package.json package-lock.json ./
+COPY package.json ./
 COPY packages ./packages
 
 # Install only production dependencies
