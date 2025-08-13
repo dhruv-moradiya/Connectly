@@ -2,32 +2,32 @@
 FROM node:20 AS builder
 WORKDIR /app
 
-# Copy root files
-COPY package.json tsconfig.json ./
+# Copy root package.json
+COPY package.json package-lock.json ./
 
-# Copy entire monorepo (except node_modules via .dockerignore)
+# Copy everything
 COPY packages ./packages
 
-# Install dependencies (root + all workspaces)
+# Install all deps
 RUN npm install
 
-# Build all packages (client, server, shared)
+# Build all
 RUN npm run build
+
 
 # ---------- 2. Production Stage ----------
 FROM node:20 AS production
 WORKDIR /app
 
-# Copy only necessary files for production
-COPY package.json ./
-COPY packages ./packages
+# Copy only necessary files from builder
+COPY --from=builder /app/packages/server/dist ./packages/server/dist
+COPY --from=builder /app/packages/client/dist ./packages/client/dist
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/packages/server/package*.json ./packages/server/
 
-# Install only production dependencies
+# Install only production deps
 RUN npm install --omit=dev
 
-# Expose server port
 EXPOSE 3000
 
-# Start server
 CMD ["node", "packages/server/dist/index.js"]
-
