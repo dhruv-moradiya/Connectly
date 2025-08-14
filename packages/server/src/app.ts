@@ -85,6 +85,8 @@ redisConnection.on("error", (err) => {
   console.error("Redis connection error:", err);
 });
 
+console.log("Environment:", environment);
+
 // Function to reset the BullMQ message queue on server start
 const resetQueue = async () => {
   const queue = new Queue("message", { connection: redisConnection });
@@ -104,6 +106,7 @@ app.use(globalErrorHandler);
 
 // Serve static files in production
 if (environment === "production") {
+  console.log("Serving static files in production");
   const distPath = path.join(__dirname, "../../client/dist");
 
   app.use(express.static(distPath));
@@ -111,6 +114,8 @@ if (environment === "production") {
   app.get("/{*splat}", (req, res) => {
     res.sendFile(path.join(distPath, "index.html"));
   });
+} else {
+  console.log("Serving static files in development");
 }
 
 // Export the app and HTTP server for use elsewhere (e.g., server entry point)
