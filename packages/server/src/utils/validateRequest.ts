@@ -13,24 +13,14 @@ function validateRequest<T>(
 ): ValidationResult<T> {
   if (data === undefined || data === null) {
     return {
-      success: false,
+      success: false as const,
       error: { general: ["Request body is missing or empty."] },
     };
   }
 
-  const parsed = schema.safeParse(data);
-
-  if (!parsed.success) {
-    const errorMessages = parsed.error.flatten().fieldErrors;
-    return {
-      success: false,
-      error: errorMessages,
-    };
-  }
-
   return {
-    success: true,
-    data: parsed.data,
+    success: true as const,
+    data: schema.parse(data),
   };
 }
 
