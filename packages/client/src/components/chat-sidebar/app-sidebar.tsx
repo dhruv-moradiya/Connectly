@@ -26,6 +26,7 @@ import { useAppDispatch, useAppSelector } from "@/store/store";
 import { getUserChatsThunk } from "@/store/chats/user-chats-slice";
 import ChatItem from "./chat-item";
 import ChatsLoader from "./chats-loader";
+import { useNavigate } from "react-router-dom";
 
 // This is sample data
 const data = {
@@ -63,6 +64,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const navigation = useNavigate();
   const dispatch = useAppDispatch();
   const { setOpen } = useSidebar();
 
@@ -110,6 +112,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       tooltip={{
                         children: item.title,
                         hidden: false,
+                      }}
+                      onClick={() => {
+                        navigation(item.url);
                       }}
                       // onClick={() => {
                       //   setActiveItem(item);
