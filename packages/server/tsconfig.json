@@ -7,7 +7,9 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "typeRoots": ["../shared/src/types", "../../node_modules/@types"]
+    "typeRoots": ["../shared/src/types", "../../node_modules/@types"],
+     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src", "src/types/**/*.d.ts", "../shared/src/types/**/*.d.ts"],
   "files": ["../shared/src/types/express/index.d.ts"],
