@@ -72,7 +72,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     dispatch(getUserChatsThunk());
   }, [dispatch, setOpen]);
 
-  const { chats, isLoading } = useAppSelector((state) => state.userChats);
+  const { chats = [], isLoading } = useAppSelector((state) => state.userChats);
   const { user } = useAppSelector((state) => state.auth);
 
   return (
