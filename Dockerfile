@@ -30,4 +30,4 @@ RUN npm install --omit=dev
 
 EXPOSE 3000
 
-CMD ["node", "packages/server/dist/index.js"]
+CMD ["npm", "run", "server"]
