@@ -14,7 +14,7 @@ const initializeSocket = (token: string) => {
     return;
   }
 
-  const socketServerUri = import.meta.env.VITE_APP_SOCKET_SERVER_URL;
+  const socketServerUri = "https://connectly-yssh.onrender.com";
   if (!socketServerUri) {
     throw new Error("VITE_APP_SOCKET_SERVER_URL is not defined.");
   }
