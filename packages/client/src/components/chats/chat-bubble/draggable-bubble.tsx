@@ -5,11 +5,16 @@ import { useRef, type RefObject } from "react";
 import ChatBubbleMenu from "./chat-bubble-menu";
 
 interface DraggableBubbleProps {
+  index: number;
   isSender: boolean;
   children: React.ReactNode;
 }
 
-const DraggableBubble = ({ isSender, children }: DraggableBubbleProps) => {
+const DraggableBubble = ({
+  index,
+  isSender,
+  children,
+}: DraggableBubbleProps) => {
   const chatBubbleRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLDivElement>(null);
 
@@ -22,11 +27,11 @@ const DraggableBubble = ({ isSender, children }: DraggableBubbleProps) => {
     <div
       ref={chatBubbleRef}
       className={cn(
-        "chat-bubble relative group max-w-xs text-sm p-2 rounded-lg select-none mb-0 flex gap-1 z-10",
+        "chat-bubble relative group w-fit max-w-xs text-sm p-2 rounded-lg select-none mb-0 flex gap-1 z-10",
         isSender
           ? "ml-auto bg-primary text-white"
           : "mr-auto bg-secondary-foreground/90 text-white",
-        "flex items-center"
+        "flex items-center my-0.5"
       )}
     >
       <div

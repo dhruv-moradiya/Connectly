@@ -3,18 +3,20 @@ import DraggableBubble from "./draggable-bubble";
 import type { TMessageDeliveryStatus } from "@/types/api-response.type";
 
 const ChatBubble = ({
+  index,
   isSender,
   content,
   deliveryStatus,
 }: {
+  index: number;
   isSender: boolean;
   content: string;
   deliveryStatus: TMessageDeliveryStatus;
 }) => {
   return (
-    <DraggableBubble isSender={isSender}>
+    <DraggableBubble index={index} isSender={isSender}>
       <div>{content}</div>
-      <div className="flex gap-0 items-end">
+      <div className="shrink-0 flex gap-0 items-end">
         <span className="text-[10px] text-muted ml-2 self-end justify-end translate-y-1">
           12:34 PM
         </span>

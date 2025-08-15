@@ -17,7 +17,7 @@ const useActiveChatSetUp = (chatId: string) => {
       getActiveChatMessagesThunk({
         chatId: chatId,
         page: 1,
-        limit: 40,
+        limit: 100,
       })
     );
 
