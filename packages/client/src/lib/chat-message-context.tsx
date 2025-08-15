@@ -23,6 +23,9 @@ const ChatMessageProvider = ({ children }: { children: ReactNode }) => {
     InteractionMode.NONE
   );
 
+  console.log("interactionMode :>> ", interactionMode);
+  console.log("setInteractionMode :>> ", setInteractionMode);
+
   const value = useMemo(
     () => ({ selectedMessage, setSelectedMessage }),
     [selectedMessage]
