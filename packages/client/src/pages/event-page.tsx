@@ -6,31 +6,28 @@ import interactionPlugin, {
   type DateClickArg,
 } from "@fullcalendar/interaction";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import { EventTimeSelector } from "@/components/events/event-time-selector";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import EventCreationForm from "@/components/events/event-form/event-time-selector";
 
-type TPopoverState = {
-  date: string;
-  target: HTMLElement;
-} | null;
+type TDialogState = boolean;
 
 const Event = () => {
-  const [popoverState, setPopoverState] = useState<TPopoverState>(null);
+  const [dialogState, setDialogState] = useState<TDialogState>(false);
+  const [date, setDate] = useState<Date>(new Date());
 
   const handleDateClicked = (info: DateClickArg) => {
-    setPopoverState({
-      date: info.dateStr,
-      target: info.dayEl,
-    });
+    setDialogState(true);
+    setDate(info.date);
   };
 
+  console.log("date :>> ", date);
+
   return (
-    <div className="p-4">
+    <div className="w-full h-[calc(100vh-65px)] p-4 overflow-hidden">
       <FullCalendar
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
@@ -44,32 +41,14 @@ const Event = () => {
         ]}
       />
 
-      {popoverState && (
-        <Popover open onOpenChange={() => setPopoverState(null)}>
-          <PopoverTrigger asChild>
-            <button
-              style={{
-                top:
-                  popoverState.target.getBoundingClientRect().top +
-                  window.scrollY,
-                left:
-                  popoverState.target.getBoundingClientRect().left +
-                  window.scrollX,
-                width: 1,
-                height: 1,
-                opacity: 0,
-              }}
-              className={cn("absolute")}
-            />
-          </PopoverTrigger>
-
-          <PopoverContent className="slide-in-right w-fit flex flex-col gap-4 items-start">
-            <Input className="w-full" placeholder="Event Title" />
-
-            <EventTimeSelector selectedDate={new Date(popoverState.date)} />
-          </PopoverContent>
-        </Popover>
-      )}
+      <Dialog open={dialogState} onOpenChange={() => setDialogState(false)}>
+        <DialogContent className="max-h-11/12 max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Create Event </DialogTitle>
+          </DialogHeader>
+          <EventCreationForm date={date} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import {
   clearActiveChat,
   getActiveChatMessagesThunk,
@@ -8,21 +8,23 @@ import { useEffect } from "react";
 
 const useActiveChatSetUp = (chatId: string) => {
   const dispatch = useAppDispatch();
+  const { isConnected } = useAppSelector((state) => state.socket);
 
   useEffect(() => {
-    dispatch(setActiveChat(chatId));
+    if (isConnected) dispatch(setActiveChat(chatId));
+
     dispatch(
       getActiveChatMessagesThunk({
         chatId: chatId,
         page: 1,
-        limit: 10,
+        limit: 40,
       })
     );
 
     return () => {
       dispatch(clearActiveChat(chatId));
     };
-  }, [chatId, dispatch]);
+  }, [chatId, dispatch, isConnected]);
 };
 
 export { useActiveChatSetUp };

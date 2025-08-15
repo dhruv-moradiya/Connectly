@@ -8,8 +8,6 @@ const ChatMessages = () => {
   const { messages } = useAppSelector((state) => state.activeChat);
   const user = useAppSelector((state) => state.auth.user);
 
-  console.log("messages :>> ", messages);
-
   useEffect(() => {
     if (chatContainer.current) {
       chatContainer.current.scrollTop = chatContainer.current.scrollHeight;

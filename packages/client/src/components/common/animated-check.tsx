@@ -40,7 +40,7 @@ export default function AnimatedCheck({ selected }: { selected: boolean }) {
         { strokeDashoffset: 0 },
         {
           strokeDashoffset: length,
-          duration: 0.6,
+          duration: 0,
           ease: "power2.in",
           onComplete: () => {
             gsap.set(path, { display: "none" });

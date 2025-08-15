@@ -17,6 +17,7 @@ import {
   createConnection,
   disconnectConnection,
 } from "./store/socket/socket.slice";
+import AppIcon from "./components/common/app-icon";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
@@ -34,8 +35,6 @@ function App() {
   const dispatch = useAppDispatch();
 
   const { isLoading, isAuthenticated } = useAppSelector((state) => state.auth);
-  const socket = useAppSelector((state) => state.socket);
-  console.log("socket :>> ", socket);
 
   useEffect(() => {
     const publicPaths = ["/auth/sign-in", "/auth/sign-up"];
@@ -70,9 +69,7 @@ function App() {
   ) {
     return (
       <div className="w-screen h-screen flex items-center justify-center">
-        <div className="size-16 animate-up-down">
-          <img src="/connectly-logo.png" />
-        </div>
+        <AppIcon />
       </div>
     );
   }

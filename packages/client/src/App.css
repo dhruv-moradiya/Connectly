@@ -1,3 +1,19 @@
+.fc {
+  @apply h-full w-full;
+}
+
+.fc .fc-col-header {
+  width: 100% !important;
+}
+
+.fc .fc-daygrid-body {
+  width: 100% !important;
+}
+
+.fc .fc-scrollgrid-section-body table {
+  width: 100% !important;
+}
+
 .slide-in-right {
   animation: slideInRight 0.2s ease-out forwards;
 }
