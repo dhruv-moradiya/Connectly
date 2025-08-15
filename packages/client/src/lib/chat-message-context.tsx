@@ -1,11 +1,6 @@
-import { createContext, useState, useMemo } from "react";
+import { createContext, useState } from "react";
 import type { IMessage } from "@/types/api-response.type";
 import type { ReactNode } from "react";
-
-interface ChatMessageContextType {
-  selectedMessage: IMessage[];
-  setSelectedMessage: React.Dispatch<React.SetStateAction<IMessage[]>>;
-}
 
 enum InteractionMode {
   NONE = "none",
@@ -13,6 +8,14 @@ enum InteractionMode {
   REPLY = "reply",
   PIN = "pin",
   drag = "drag",
+}
+
+interface ChatMessageContextType {
+  selectedMessage: IMessage[];
+  interactionMode: InteractionMode;
+
+  setSelectedMessage: React.Dispatch<React.SetStateAction<IMessage[]>>;
+  setInteractionMode: React.Dispatch<React.SetStateAction<InteractionMode>>;
 }
 
 const ChatMessageContext = createContext<ChatMessageContextType | null>(null);
@@ -23,13 +26,12 @@ const ChatMessageProvider = ({ children }: { children: ReactNode }) => {
     InteractionMode.NONE
   );
 
-  console.log("interactionMode :>> ", interactionMode);
-  console.log("setInteractionMode :>> ", setInteractionMode);
-
-  const value = useMemo(
-    () => ({ selectedMessage, setSelectedMessage }),
-    [selectedMessage]
-  );
+  const value = {
+    selectedMessage,
+    setSelectedMessage,
+    interactionMode,
+    setInteractionMode,
+  };
 
   return (
     <ChatMessageContext.Provider value={value}>

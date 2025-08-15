@@ -8,8 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import SwitchToggle from "@/components/common/switch-toggle";
 import type { TFormData } from "./group-chat-form";
+import SwitchToggle from "@/components/common/switch-toggle";
 
 const settings: {
   label: string;

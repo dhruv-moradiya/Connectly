@@ -17,9 +17,7 @@ const DraggableBubble = ({
 }: DraggableBubbleProps) => {
   const chatBubbleRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLDivElement>(null);
-
   console.log("index :>> ", index);
-
   useDraggableBubble(
     chatBubbleRef as RefObject<HTMLDivElement>,
     arrowRef as RefObject<HTMLDivElement>

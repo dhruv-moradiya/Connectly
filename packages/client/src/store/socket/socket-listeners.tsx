@@ -77,8 +77,9 @@ const SOCKET_LISTENERS = (store: MiddlewareAPI) => ({
     showToast("Join room error", data.message, "error");
   },
 
-  [SocketEvents.JOIN_ROOM_SUCCESS]: (data: IJoinRoomSuccess) => {
-    showToast("Join room success", data.message, "success");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  [SocketEvents.JOIN_ROOM_SUCCESS]: (_data: IJoinRoomSuccess) => {
+    // showToast("Join room success", data.message, "success");
   },
 
   [SocketEvents.LEAVE_ROOM_ERROR]: (data: string) => {

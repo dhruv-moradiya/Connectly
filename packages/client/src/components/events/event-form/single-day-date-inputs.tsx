@@ -1,7 +1,7 @@
 import type { UseFormReturn } from "react-hook-form";
 import type { EventFormData } from "./event-time-selector";
-import { Calendar22 } from "@/components/common/calendar-22";
 import { Input } from "@/components/ui/input";
+import Calendar22 from "@/components/common/calendar-22";
 
 interface Props {
   form: UseFormReturn<EventFormData>;

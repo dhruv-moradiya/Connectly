@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom";
 import { useAppSelector } from "@/store/store";
 
 import AppIcon from "@/components/common/app-icon";
-import { ChatInput } from "@/components/chats/chat-input";
-import { ChatMessages } from "@/components/chats/chat-messages";
+import ChatInput from "@/components/chats/chat-input";
+import ChatMessages from "@/components/chats/chat-messages";
 import { ChatMessageProvider } from "@/lib/chat-message-context";
 
 import { useActiveChatSetUp } from "@/hooks/use-active-chat";

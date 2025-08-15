@@ -10,7 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 
-export function Calendar22({
+const Calendar22 = ({
   withLabel = true,
   value,
   onChange,
@@ -20,7 +20,7 @@ export function Calendar22({
   value: Date;
   onChange: (date: Date) => void;
   className?: string;
-}) {
+}) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -50,4 +50,6 @@ export function Calendar22({
       </Popover>
     </div>
   );
-}
+};
+
+export default Calendar22;

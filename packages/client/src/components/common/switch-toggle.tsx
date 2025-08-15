@@ -6,10 +6,7 @@ type Props = {
   onChange?: (checked: boolean) => void;
 };
 
-export default function SwitchToggle({
-  defaultChecked = false,
-  onChange,
-}: Props) {
+const SwitchToggle = ({ defaultChecked = false, onChange }: Props) => {
   const [isOn, setIsOn] = useState(defaultChecked);
 
   const toggleSwitch = () => {
@@ -34,4 +31,6 @@ export default function SwitchToggle({
       />
     </div>
   );
-}
+};
+
+export default SwitchToggle;

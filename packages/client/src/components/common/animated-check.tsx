@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { CheckIcon } from "lucide-react";
 
-export default function AnimatedCheck({ selected }: { selected: boolean }) {
+const AnimatedCheck = ({ selected }: { selected: boolean }) => {
   const iconRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
@@ -53,4 +53,6 @@ export default function AnimatedCheck({ selected }: { selected: boolean }) {
   return (
     <CheckIcon ref={iconRef} className="w-4 h-4 text-primary" strokeWidth={3} />
   );
-}
+};
+
+export default AnimatedCheck;
