@@ -1,8 +1,4 @@
-"use client";
-
-import * as React from "react";
-import { ChevronDownIcon } from "lucide-react";
-
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
@@ -25,7 +21,7 @@ export function Calendar22({
   onChange: (date: Date) => void;
   className?: string;
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-3">
