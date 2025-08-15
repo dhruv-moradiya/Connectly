@@ -14,7 +14,7 @@ import type {
 import axios, { AxiosError, type AxiosResponse } from "axios";
 
 const apiClient = axios.create({
-  baseURL: "https://connectly-yssh.onrender.com/api",
+  baseURL: import.meta.env.VITE_APP_SERVER_URL,
   withCredentials: true,
   timeout: 10000,
 });

@@ -2,6 +2,12 @@
 FROM node:20 AS builder
 WORKDIR /app
 
+# Accept build arguments from Render
+ARG VITE_APP_SERVER_URL
+ARG VITE_APP_SOCKET_SERVER_URL
+ENV VITE_APP_SERVER_URL=${VITE_APP_SERVER_URL}
+ENV VITE_APP_SOCKET_SERVER_URL=${VITE_APP_SOCKET_SERVER_URL}
+
 # Copy root files
 COPY package*.json ./
 COPY tsconfig*.json ./
