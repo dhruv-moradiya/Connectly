@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 
 const ChatBubbleMenu = () => {
+  // const { setInteractionMode, setSelectedMessage } = useChatMessage();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

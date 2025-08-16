@@ -116,18 +116,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       onClick={() => {
                         navigation(item.url);
                       }}
-                      // onClick={() => {
-                      //   setActiveItem(item);
-                      //   const mail = data.mails.sort(() => Math.random() - 0.5);
-                      //   setMails(
-                      //     mail.slice(
-                      //       0,
-                      //       Math.max(5, Math.floor(Math.random() * 10) + 1)
-                      //     )
-                      //   );
-                      //   setOpen(true);
-                      // }}
-                      // isActive={activeItem?.title === item.title}
                       className="px-2.5 md:px-2"
                     >
                       <item.icon />

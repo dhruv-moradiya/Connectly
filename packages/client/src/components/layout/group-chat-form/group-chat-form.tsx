@@ -38,20 +38,21 @@ const users = [
     name: "Luck",
     email: "luck@gmail.com",
     avatar:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSx0kuLHyU-1CP7Tarm-mlm30SzMvvjm-XclfUJjZXgG2v-ZmO3_pKOakHuvHax45ZxkEA6UmOfDji4tfmE3LZa9lscqfceaB2r6Qmu3WKtkw",
+      "https://plus.unsplash.com/premium_photo-1672116453187-3aa64afe04ad?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: "2",
-    name: "Jane Doe",
-    email: "jane@example.com",
+    name: "Linsey Juiet ~ 64.",
+    email: "linsey@example.com",
     avatar:
-      "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTxDSFN2ZuQxetzPn99Dykq0uuXYmFF7r7SGg8YVnY2GZGoXZ2GQg10NZDjK47EFO_OUJacvPgtAN6xacS39_-0lbIkb2ta0LV6onS1S2QL",
+      "https://plus.unsplash.com/premium_photo-1672116453187-3aa64afe04ad?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
   {
     id: "3",
-    name: "John Smith",
-    email: "john@example.com",
-    avatar: "https://i.mydramalist.com/oQNyYk_5f.jpg",
+    name: "Ravi",
+    email: "ravi@example.com",
+    avatar:
+      "https://plus.unsplash.com/premium_photo-1672116453187-3aa64afe04ad?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
 ];
 

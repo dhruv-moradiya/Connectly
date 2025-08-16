@@ -48,7 +48,7 @@ const DraggableBubble = ({
         isSender
           ? "ml-auto bg-primary text-white"
           : "mr-auto bg-secondary-foreground/90 text-white",
-        "flex items-center my-0.5"
+        "flex items-center"
       )}
     >
       <div

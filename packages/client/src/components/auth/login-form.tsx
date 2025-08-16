@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUserThunk } from "@/store/auth/auth-thunks";
 
 export function LoginForm({
@@ -37,7 +37,7 @@ export function LoginForm({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       username: "",
-      password: "123456",
+      password: "",
     },
   });
 
@@ -111,16 +111,24 @@ export function LoginForm({
                 >
                   {isFormLoading ? <div className="btn-spinner" /> : "Login"}
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button
+                  type="button"
+                  disabled
+                  variant="outline"
+                  className="w-full"
+                >
                   Login with Google
                 </Button>
               </div>
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
+              <Link
+                to={"/auth/sign-up"}
+                className="underline underline-offset-4"
+              >
                 Sign up
-              </a>
+              </Link>
             </div>
           </form>
         </CardContent>

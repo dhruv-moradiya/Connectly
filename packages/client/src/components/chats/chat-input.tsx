@@ -3,9 +3,8 @@ import { memo, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { sendMessage } from "@/store/active-chat/active-chat-slice";
 import { cn, getSenderName, isCurrentUser } from "@/lib/utils";
-import { CheckCircle, Mic, Plus, Send, X } from "lucide-react";
+import { Plus, Send, Smile, X } from "lucide-react";
 import type { IMessage } from "@/types/api-response.type";
-import EmojiIcon from "@/components/common/emoji-icon";
 import { usePanelExpand } from "@/hooks/use-panel-expand";
 import { useChatMessage } from "@/hooks/use-chat-message";
 import { InteractionMode } from "@/types/index.type";
@@ -91,10 +90,9 @@ const ChatInput = memo(function ChatInput() {
         </Button>
       </div>
 
-      <div className="w-full flex items-center">
-        <InputButton icon={<Plus size={24} />} />
-        <InputButton icon={<EmojiIcon />} />
-        <InputButton icon={<CheckCircle size={24} />} onClick={openPanel} />
+      <div className="w-full flex items-center gap-1">
+        <InputButton icon={<Plus size={20} />} />
+        <InputButton icon={<Smile size={20} />} />
 
         <form
           onSubmit={handleSubmit}
@@ -107,7 +105,7 @@ const ChatInput = memo(function ChatInput() {
           />
 
           <InputButton type="submit" icon={<Send size={20} />} />
-          <InputButton icon={<Mic size={20} />} onClick={() => {}} />
+          {/* <InputButton icon={<Mic size={20} />} onClick={() => {}} /> */}
         </form>
       </div>
     </div>
@@ -125,7 +123,7 @@ const InputButton = ({ onClick, icon, type = "button" }: InputButtonProps) => (
   <button
     type={type}
     onClick={onClick}
-    className="size-10 rounded-full hover:bg-accent flex items-center justify-center transition-all duration-300"
+    className="size-8 rounded-full hover:bg-accent flex items-center justify-center transition-all duration-300"
   >
     {icon}
   </button>

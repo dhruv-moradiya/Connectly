@@ -62,7 +62,7 @@ const authSlice = createSlice({
     builder.addCase(emailVerifyThunk.rejected, (state, action) => {
       const error = (action.payload as string) || "Something went wrong";
       state.isLoading = false;
-      state.isFormLoading = true;
+      state.isFormLoading = false;
       state.error = error;
       showToast("Email verification failed", error, "error");
     });
@@ -92,7 +92,7 @@ const authSlice = createSlice({
     builder.addCase(loginUserThunk.rejected, (state, action) => {
       const error = (action.payload as string) || "Something went wrong";
       state.isLoading = false;
-      state.isFormLoading = true;
+      state.isFormLoading = false;
       state.error = error;
       showToast("Email verification failed", error, "error");
     });

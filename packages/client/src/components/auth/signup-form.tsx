@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { registerUser } from "@/api";
 import { cn, showToast } from "@/lib/utils";
@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import type { IUserRegistrationResponse } from "@/types/auth-type";
+import { AxiosError } from "axios";
 
 const SignupForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const navigate = useNavigate();
@@ -52,7 +53,9 @@ const SignupForm = ({ className, ...props }: React.ComponentProps<"div">) => {
 
       showToast(
         "Registration failed",
-        error instanceof Error ? error.message : "Something went wrong.",
+        error instanceof AxiosError
+          ? error.response?.data.message
+          : "Something went wrong.",
         "error"
       );
     } finally {
@@ -150,9 +153,12 @@ const SignupForm = ({ className, ...props }: React.ComponentProps<"div">) => {
             </div>
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
+              <Link
+                to={"/auth/sign-in"}
+                className="underline underline-offset-4"
+              >
                 Sign in
-              </a>
+              </Link>
             </div>
           </form>
         </CardContent>

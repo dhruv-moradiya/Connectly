@@ -21,6 +21,7 @@ import {
   Ban,
 } from "lucide-react";
 import { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 type ChatItemProps = {
   chat: IChatPreview;
@@ -29,6 +30,7 @@ type ChatItemProps = {
 export default function ChatItem({ chat }: ChatItemProps) {
   const { chatId } = useParams();
   const currentUser = useAppSelector((state) => state.auth.user);
+  const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
 
   if (!currentUser) return null;
 
@@ -49,7 +51,8 @@ export default function ChatItem({ chat }: ChatItemProps) {
         "text-sidebar-foreground border-sidebar-border",
         "hover:bg-sidebar-hover hover:text-sidebar-hover-foreground",
         "focus:bg-sidebar-focus focus:text-sidebar-focus-foreground",
-        isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
+        isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
+        isMobileScreen && "border-b p-3"
       )}
     >
       <Avatar className="size-10 rounded-lg">

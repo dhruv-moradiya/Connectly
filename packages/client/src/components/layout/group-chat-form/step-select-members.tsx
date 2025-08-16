@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import AnimatedCheck from "@/components/common/animated-check";
 import type { TFormUser } from "./group-chat-form";
+import CommonTooltip from "@/components/common/common-tooltip";
 
 type Props = {
   users: TFormUser[];
@@ -38,7 +39,11 @@ export default function StepSelectMembers({
               className="w-10 h-10 rounded-full object-cover"
             />
             <div className="flex-1">
-              <p className="text-sm font-medium">{user.name}</p>
+              <CommonTooltip title={user.name}>
+                <p className="w-fit text-sm font-medium line-clamp-1">
+                  {user.name}
+                </p>
+              </CommonTooltip>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
             <AnimatedCheck selected={selected} />
