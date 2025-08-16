@@ -5,6 +5,10 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useChatMessage } from "@/hooks/use-chat-message";
+import { showToast } from "@/lib/utils";
+import { useAppSelector } from "@/store/store";
+import { InteractionMode } from "@/types/index.type";
 import {
   Reply,
   Copy,
@@ -16,8 +20,14 @@ import {
   MoreVertical,
 } from "lucide-react";
 
-const ChatBubbleMenu = () => {
-  // const { setInteractionMode, setSelectedMessage } = useChatMessage();
+interface ChatBubbleMenuProps {
+  messageId: string;
+}
+
+const ChatBubbleMenu = ({ messageId }: ChatBubbleMenuProps) => {
+  const { messages } = useAppSelector((state) => state.activeChat);
+
+  const { setInteractionMode, setSelectedMessage } = useChatMessage();
 
   return (
     <DropdownMenu>
@@ -31,11 +41,24 @@ const ChatBubbleMenu = () => {
         side="top"
         className="w-40 rounded-md bg-white dark:bg-muted p-1 animate-in fade-in zoom-in-95 z-50"
       >
-        <DropdownMenuItem className="gap-2">
+        <DropdownMenuItem
+          className="gap-2"
+          onClick={() => {
+            setInteractionMode(InteractionMode.REPLY);
+            setSelectedMessage([messages.find((m) => m._id === messageId)!]);
+          }}
+        >
           <Reply className="w-4 h-4 text-gray-500" />
           Reply
         </DropdownMenuItem>
-        <DropdownMenuItem className="gap-2">
+        <DropdownMenuItem
+          className="gap-2"
+          onClick={() => {
+            const message = messages.find((m) => m._id === messageId);
+            navigator.clipboard.writeText(message?.content || "");
+            showToast("Copied", "", "success");
+          }}
+        >
           <Copy className="w-4 h-4 text-gray-500" />
           Copy
         </DropdownMenuItem>

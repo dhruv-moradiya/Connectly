@@ -18,28 +18,30 @@ export default function ChatMessages() {
       className="overflow-x-hidden"
       ref={virtuosoRef}
       groupCounts={groupCounts}
-      data={flatMessages}
+      // data={flatMessages}
       // initialTopMostItemIndex={flatMessages.length - 1}
       // followOutput={(isAtBottom) => {
       //   const lastMsg = flatMessages[flatMessages.length - 1];
       //   return isAtBottom || (lastMsg && lastMsg.sender._id === user._id);
       // }}
       groupContent={(index) => (
-        <div className="text-center py-1 sticky top-0 bg-card z-[100000]">
+        <div className="text-center py-1 sticky top-0 z-[100000]">
           <span className="text-xs border rounded-md p-0.5 shadow-xs">
             {groups[index].date}
           </span>
         </div>
       )}
-      itemContent={(_index, _groupIndex, message) => (
-        <ChatBubble
-          key={message._id}
-          messageId={message._id}
-          isSender={message.sender._id === user._id}
-          content={message.content}
-          deliveryStatus={message.deliveryStatus}
-        />
-      )}
+      itemContent={(index) => {
+        const message = flatMessages[index];
+        return (
+          <ChatBubble
+            messageId={message._id}
+            isSender={message.sender._id === user._id}
+            content={message.content}
+            deliveryStatus={message.deliveryStatus}
+          />
+        );
+      }}
       style={{ height: "100%" }}
     />
   );

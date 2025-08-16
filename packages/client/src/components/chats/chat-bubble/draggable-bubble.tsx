@@ -44,11 +44,12 @@ const DraggableBubble = ({
     <div
       ref={chatBubbleRef}
       className={cn(
-        "chat-bubble relative group w-fit max-w-[80%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl text-sm p-2 rounded-lg select-none mb-0 flex gap-1 z-10",
+        "chat-bubble relative group text-sm p-2 rounded-lg select-none mb-0 flex gap-1 z-10",
+        "w-fit max-w-[80%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl",
+        "flex items-center",
         isSender
           ? "ml-auto bg-primary text-white"
-          : "mr-auto bg-secondary-foreground/90 text-white",
-        "flex items-center"
+          : "mr-auto bg-secondary-foreground/90 text-white"
       )}
     >
       <div
@@ -66,7 +67,7 @@ const DraggableBubble = ({
       {children}
 
       <div className="absolute top-1.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <ChatBubbleMenu />
+        <ChatBubbleMenu messageId={messageId} />
       </div>
     </div>
   );
