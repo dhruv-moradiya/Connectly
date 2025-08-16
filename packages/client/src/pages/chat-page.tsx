@@ -10,6 +10,7 @@ import { useActiveChatSetUp } from "@/hooks/use-active-chat";
 
 const Chat = () => {
   const { chatId } = useParams();
+
   const isLoading = useAppSelector(
     (state) => state.activeChat.fetchingInitialData
   );

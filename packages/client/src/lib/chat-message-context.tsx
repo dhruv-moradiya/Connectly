@@ -1,14 +1,7 @@
 import { createContext, useState } from "react";
 import type { IMessage } from "@/types/api-response.type";
 import type { ReactNode } from "react";
-
-enum InteractionMode {
-  NONE = "none",
-  DELETE = "delete",
-  REPLY = "reply",
-  PIN = "pin",
-  drag = "drag",
-}
+import { InteractionMode } from "@/types/index.type";
 
 interface ChatMessageContextType {
   selectedMessage: IMessage[];

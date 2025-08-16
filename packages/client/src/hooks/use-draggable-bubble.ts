@@ -24,7 +24,7 @@ export const useDraggableBubble = (
         arrow.style.transition = "all 0.2s ease-in-out";
       },
       onDragStart: function () {
-        gsap.to(el, { scale: 1.05, duration: 0.2, ease: "power1.inOut" });
+        gsap.to(el, { scale: 0.95, duration: 0.2, ease: "power1.inOut" });
       },
       onDragEnd: function () {
         gsap.to(el, {

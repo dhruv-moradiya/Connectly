@@ -1,33 +1,50 @@
-import { useDraggableBubble } from "@/hooks/use-draggable-bubble";
-import { cn } from "@/lib/utils";
-import { CornerUpRight } from "lucide-react";
 import { useRef, type RefObject } from "react";
-import ChatBubbleMenu from "./chat-bubble-menu";
+import { CornerUpRight } from "lucide-react";
+
+import ChatBubbleMenu from "@/components/chats/chat-bubble/chat-bubble-menu";
+
+import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/store";
+import { useChatMessage } from "@/hooks/use-chat-message";
+
+import { InteractionMode } from "@/types/index.type";
+
+import { useDraggableBubble } from "@/hooks/use-draggable-bubble";
 
 interface DraggableBubbleProps {
-  index: number;
+  messageId: string;
   isSender: boolean;
   children: React.ReactNode;
 }
 
 const DraggableBubble = ({
-  index,
+  messageId,
   isSender,
   children,
 }: DraggableBubbleProps) => {
-  const chatBubbleRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLDivElement>(null);
-  console.log("index :>> ", index);
+  const chatBubbleRef = useRef<HTMLDivElement>(null);
+  const { setInteractionMode, setSelectedMessage } = useChatMessage();
+  const { messages } = useAppSelector((state) => state.activeChat);
+
+  const onReplyTrigger = () => {
+    const message = messages.find((m) => m._id === messageId);
+
+    setInteractionMode(InteractionMode.REPLY);
+    setSelectedMessage([message!]);
+  };
+
   useDraggableBubble(
     chatBubbleRef as RefObject<HTMLDivElement>,
-    arrowRef as RefObject<HTMLDivElement>
+    arrowRef as RefObject<HTMLDivElement>,
+    onReplyTrigger
   );
 
   return (
     <div
       ref={chatBubbleRef}
       className={cn(
-        "chat-bubble relative group w-fit max-w-xs text-sm p-2 rounded-lg select-none mb-0 flex gap-1 z-10",
+        "chat-bubble relative group w-fit max-w-[80%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl text-sm p-2 rounded-lg select-none mb-0 flex gap-1 z-10",
         isSender
           ? "ml-auto bg-primary text-white"
           : "mr-auto bg-secondary-foreground/90 text-white",

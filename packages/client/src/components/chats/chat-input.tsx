@@ -1,22 +1,24 @@
 import { v4 as uuidv4 } from "uuid";
-import { memo, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { sendMessage } from "@/store/active-chat/active-chat-slice";
-import { cn } from "@/lib/utils";
-import { CheckCircle, Mic, Plus, Send } from "lucide-react";
+import { cn, getSenderName, isCurrentUser } from "@/lib/utils";
+import { CheckCircle, Mic, Plus, Send, X } from "lucide-react";
 import type { IMessage } from "@/types/api-response.type";
 import EmojiIcon from "@/components/common/emoji-icon";
 import { usePanelExpand } from "@/hooks/use-panel-expand";
+import { useChatMessage } from "@/hooks/use-chat-message";
+import { InteractionMode } from "@/types/index.type";
+import { Button } from "@/components/ui/button";
 
 /* -------------------- Main Chat Input -------------------- */
 const ChatInput = memo(function ChatInput() {
   const dispatch = useAppDispatch();
   const panelRef = useRef<HTMLDivElement>(null);
-
   const user = useAppSelector((state) => state.auth.user);
 
   const [messageText, setMessageText] = useState("");
-
+  const { selectedMessage, interactionMode } = useChatMessage();
   const { closePanel, openPanel } = usePanelExpand({
     panelRef: panelRef as React.RefObject<HTMLElement>,
   });
@@ -49,17 +51,46 @@ const ChatInput = memo(function ChatInput() {
     }
   };
 
+  useEffect(() => {
+    if (
+      selectedMessage.length > 0 &&
+      interactionMode === InteractionMode.REPLY
+    ) {
+      openPanel();
+    }
+  }, [selectedMessage, interactionMode]);
+
   return (
     <div className="relative flex flex-col items-center bg-white rounded-md p-1">
-      <div ref={panelRef} style={{ overflow: "hidden" }}>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
-          inventore saepe, repellat eos aspernatur quidem incidunt amet. Cum
-          pariatur facere suscipit aliquam eveniet debitis! Id quas iste nam
-          sunt numquam.
-        </p>
-        <button onClick={closePanel}>Reply</button>
+      <div
+        ref={panelRef}
+        className={cn(
+          "w-full pl-4 overflow-hidden flex items-center justify-between border-l-4 rounded-md",
+          isCurrentUser(selectedMessage[0], user)
+            ? "border-primary"
+            : "border-zinc-600"
+        )}
+      >
+        <div className="flex flex-col gap-1">
+          <p
+            className={cn(
+              "text-start text-sm font-semibold",
+              isCurrentUser(selectedMessage[0], user)
+                ? "text-primary"
+                : "text-zinc-600"
+            )}
+          >
+            {getSenderName(selectedMessage[0], user)}
+          </p>
+          <p className="text-start text-sm line-clamp-2">
+            {selectedMessage.length ? selectedMessage[0].content : ""}
+          </p>
+        </div>
+        <Button size={"sm"} variant={"ghost"} onClick={closePanel}>
+          <X size={16} />
+        </Button>
       </div>
+
       <div className="w-full flex items-center">
         <InputButton icon={<Plus size={24} />} />
         <InputButton icon={<EmojiIcon />} />

@@ -1,30 +1,38 @@
 import { Check, CheckCheck } from "lucide-react";
 import DraggableBubble from "./draggable-bubble";
 import type { TMessageDeliveryStatus } from "@/types/api-response.type";
+import { cn } from "@/lib/utils";
 
 const ChatBubble = ({
-  index,
+  messageId,
   isSender,
   content,
   deliveryStatus,
 }: {
-  index: number;
+  messageId: string;
   isSender: boolean;
   content: string;
   deliveryStatus: TMessageDeliveryStatus;
 }) => {
   return (
-    <DraggableBubble index={index} isSender={isSender}>
-      <div>{content}</div>
-      <div className="shrink-0 flex gap-0 items-end">
-        <span className="text-[10px] text-muted ml-2 self-end justify-end translate-y-1">
-          12:34 PM
-        </span>
-        {isSender && (
-          <ChatBubbleDelevaryStatus deliveryStatus={deliveryStatus} />
-        )}
-      </div>
-    </DraggableBubble>
+    <div
+      className={cn(
+        "flex items-center gap-10 px-3 py-0.5 rounded-md hover:bg-primary/5 duration-200"
+      )}
+    >
+      {/* <Checkbox /> */}
+      <DraggableBubble messageId={messageId} isSender={isSender}>
+        <div className="text-sm">{content}</div>
+        <div className="shrink-0 flex gap-0 items-end">
+          <span className="text-[10px] text-muted ml-2 self-end justify-end translate-y-1">
+            12:34 PM
+          </span>
+          {isSender && (
+            <ChatBubbleDelevaryStatus deliveryStatus={deliveryStatus} />
+          )}
+        </div>
+      </DraggableBubble>
+    </div>
   );
 };
 
