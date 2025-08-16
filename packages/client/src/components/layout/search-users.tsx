@@ -13,9 +13,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createNewChat, getUserByUsernameQuery } from "@/api";
 import type { IUserPreview } from "@/types/api-response.type";
 import { handleApiError } from "@/lib/handle-api-error";
-import { showToast } from "@/lib/utils";
+import { cn, showToast } from "@/lib/utils";
+import { useMediaQuery } from "react-responsive";
 
 const SearchUsers = () => {
+  const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
+
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<IUserPreview[]>([]);
@@ -82,9 +85,14 @@ const SearchUsers = () => {
           <Search size={16} />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg transition-all duration-300 animate-scale-in">
+      <DialogContent
+        className={cn(
+          "sm:max-w-lg transition-all duration-300 animate-scale-in",
+          isMobileScreen && "top-10 translate-y-0 p-4"
+        )}
+      >
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
+          <DialogTitle className="text-base md:text-xl font-semibold">
             Search Users
           </DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
@@ -101,7 +109,7 @@ const SearchUsers = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="flex-1 outline-none bg-transparent text-sm text-muted-foreground"
+              className="flex-1 outline-none bg-transparent text-sm text-muted-foreground placeholder:text-sm"
             />
           </div>
 
