@@ -22,9 +22,15 @@ import {
 
 interface ChatBubbleMenuProps {
   messageId: string;
+  setShowPopover: React.Dispatch<React.SetStateAction<boolean>>;
+  chatBubbleMenuRef: React.RefObject<HTMLDivElement | null>;
 }
 
-const ChatBubbleMenu = ({ messageId }: ChatBubbleMenuProps) => {
+const ChatBubbleMenu = ({
+  messageId,
+  setShowPopover,
+  chatBubbleMenuRef,
+}: ChatBubbleMenuProps) => {
   const { messages } = useAppSelector((state) => state.activeChat);
 
   const { setInteractionMode, setSelectedMessage } = useChatMessage();
@@ -38,6 +44,7 @@ const ChatBubbleMenu = ({ messageId }: ChatBubbleMenuProps) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
+        ref={chatBubbleMenuRef}
         side="top"
         className="w-40 rounded-md bg-white dark:bg-muted p-1 animate-in fade-in zoom-in-95 z-50"
       >
@@ -62,7 +69,14 @@ const ChatBubbleMenu = ({ messageId }: ChatBubbleMenuProps) => {
           <Copy className="w-4 h-4 text-gray-500" />
           Copy
         </DropdownMenuItem>
-        <DropdownMenuItem className="gap-2">
+        <DropdownMenuItem
+          className="gap-2"
+          onClick={() => {
+            setInteractionMode(InteractionMode.REACT);
+            setSelectedMessage([messages.find((m) => m._id === messageId)!]);
+            setShowPopover(true);
+          }}
+        >
           <Smile className="w-4 h-4 text-gray-500" />
           React
         </DropdownMenuItem>
