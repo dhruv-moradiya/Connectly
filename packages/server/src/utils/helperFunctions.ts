@@ -6,7 +6,7 @@ import { SocketEvents } from "../constants";
 import MessageModel from "../models/message.model";
 import { messagesQueue } from "../queues/bullmq/messages.queue";
 import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
-import ChatRoom from "@/models/chat.model";
+import ChatRoom from "../models/chat.model";
 
 interface IMessagesaveInDBJobType {
   _id: string;
