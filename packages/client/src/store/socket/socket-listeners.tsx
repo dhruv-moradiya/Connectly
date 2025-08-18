@@ -90,6 +90,11 @@ const SOCKET_LISTENERS = (store: MiddlewareAPI) => ({
     showToast("Leave room success", data, "success");
   },
 
+  // [SocketEvents.LAST_MESSAGE]: (data: TChatCreatedEventReceived) => {
+  //   console.log("✅ Last message:", data);
+  //   store.dispatch(updateLastMessageReducer(data));
+  // },
+
   // Add more events here...
 });
 

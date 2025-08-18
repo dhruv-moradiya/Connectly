@@ -72,6 +72,9 @@ async function handleMessageSent(socket: Socket, data: IMessageentBody) {
   // To Current User Messgae sent successfully
   socket.emit(SocketEvents.MESSAGE_SENT, data);
 
+  // To update last message
+  socket.emit(SocketEvents.LAST_MESSAGE, data);
+
   await notifyParticipants(data.chatId, data, socket);
 }
 

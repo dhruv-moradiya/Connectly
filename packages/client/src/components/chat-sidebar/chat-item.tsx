@@ -38,8 +38,7 @@ export default function ChatItem({ chat }: ChatItemProps) {
     chat,
     currentUser._id
   );
-  const lastMessage =
-    "Placeholder for last message, can be replaced with actual data";
+
   const isActive = chatId === chat._id;
 
   return (
@@ -70,7 +69,7 @@ export default function ChatItem({ chat }: ChatItemProps) {
           <span className="text-xs text-gray-400">12:34 PM</span>
         </div>
         <div className="text-gray-500 text-xs line-clamp-1 w-full whitespace-break-spaces">
-          <span>{lastMessage}</span>
+          <span>{chat.lastMessage.content ?? ""}</span>
         </div>
       </div>
 

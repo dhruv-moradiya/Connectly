@@ -1,5 +1,6 @@
 import { type Socket } from "socket.io-client";
 import type {
+  ILastMessage,
   IUserPreview,
   TMessageSenderDetails,
   TMessageType,
@@ -61,6 +62,7 @@ type TChatCreatedEventReceived = {
     isGroup: boolean;
     participants: IUserPreview[];
     unreadCount: [];
+    lastMessage: ILastMessage;
   };
   message: string;
 };

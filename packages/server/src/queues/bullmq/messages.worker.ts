@@ -2,7 +2,10 @@ import { Worker } from "bullmq";
 import { redisConnection } from "../../db/redis";
 import MessageModel from "../../models/message.model";
 import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
-import { updateDeliveryStatus } from "../../utils/helperFunctions";
+import {
+  saveMessageAsLastMessage,
+  updateDeliveryStatus,
+} from "../../utils/helperFunctions";
 
 interface IMessagesaveInDBJobType {
   _id: string;
@@ -31,6 +34,8 @@ const messagesWorker = new Worker(
           chat: chatId,
           content,
         });
+        await saveMessageAsLastMessage(chatId, _id);
+
         break;
 
       case "delivered":

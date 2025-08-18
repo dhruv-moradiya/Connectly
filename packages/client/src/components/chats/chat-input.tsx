@@ -64,10 +64,10 @@ const ChatInput = memo(function ChatInput() {
       <div
         ref={panelRef}
         className={cn(
-          "w-full pl-4 overflow-hidden flex items-center justify-between border-l-4 rounded-md",
+          "w-full pl-4 py-1 overflow-hidden flex items-center justify-between border-l-4 rounded-md",
           isCurrentUser(selectedMessage[0], user)
-            ? "border-primary"
-            : "border-zinc-600"
+            ? "border-primary bg-primary/10"
+            : "border-zinc-600 bg-secondary"
         )}
       >
         <div className="flex flex-col gap-1">

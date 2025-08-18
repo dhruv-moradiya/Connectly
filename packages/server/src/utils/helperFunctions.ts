@@ -6,6 +6,7 @@ import { SocketEvents } from "../constants";
 import MessageModel from "../models/message.model";
 import { messagesQueue } from "../queues/bullmq/messages.queue";
 import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
+import ChatRoom from "@/models/chat.model";
 
 interface IMessagesaveInDBJobType {
   _id: string;
@@ -35,6 +36,21 @@ async function getPrivateReceiverId(
 
 async function enqueueMessageStatusUpdate(data: IMessagesaveInDBJobType) {
   await messagesQueue.add("messages", data);
+}
+
+async function saveMessageAsLastMessage(chatId: string, messageId: string) {
+  try {
+    console.log("chatId :>> ", chatId);
+    console.log("messageId :>> ", messageId);
+    await ChatRoom.updateOne(
+      { _id: chatId },
+      { $set: { lastMessage: messageId } }
+    );
+    console.log("Last message saved successfully");
+  } catch (error) {
+    console.error("Error saving message as last message: ", error);
+    throw new Error("Failed to update last message"); // rethrow with cleaner msg
+  }
 }
 
 async function handlePrivateChat(
@@ -98,4 +114,5 @@ export {
   handlePrivateChat,
   handleGroupChat,
   updateDeliveryStatus,
+  saveMessageAsLastMessage,
 };

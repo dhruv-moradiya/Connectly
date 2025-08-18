@@ -119,6 +119,8 @@ const SocketEvents = {
   MESSAGE_DELIVERED: "message_delivered",
   MESSAGE_SEEN: "message_seen",
 
+  LAST_MESSAGE: "last_message",
+
   UPDATE_PROFILE_PIC: "update_profile_pic",
 
   CHANGE_GROUP_CHAT_NAME: "change_group_chat_name",

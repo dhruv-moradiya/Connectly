@@ -59,7 +59,7 @@ const ChatRoomSchema = new Schema<IChatRoomDocument>(
     bannedUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
     mutedUsers: [{ type: Schema.Types.ObjectId, ref: "User" }],
 
-    lastMessage: { type: Schema.Types.ObjectId, ref: "Message" },
+    lastMessage: { type: String, ref: "Message" },
 
     inviteLink: [
       {

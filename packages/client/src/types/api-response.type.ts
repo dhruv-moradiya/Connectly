@@ -1,11 +1,13 @@
 import type { TUserAuth } from "./auth-type";
 
+// Base type for all the API responses
 interface IBaseType {
   success: boolean;
   message: string;
   statusCode: number;
 }
 
+// User preview short details about user
 interface IUserPreview {
   _id: string;
   username: string;
@@ -14,16 +16,31 @@ interface IUserPreview {
   email: string;
 }
 
+// User details including token
 interface IGetCurrentUser extends IBaseType {
   data: TUserAuth;
 }
 
+interface ILastMessage {
+  _id: string;
+  content: string;
+  sender: string;
+  createdAt: string;
+  deliveryStatus: TMessageDeliveryStatus;
+  type: TMessageType;
+  isDeleted: boolean;
+  deletedFor: string[];
+  reactions: string[];
+}
+
+// Chat preview
 interface IChatPreview {
   _id: string;
   name: string;
   isGroup: boolean;
   unreadCount: [];
   participants: IUserPreview[];
+  lastMessage: ILastMessage;
 }
 
 interface IUserChats extends IBaseType {
@@ -85,4 +102,5 @@ export {
   type TMessageDeliveryStatus,
   type TMessageSenderDetails,
   type TMessageType,
+  type ILastMessage,
 };

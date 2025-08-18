@@ -170,6 +170,7 @@ const createNewChatBetweenTwoUsers = asyncHandler(
       isGroup: false,
       participants: participantsData,
       unreadCount: [],
+      lastMessage: {},
     };
 
     req.app
@@ -657,6 +658,7 @@ const getCurrentUserChats = asyncHandler(
           name: 1,
           unreadCount: 1,
           participants: 1,
+          lastMessage: 1,
         },
       },
       {
@@ -687,6 +689,7 @@ const getCurrentUserChats = asyncHandler(
           isGroup: 1,
           name: 1,
           unreadCount: 1,
+          lastMessage: 1,
           participant: {
             _id: "$userData._id",
             username: "$userData.username",
@@ -703,6 +706,41 @@ const getCurrentUserChats = asyncHandler(
           name: { $first: "$name" },
           unreadCount: { $first: "$unreadCount" },
           participants: { $push: "$participant" },
+          lastMessage: { $first: "$lastMessage" },
+        },
+      },
+      {
+        $lookup: {
+          from: "messages",
+          localField: "lastMessage",
+          foreignField: "_id",
+          as: "lastMessage",
+        },
+      },
+      {
+        $unwind: {
+          path: "$lastMessage",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          isGroup: 1,
+          name: 1,
+          unreadCount: 1,
+          participants: 1,
+          lastMessage: {
+            _id: "$lastMessage._id",
+            sender: "$lastMessage.sender",
+            createdAt: "$lastMessage.createdAt",
+            deliveryStatus: "$lastMessage.deliveryStatus",
+            type: "$lastMessage.type",
+            isDeleted: "$lastMessage.isDeleted",
+            deletedFor: "$lastMessage.deletedFor",
+            reactions: "$lastMessage.reactions",
+            content: "$lastMessage.content",
+          },
         },
       },
     ]);

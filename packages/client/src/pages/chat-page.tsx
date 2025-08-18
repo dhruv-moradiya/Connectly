@@ -27,6 +27,7 @@ const Chat = () => {
       {!isLoading && (
         <ChatMessageProvider>
           <ChatMessages />
+
           <ChatInput />
         </ChatMessageProvider>
       )}

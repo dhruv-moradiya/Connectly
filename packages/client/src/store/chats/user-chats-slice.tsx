@@ -26,6 +26,15 @@ const userChatsSlice = createSlice({
     chatCreatedReducer: (state, action: PayloadAction<IChatPreview>) => {
       state.chats = [...state.chats, action.payload];
     },
+
+    updateLastMessageReducer: (state, action: PayloadAction<IChatPreview>) => {
+      state.chats = state.chats.map((chat) => {
+        if (chat._id === action.payload._id) {
+          return action.payload;
+        }
+        return chat;
+      });
+    },
   },
   extraReducers(builder) {
     builder.addCase(getUserChatsThunk.pending, (state) => {
@@ -60,6 +69,7 @@ const getUserChatsThunk = createAsyncThunk(
 );
 
 const userChatsReducer = userChatsSlice.reducer;
-export const { chatCreatedReducer } = userChatsSlice.actions;
+export const { chatCreatedReducer, updateLastMessageReducer } =
+  userChatsSlice.actions;
 export { getUserChatsThunk };
 export default userChatsReducer;
