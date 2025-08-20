@@ -56,7 +56,7 @@ interface ISettings {
   sendNewMessages: boolean;
 }
 
-interface IChatRoom {
+interface IChatRoomSchema {
   name: string;
   description: string;
   groupIcon: string;
@@ -117,7 +117,7 @@ interface IChatRoomForCache {
 }
 
 export type {
-  IChatRoom,
+  IChatRoomSchema,
   TAuditLogAction,
   AuditLogData,
   UserRole,

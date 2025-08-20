@@ -7,30 +7,56 @@ import { redisConnection } from "../db/redis";
 import { SocketResponse } from "../utils/apiResponse";
 import { messageSocket } from "../socket/message.socket";
 import { socketAuthMiddleware } from "../socket/auth.socket";
+import MessageModel from "@/models/message.model";
+
+const updateMessageStatus = (chatId: string, userId: string) => {
+  return MessageModel.updateMany(
+    {
+      chat: chatId,
+      $or: [{ deliveryStatus: "pending" }, { deliveryStatus: "sent" }],
+      "seenBy.user": { $ne: userId },
+      sender: { $ne: userId },
+    },
+    {
+      $set: { deliveryStatus: "seen" },
+      $addToSet: { seenBy: { user: userId, seen_at: new Date() } },
+    }
+  );
+};
 
 const handleSocketJoinRoom = (socket: Socket) => {
-  socket.on(SocketEvents.JOIN_ROOM, ({ chatId }: { chatId: string }) => {
+  socket.on(SocketEvents.JOIN_ROOM, async ({ chatId }: { chatId: string }) => {
     if (!mongoose.Types.ObjectId.isValid(chatId)) {
-      const data = new SocketResponse(
-        "Unable to join room — the provided chat ID is invalid.",
-        false,
-        null
+      socket.emit(
+        SocketEvents.JOIN_ROOM_ERROR,
+        new SocketResponse("Invalid chat ID", false, null)
       );
-      socket.emit(SocketEvents.JOIN_ROOM_ERROR, data);
       return;
-    } else {
-      socket.join(chatId);
-      const data = new SocketResponse(
-        `Successfully joined the chat room.`,
-        true,
-        { chatId }
-      );
-      socket.emit(SocketEvents.JOIN_ROOM_SUCCESS, data);
+    }
 
-      redisConnection.set(
-        generateRedisKeys.activeRomm(socket.user._id),
-        chatId
-      );
+    // Already joined? skip
+    if (socket.rooms.has(chatId)) {
+      return;
+    }
+
+    socket.join(chatId);
+
+    socket.emit(
+      SocketEvents.JOIN_ROOM_SUCCESS,
+      new SocketResponse("Joined room successfully", true, { chatId })
+    );
+
+    // Track active rooms in Redis (Set instead of single value)
+    await redisConnection.set(
+      generateRedisKeys.activeRomm(socket.user._id),
+      chatId
+    );
+
+    // Update messages
+    try {
+      await updateMessageStatus(chatId, socket.user._id);
+    } catch (err) {
+      console.error("Message update failed:", err);
     }
   });
 };

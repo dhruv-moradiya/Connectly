@@ -9,7 +9,10 @@ import type {
   TypedSocket,
 } from "@/types/middleware.type";
 import type { MiddlewareAPI } from "@reduxjs/toolkit";
-import { chatCreatedReducer } from "../chats/user-chats-slice";
+import {
+  chatCreatedReducer,
+  updateLastMessageReducer,
+} from "../chats/user-chats-slice";
 import { showToast } from "@/lib/utils";
 import {
   messageDeliveredSuccess,
@@ -90,10 +93,13 @@ const SOCKET_LISTENERS = (store: MiddlewareAPI) => ({
     showToast("Leave room success", data, "success");
   },
 
-  // [SocketEvents.LAST_MESSAGE]: (data: TChatCreatedEventReceived) => {
-  //   console.log("✅ Last message:", data);
-  //   store.dispatch(updateLastMessageReducer(data));
-  // },
+  [SocketEvents.LAST_MESSAGE]: (data: {
+    _id: string;
+    content: string;
+    chatId: string;
+  }) => {
+    store.dispatch(updateLastMessageReducer(data));
+  },
 
   // Add more events here...
 });

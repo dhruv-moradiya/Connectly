@@ -27,10 +27,25 @@ const userChatsSlice = createSlice({
       state.chats = [...state.chats, action.payload];
     },
 
-    updateLastMessageReducer: (state, action: PayloadAction<IChatPreview>) => {
+    updateLastMessageReducer: (
+      state,
+      action: PayloadAction<{
+        _id: string;
+        content: string;
+        chatId: string;
+      }>
+    ) => {
       state.chats = state.chats.map((chat) => {
-        if (chat._id === action.payload._id) {
-          return action.payload;
+        if (chat._id === action.payload.chatId) {
+          return {
+            ...chat,
+            lastMessage: {
+              ...chat.lastMessage,
+              content: action.payload.content,
+              chatId: action.payload.chatId,
+              _id: action.payload._id,
+            },
+          };
         }
         return chat;
       });

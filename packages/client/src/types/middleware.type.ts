@@ -1,7 +1,6 @@
 import { type Socket } from "socket.io-client";
 import type {
-  ILastMessage,
-  IUserPreview,
+  IChatPreview,
   TMessageSenderDetails,
   TMessageType,
 } from "./api-response.type";
@@ -56,14 +55,7 @@ interface IJoinRoomSuccess extends IBaseSocketResponse {
 }
 
 type TChatCreatedEventReceived = {
-  data: {
-    _id: string;
-    name: string;
-    isGroup: boolean;
-    participants: IUserPreview[];
-    unreadCount: [];
-    lastMessage: ILastMessage;
-  };
+  data: IChatPreview;
   message: string;
 };
 
@@ -73,6 +65,12 @@ type TMessageReceivedEventReceived = {
   content: string;
   sender: TMessageSenderDetails;
   type: TMessageType;
+};
+
+type TLastMessage = {
+  _id: string;
+  content: string;
+  chatId: string;
 };
 
 // socket-action-types.ts
@@ -102,4 +100,5 @@ export type {
   IJoinRoomSuccess,
   TChatCreatedEventReceived,
   TMessageReceivedEventReceived,
+  TLastMessage,
 };

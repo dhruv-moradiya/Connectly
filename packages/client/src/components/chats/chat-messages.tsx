@@ -41,8 +41,10 @@ export default function ChatMessages() {
       className="overflow-x-hidden"
       ref={virtuosoRef}
       groupCounts={groupCounts}
+      initialTopMostItemIndex={messages.length - 1}
+      scrolling="smooth"
       groupContent={(index) => (
-        <div className="text-center py-1 sticky top-0 z-[100000]">
+        <div className="text-center sticky top-0 z-[100000] bg-card">
           <span className="text-xs border rounded-md p-0.5 shadow-xs">
             {groups[index].date}
           </span>

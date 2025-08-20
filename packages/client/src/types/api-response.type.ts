@@ -21,18 +21,6 @@ interface IGetCurrentUser extends IBaseType {
   data: TUserAuth;
 }
 
-interface ILastMessage {
-  _id: string;
-  content: string;
-  sender: string;
-  createdAt: string;
-  deliveryStatus: TMessageDeliveryStatus;
-  type: TMessageType;
-  isDeleted: boolean;
-  deletedFor: string[];
-  reactions: string[];
-}
-
 // Chat preview
 interface IChatPreview {
   _id: string;
@@ -40,7 +28,7 @@ interface IChatPreview {
   isGroup: boolean;
   unreadCount: [];
   participants: IUserPreview[];
-  lastMessage: ILastMessage;
+  lastMessage: IMessage;
 }
 
 interface IUserChats extends IBaseType {
@@ -102,5 +90,4 @@ export {
   type TMessageDeliveryStatus,
   type TMessageSenderDetails,
   type TMessageType,
-  type ILastMessage,
 };

@@ -18,7 +18,7 @@ const ChatInput = memo(function ChatInput() {
 
   const [messageText, setMessageText] = useState("");
   const { selectedMessage, interactionMode } = useChatMessage();
-  const { closePanel, openPanel } = usePanelExpand({
+  const { showPanel, closePanel, openPanel } = usePanelExpand({
     panelRef: panelRef as React.RefObject<HTMLElement>,
   });
 
@@ -67,7 +67,8 @@ const ChatInput = memo(function ChatInput() {
           "w-full pl-4 py-1 overflow-hidden flex items-center justify-between border-l-4 rounded-md",
           isCurrentUser(selectedMessage[0], user)
             ? "border-primary bg-primary/10"
-            : "border-zinc-600 bg-secondary"
+            : "border-zinc-600 bg-secondary",
+          showPanel ? "py-1" : "py-0"
         )}
       >
         <div className="flex flex-col gap-1">

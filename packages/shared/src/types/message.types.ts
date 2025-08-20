@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 type TMessageDeliveryStatus = "sent" | "delivered" | "seen";
 
-interface IMessagechema {
+interface IMessageSchema {
   _id: string;
   sender: Types.ObjectId;
   chat: Types.ObjectId;
@@ -57,4 +57,4 @@ interface IMessagechema {
   updatedAt: Date;
 }
 
-export type { IMessagechema, TMessageDeliveryStatus };
+export type { IMessageSchema, TMessageDeliveryStatus };

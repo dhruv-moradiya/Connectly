@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 import {
-  type IChatRoom,
+  type IChatRoomSchema,
   type TAuditLogAction,
 } from "@monorepo/shared/src/types/chat.types";
 
@@ -25,7 +25,7 @@ export const validAuditActions: TAuditLogAction[] = [
   "created_group_chat",
 ];
 
-export interface IChatRoomDocument extends IChatRoom, Document {}
+export interface IChatRoomDocument extends IChatRoomSchema, Document {}
 
 const ParticipantSchema = new Schema(
   {

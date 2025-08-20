@@ -49,6 +49,7 @@ const usePanelExpand = ({
   const openPanel = () => setShowPanel(true);
 
   return {
+    showPanel,
     closePanel,
     openPanel,
   };

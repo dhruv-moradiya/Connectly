@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
-import { type IMessagechema } from "@monorepo/shared/src/types/message.types";
+import { type IMessageSchema } from "@monorepo/shared/src/types/message.types";
 
-interface IMessagechemaDocument extends IMessagechema, Document {
+interface IMessagechemaDocument extends IMessageSchema, Document {
   // deleteMessage: () => Promise<void>;
   // markAsSeen: (userId: Types.ObjectId) => Promise<void>;
   // addAttachment: (attachment: {
