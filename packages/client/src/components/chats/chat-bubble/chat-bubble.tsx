@@ -16,7 +16,7 @@ const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
     return (
       <div
         className={cn(
-          "flex items-center gap-10 px-3 py-0.5 rounded-md hover:bg-primary/5 duration-200"
+          "flex items-center gap-10 px-3 rounded-md hover:bg-primary/5 duration-200 my-0.5"
         )}
       >
         {/* <Checkbox /> */}

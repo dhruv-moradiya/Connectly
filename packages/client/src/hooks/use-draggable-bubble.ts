@@ -46,7 +46,7 @@
 //   }, [chatBubbleRef, arrowRef, onReplyTrigger]);
 // };
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { Draggable } from "gsap/Draggable";
 
@@ -58,7 +58,11 @@ export const useDraggableBubble = (
   chatBubbleRefs: React.RefObject<HTMLDivElement[]>,
   messagesLength: number,
   onReplyTrigger?: ReplyCb,
-  opts?: { direction?: "left" | "right"; distance?: number; threshold?: number }
+  opts?: {
+    direction?: "left" | "right";
+    distance?: number;
+    threshold?: number;
+  }
 ) => {
   useEffect(() => {
     console.log(
@@ -146,3 +150,84 @@ export const useDraggableBubble = (
     opts?.threshold,
   ]);
 };
+
+export function usePointerSwipe(
+  onReplyTrigger?: ReplyCb,
+  containerSelector = ".chat-container"
+) {
+  const draggablesRef = useRef<Map<HTMLElement, Draggable>>(new Map());
+
+  useEffect(() => {
+    const container = document.querySelector(containerSelector) as HTMLElement;
+    if (!container) return;
+
+    function handlePointerDown(e: PointerEvent) {
+      const bubble = (e.target as HTMLElement).closest(
+        ".chat-bubble"
+      ) as HTMLElement;
+      if (!bubble) return;
+
+      // Already has a draggable? skip
+      if (draggablesRef.current.has(bubble)) return;
+
+      // ✅ Create draggable immediately
+      const [draggable] = Draggable.create(bubble, {
+        type: "x",
+        bounds: { minX: 0, maxX: 100 },
+        dragResistance: 0.12,
+        allowContextMenu: true,
+
+        onDrag() {
+          const arrow = bubble.querySelector(".chat-bubble-arrow");
+          if (arrow) {
+            const show = this.x > 20;
+            gsap.to(arrow, {
+              opacity: show ? 1 : 0,
+              scale: show ? 1.2 : 0,
+              duration: 0.15,
+              ease: "power2.out",
+            });
+          }
+        },
+
+        onDragStart() {
+          gsap.to(bubble, { scale: 0.95, duration: 0.2, ease: "power1.inOut" });
+          bubble.style.userSelect = "none";
+        },
+
+        onDragEnd() {
+          const passed = this.x >= 70;
+          gsap.to(bubble, {
+            x: 0,
+            scale: 1,
+            duration: 0.45,
+            ease: "elastic.out(1, 0.8)",
+            onComplete: () => {
+              bubble.style.userSelect = "";
+            },
+          });
+
+          const arrow = bubble.querySelector(".chat-bubble-arrow");
+          if (arrow) gsap.to(arrow, { opacity: 0, scale: 0, duration: 0.15 });
+
+          if (passed) {
+            console.log("Reply to", bubble.id);
+            onReplyTrigger?.(bubble.id);
+          }
+        },
+      });
+
+      draggablesRef.current.set(bubble, draggable);
+
+      draggable.startDrag(e);
+    }
+
+    container.addEventListener("pointerdown", handlePointerDown);
+
+    return () => {
+      container.removeEventListener("pointerdown", handlePointerDown);
+      draggablesRef.current.forEach((d) => d.kill());
+      draggablesRef.current.clear();
+    };
+  }, [containerSelector]);
+}

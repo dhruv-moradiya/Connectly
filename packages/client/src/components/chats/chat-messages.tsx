@@ -1,22 +1,20 @@
 import { useCallback, useRef } from "react";
-import { GroupedVirtuoso, type GroupedVirtuosoHandle } from "react-virtuoso";
 import { useAppSelector } from "@/store/store";
 import ChatBubble from "./chat-bubble/chat-bubble";
-import { useGroupMessages } from "@/hooks/use-group-messages";
-import { useDraggableBubble } from "@/hooks/use-draggable-bubble";
+import { usePointerSwipe } from "@/hooks/use-draggable-bubble";
 import { useChatMessage } from "@/hooks/use-chat-message";
 import { InteractionMode } from "@/types/index.type";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 export default function ChatMessages() {
   const bubbleRefs = useRef<HTMLDivElement[]>([]);
 
-  const virtuosoRef = useRef<GroupedVirtuosoHandle>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
 
   const user = useAppSelector((state) => state.auth.user);
   const { setInteractionMode, setSelectedMessage } = useChatMessage();
 
   const { messages } = useAppSelector((state) => state.activeChat);
-  const { flatMessages, groupCounts, groups } = useGroupMessages({ messages });
 
   const onReplyTrigger = useCallback(
     (messageId: string) => {
@@ -28,43 +26,59 @@ export default function ChatMessages() {
     [messages]
   );
 
-  useDraggableBubble(bubbleRefs, messages.length, onReplyTrigger, {
-    direction: "right",
-    distance: 100,
-    threshold: 70,
+  const virtualizer = useVirtualizer({
+    count: messages.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 45,
   });
+
+  const items = virtualizer.getVirtualItems();
+
+  usePointerSwipe(onReplyTrigger);
 
   if (!user) return null;
 
   return (
-    <GroupedVirtuoso
-      className="overflow-x-hidden"
-      ref={virtuosoRef}
-      groupCounts={groupCounts}
-      initialTopMostItemIndex={messages.length - 1}
-      scrolling="smooth"
-      groupContent={(index) => (
-        <div className="text-center sticky top-0 z-[100000] bg-card">
-          <span className="text-xs border rounded-md p-0.5 shadow-xs">
-            {groups[index].date}
-          </span>
+    <div
+      ref={parentRef}
+      className="h-full w-full overflow-y-auto overflow-x-hidden"
+    >
+      <div
+        style={{
+          height: virtualizer.getTotalSize(),
+          width: "100%",
+          position: "relative",
+        }}
+      >
+        <div
+          className="chat-container"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            transform: `translateY(${items[0]?.start ?? 0}px)`,
+          }}
+        >
+          {items.map((virtualRow) => (
+            <div
+              key={virtualRow.key}
+              data-index={virtualRow.index}
+              ref={virtualizer.measureElement}
+            >
+              <ChatBubble
+                ref={(el: HTMLDivElement | null) => {
+                  if (el) bubbleRefs.current[virtualRow.index] = el;
+                }}
+                messageId={messages[virtualRow.index]._id}
+                isSender={messages[virtualRow.index].sender._id === user._id}
+                content={messages[virtualRow.index].content}
+                deliveryStatus={messages[virtualRow.index].deliveryStatus}
+              />
+            </div>
+          ))}
         </div>
-      )}
-      itemContent={(index) => {
-        const message = flatMessages[index];
-        return (
-          <ChatBubble
-            ref={(el: HTMLDivElement | null) => {
-              if (el) bubbleRefs.current[index] = el;
-            }}
-            messageId={message._id}
-            isSender={message.sender._id === user._id}
-            content={message.content}
-            deliveryStatus={message.deliveryStatus}
-          />
-        );
-      }}
-      style={{ height: "100%" }}
-    />
+      </div>
+    </div>
   );
 }
