@@ -7,7 +7,7 @@ import { redisConnection } from "../db/redis";
 import { SocketResponse } from "../utils/apiResponse";
 import { messageSocket } from "../socket/message.socket";
 import { socketAuthMiddleware } from "../socket/auth.socket";
-import MessageModel from "@/models/message.model";
+import MessageModel from "../models/message.model";
 
 const updateMessageStatus = (chatId: string, userId: string) => {
   return MessageModel.updateMany(
