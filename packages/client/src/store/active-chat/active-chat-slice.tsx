@@ -82,7 +82,6 @@ const activeChatSlice = createSlice({
       state.error = null;
     },
     sendMessage(state, action: PayloadAction<IMessage>) {
-      console.log("action.payload :>> ", action.payload);
       state.messages = [...state.messages, action.payload];
     },
 
