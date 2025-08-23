@@ -60,14 +60,17 @@ const SOCKET_LISTENERS = (store: MiddlewareAPI) => ({
   },
 
   [SocketEvents.MESSAGE_RECEIVED]: (data: IMessage) => {
+    console.log("✅ Message received:", data);
     store.dispatch(messageReceivedReducer(data));
   },
 
   [SocketEvents.MESSAGE_SENT]: (data: { _id: string }) => {
+    console.log("✅ Message sent:", data);
     store.dispatch(messageSentSuccess(data));
   },
 
   [SocketEvents.MESSAGE_DELIVERED]: (data: { _id: string }) => {
+    console.log("✅ Message delivered:", data);
     store.dispatch(messageDeliveredSuccess(data));
   },
 

@@ -29,8 +29,12 @@ const useGroupMessages = ({ messages }: { messages: IMessage[] }) => {
   );
 
   const groupedMessages = useMemo(() => {
+    console.log("Grouping messages with date separators", messages);
     return messages.map((msg, index, arr) => {
-      const currentDate = format(new Date(msg.createdAt), "dd-MMM-yyyy");
+      const currentDate = msg.createdAt
+        ? format(new Date(msg.createdAt), "dd-MMM-yyyy")
+        : "";
+
       const prevDate =
         index > 0
           ? format(new Date(arr[index - 1].createdAt), "dd-MMM-yyyy")

@@ -55,7 +55,10 @@ async function notifyParticipants(
 }
 
 // Main handler
-async function handleMessageSent(socket: Socket, data: IMessageentBody) {
+async function handleMessageSent(
+  socket: Socket,
+  data: IMessageentBody & { createdAt: Date }
+) {
   if (!validateSocketData(messageSentSchema, data, socket)) return;
 
   // Queue message for processing
@@ -81,9 +84,11 @@ async function handleMessageSent(socket: Socket, data: IMessageentBody) {
 // Socket registration
 const messageSocket = (socket: Socket) => {
   socket.on(SocketEvents.MESSAGE_SENT, (data: IMessageentBody) => {
-    handleMessageSent(socket, data).catch((err) => {
-      emitSocketError(socket, `Unexpected error: ${err.message}`);
-    });
+    handleMessageSent(socket, { ...data, createdAt: new Date() }).catch(
+      (err) => {
+        emitSocketError(socket, `Unexpected error: ${err.message}`);
+      }
+    );
   });
 };
 
