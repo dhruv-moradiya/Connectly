@@ -5,16 +5,19 @@ import { usePointerSwipe } from "@/hooks/use-draggable-bubble";
 import { useChatMessage } from "@/hooks/use-chat-message";
 import { InteractionMode } from "@/types/index.type";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useGroupMessages } from "@/hooks/use-group-messages";
+import { cn } from "@/lib/utils";
 
 export default function ChatMessages() {
-  const bubbleRefs = useRef<HTMLDivElement[]>([]);
-
   const parentRef = useRef<HTMLDivElement>(null);
+  const bubbleRefs = useRef<HTMLDivElement[]>([]);
 
   const user = useAppSelector((state) => state.auth.user);
   const { setInteractionMode, setSelectedMessage } = useChatMessage();
 
   const { messages } = useAppSelector((state) => state.activeChat);
+
+  const { groupedMessages } = useGroupMessages({ messages });
 
   const onReplyTrigger = useCallback(
     (messageId: string) => {
@@ -27,9 +30,22 @@ export default function ChatMessages() {
   );
 
   const virtualizer = useVirtualizer({
-    count: messages.length,
+    count: groupedMessages.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 45,
+    // rangeExtractor: ({ startIndex, endIndex }) => {
+    //   const indices: number[] = [];
+
+    //   for (let i = startIndex; i <= endIndex; i++) {
+    //     indices.push(i);
+    //   }
+
+    //   if (!indices.includes(0)) {
+    //     indices.unshift(0);
+    //   }
+
+    //   return indices;
+    // },
   });
 
   const items = virtualizer.getVirtualItems();
@@ -44,19 +60,12 @@ export default function ChatMessages() {
       className="h-full w-full overflow-y-auto overflow-x-hidden"
     >
       <div
-        style={{
-          height: virtualizer.getTotalSize(),
-          width: "100%",
-          position: "relative",
-        }}
+        className="relative w-full"
+        style={{ height: virtualizer.getTotalSize() }}
       >
         <div
-          className="chat-container"
+          className={cn("chat-container absolute top-0 left-0 w-full")}
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
             transform: `translateY(${items[0]?.start ?? 0}px)`,
           }}
         >
@@ -65,7 +74,22 @@ export default function ChatMessages() {
               key={virtualRow.key}
               data-index={virtualRow.index}
               ref={virtualizer.measureElement}
+              className="relative"
             >
+              {"showDateSeparator" in groupedMessages[virtualRow.index] && (
+                <div className={cn("flex justify-center my-4")}>
+                  <div className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full shadow-sm">
+                    {
+                      (
+                        groupedMessages[virtualRow.index] as {
+                          dateSeparator: string;
+                        }
+                      ).dateSeparator
+                    }
+                  </div>
+                </div>
+              )}
+
               <ChatBubble
                 ref={(el: HTMLDivElement | null) => {
                   if (el) bubbleRefs.current[virtualRow.index] = el;
