@@ -48,10 +48,14 @@ export const socketMiddleware: Middleware =
 
         case ActionType.SEND_MESSAGE: {
           if (socket) {
+            console.log("action.payload :>> ", action.payload);
             emitToServer(socket, SocketEvents.MESSAGE_SENT, {
-              chatId: state.activeChat.chatId,
-              content: action.payload.content,
-              _id: action.payload._id,
+              // chatId: state.activeChat.chatId,
+              // content: action.payload.content,
+              // _id: action.payload._id,
+              // replyTo: action.payload.replyTo,
+              ...state.activeChat,
+              ...action.payload,
             });
           }
           break;

@@ -7,6 +7,31 @@ interface IBaseType {
   statusCode: number;
 }
 
+type TMessageDeliveryStatus = "pending" | "sent" | "delivered" | "seen";
+
+type TMessageType =
+  | "text"
+  | "pinned_info"
+  | "event_schedule"
+  | "call_log"
+  | "reply"
+  | "system";
+
+interface IReplyMessage {
+  _id: string;
+  content: string;
+}
+
+interface IMessage {
+  _id: string;
+  content: string;
+  createdAt: string;
+  deliveryStatus: TMessageDeliveryStatus;
+  type: TMessageType;
+  sender: TMessageSenderDetails;
+  replyTo: IReplyMessage | null;
+}
+
 // User preview short details about user
 interface IUserPreview {
   _id: string;
@@ -14,11 +39,6 @@ interface IUserPreview {
   avatar: string;
   role: string;
   email: string;
-}
-
-// User details including token
-interface IGetCurrentUser extends IBaseType {
-  data: TUserAuth;
 }
 
 // Chat preview
@@ -29,6 +49,16 @@ interface IChatPreview {
   unreadCount: [];
   participants: IUserPreview[];
   lastMessage: IMessage;
+}
+
+type TMessageSenderDetails = {
+  _id: string;
+  username: string;
+  avatar: string;
+};
+
+interface IGetCurrentUser extends IBaseType {
+  data: TUserAuth;
 }
 
 interface IUserChats extends IBaseType {
@@ -45,36 +75,17 @@ interface ICreateNewChat extends IBaseType {
   };
 }
 
-type TMessageDeliveryStatus = "pending" | "sent" | "delivered" | "seen";
-
-type TMessageSenderDetails = {
-  _id: string;
-  username: string;
-  avatar: string;
-};
-
-type TMessageType =
-  | "text"
-  | "pinned_info"
-  | "event_schedule"
-  | "call_log"
-  | "reply"
-  | "system";
-
-interface IMessage {
-  _id: string;
-  content: string;
-  createdAt: string;
-  deliveryStatus: TMessageDeliveryStatus;
-  type: TMessageType;
-  sender: TMessageSenderDetails;
-}
-
 interface IActiveChatMessages extends IBaseType {
   data: {
     messages: IMessage[];
     totalMessages: number;
     totalPages: number;
+  };
+}
+
+interface IConnections extends IBaseType {
+  data: {
+    connections: IUserPreview[];
   };
 }
 
@@ -90,4 +101,6 @@ export {
   type TMessageDeliveryStatus,
   type TMessageSenderDetails,
   type TMessageType,
+  type IConnections,
+  type IReplyMessage,
 };

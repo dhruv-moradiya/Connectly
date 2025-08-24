@@ -19,6 +19,7 @@ import { useMediaQuery } from "react-responsive";
 const SearchUsers = () => {
   const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
 
+  const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<IUserPreview[]>([]);
@@ -63,6 +64,7 @@ const SearchUsers = () => {
           `Chat ID: ${response.data.chatId}`,
           "success"
         );
+        setIsOpen(false);
       } else {
         console.error("Chat creation failed:", response.message);
         showToast("Chat creation failed", response.message, "error");
@@ -79,7 +81,7 @@ const SearchUsers = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" className="size-7">
           <Search size={16} />
@@ -157,7 +159,7 @@ const SearchUsers = () => {
                     ) : (
                       <>
                         <UserPlus size={16} />
-                        Chat with {user.username}
+                        {!isMobileScreen ? `Chat with ${user.username}` : "Add"}
                       </>
                     )}
                   </Button>

@@ -472,7 +472,6 @@ const deleteGroupChat = asyncHandler(
   ) => {}
 );
 
-// Participants / Roles
 const addParticipants = asyncHandler(
   async (
     req: Request<{ chatId: string }, {}, IAddParticipantsBody>,

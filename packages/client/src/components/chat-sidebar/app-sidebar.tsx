@@ -66,11 +66,10 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navigation = useNavigate();
   const dispatch = useAppDispatch();
-  const { setOpen } = useSidebar();
 
   React.useEffect(() => {
     dispatch(getUserChatsThunk());
-  }, [dispatch, setOpen]);
+  }, [dispatch]);
 
   const { chats = [], isLoading } = useAppSelector((state) => state.userChats);
   const { user } = useAppSelector((state) => state.auth);

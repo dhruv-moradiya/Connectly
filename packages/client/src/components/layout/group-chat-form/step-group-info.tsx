@@ -42,6 +42,7 @@ export default function StepGroupInfo({
         <Input
           placeholder="Ex: Weekend Plans"
           className="mt-1"
+          value={formData.groupName}
           onChange={(e) =>
             setFormData({ ...formData, groupName: e.target.value })
           }

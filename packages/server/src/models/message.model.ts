@@ -90,7 +90,7 @@ const MessageSchema = new Schema<IMessagechemaDocument>(
       },
     ],
 
-    replyTo: { type: Schema.Types.ObjectId, ref: "Message", default: null },
+    replyTo: { type: String, ref: "Message", default: null },
 
     favoriteBy: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },

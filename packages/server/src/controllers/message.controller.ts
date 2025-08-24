@@ -91,8 +91,26 @@ const getMessages = asyncHandler(
               },
             },
             {
-              $unwind: "$sender",
+              $lookup: {
+                from: "messages",
+                localField: "replyTo",
+                foreignField: "_id",
+                as: "replyTo",
+                pipeline: [{ $project: { _id: 1, content: 1 } }],
+              },
             },
+            {
+              $addFields: {
+                replyTo: {
+                  $cond: {
+                    if: { $gt: [{ $size: "$replyTo" }, 0] },
+                    then: { $arrayElemAt: ["$replyTo", 0] },
+                    else: null,
+                  },
+                },
+              },
+            },
+            { $unwind: { path: "$sender", preserveNullAndEmptyArrays: true } },
             {
               $project: {
                 _id: 1,
@@ -104,6 +122,8 @@ const getMessages = asyncHandler(
                 deliveryStatus: 1,
                 content: 1,
                 createdAt: 1,
+                replyTo: 1,
+                type: 1,
               },
             },
           ],

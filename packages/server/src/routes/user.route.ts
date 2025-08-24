@@ -3,6 +3,7 @@ import {
   createNewUser,
   getAllUsers,
   getCurrentUser,
+  getDirectConnections,
   getUserByUsernameQuery,
   loginUser,
   refreshAccessToken,
@@ -25,5 +26,7 @@ router.get("/current-user", verifyToken, getCurrentUser);
 router.get("/get-users", verifyToken, getAllUsers);
 
 router.get("/by-username", verifyToken, getUserByUsernameQuery);
+
+router.get("/direct-connections", verifyToken, getDirectConnections);
 
 export default router;

@@ -1,33 +1,40 @@
 import { Check, CheckCheck } from "lucide-react";
 import DraggableBubble from "./draggable-bubble";
-import type { TMessageDeliveryStatus } from "@/types/api-response.type";
+import type {
+  IMessage,
+  TMessageDeliveryStatus,
+} from "@/types/api-response.type";
 import { cn } from "@/lib/utils";
 import { forwardRef } from "react";
+import { useAppSelector } from "@/store/store";
 
 interface ChatBubbleProps {
-  messageId: string;
-  isSender: boolean;
-  content: string;
-  deliveryStatus: TMessageDeliveryStatus;
+  message: IMessage;
 }
 
 const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
-  ({ messageId, isSender, content, deliveryStatus }, ref) => {
+  ({ message }, ref) => {
+    const user = useAppSelector((state) => state.auth.user);
+
+    const isSender = message.sender._id === user?._id;
+
     return (
       <div
         className={cn(
-          "flex items-center gap-10 px-3 rounded-md hover:bg-primary/5 duration-200 my-0.5"
+          "flex items-center px-3 rounded-md hover:bg-primary/5 duration-200 my-0.5"
         )}
       >
         {/* <Checkbox /> */}
-        <DraggableBubble messageId={messageId} isSender={isSender} ref={ref}>
-          <div className="text-sm">{content}</div>
-          <div className="shrink-0 flex gap-0 items-end">
+        <DraggableBubble message={message} isSender={isSender} ref={ref}>
+          <div className="text-sm">{message.content}</div>
+          <div className="shrink-0 flex gap-0 justify-end items-end">
             <span className="text-[10px] text-muted ml-2 self-end justify-end translate-y-1">
               12:34 PM
             </span>
             {isSender && (
-              <ChatBubbleDelevaryStatus deliveryStatus={deliveryStatus} />
+              <ChatBubbleDelevaryStatus
+                deliveryStatus={message.deliveryStatus}
+              />
             )}
           </div>
         </DraggableBubble>

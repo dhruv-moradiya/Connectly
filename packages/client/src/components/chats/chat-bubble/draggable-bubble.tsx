@@ -4,15 +4,16 @@ import { CornerUpRight } from "lucide-react";
 import ChatBubbleMenu from "@/components/chats/chat-bubble/chat-bubble-menu";
 
 import { cn } from "@/lib/utils";
+import type { IMessage } from "@/types/api-response.type";
 
 interface DraggableBubbleProps {
-  messageId: string;
   isSender: boolean;
+  message: IMessage;
   children: React.ReactNode;
 }
 
 const DraggableBubble = forwardRef<HTMLDivElement, DraggableBubbleProps>(
-  ({ messageId, isSender, children }, ref) => {
+  ({ message, isSender, children }, ref) => {
     const arrowRef = useRef<HTMLDivElement>(null);
     const chatBubbleMenuRef = useRef<HTMLDivElement>(null);
 
@@ -36,11 +37,11 @@ const DraggableBubble = forwardRef<HTMLDivElement, DraggableBubbleProps>(
     return (
       <div
         ref={ref}
-        id={messageId}
+        id={message._id}
         className={cn(
-          "chat-bubble relative group text-sm p-2 rounded-lg select-none mb-0 flex gap-1 z-10",
+          "chat-bubble relative group text-sm p-2 rounded-lg select-none mb-0 z-10",
           "w-fit max-w-[80%] sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl",
-          "flex items-center relative",
+          "flex flex-col relative",
           isSender
             ? "ml-auto bg-primary text-white"
             : "mr-auto bg-secondary-foreground/90 text-white"
@@ -77,6 +78,23 @@ const DraggableBubble = forwardRef<HTMLDivElement, DraggableBubbleProps>(
             </Button>
           </div>
         </div> */}
+
+        {message.replyTo && (
+          <div
+            className={cn(
+              "rounded-md px-2 py-1 cursor-pointer",
+              isSender
+                ? "bg-orange-900/20 text-white border-l-4 border-orange-700 pl-2"
+                : "mr-auto bg-secondary-foreground/90 text-white border-l-4 border-secondary/50 pl-2"
+            )}
+            onClick={() => {
+              console.log("Reply clicked");
+            }}
+          >
+            Lorem, ipsum dolor.
+          </div>
+        )}
+
         <div
           ref={arrowRef}
           className="chat-bubble-arrow absolute -left-6 top-1/2 -translate-y-1/2 opacity-0 scale-0"
@@ -94,7 +112,7 @@ const DraggableBubble = forwardRef<HTMLDivElement, DraggableBubbleProps>(
         <div className="absolute top-1.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <ChatBubbleMenu
             chatBubbleMenuRef={chatBubbleMenuRef}
-            messageId={messageId}
+            messageId={message._id}
             setShowPopover={setShowPopover}
           />
         </div>

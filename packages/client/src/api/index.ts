@@ -1,6 +1,7 @@
 import type { TLoginSchemaType, TSignupSchemaType } from "@/lib/schema";
 import type {
   IActiveChatMessages,
+  IConnections,
   ICreateNewChat,
   IGetCurrentUser,
   IGetUsersByUsernameQuery,
@@ -155,6 +156,17 @@ const getActiveChatMessages = async ({
   }
 };
 
+const getConnections = async () => {
+  try {
+    const response: AxiosResponse<IConnections> = await apiClient.get(
+      "/user/direct-connections"
+    );
+    return response.data;
+  } catch (error) {
+    throw errorHandler(error);
+  }
+};
+
 export {
   registerUser,
   verifyOtp,
@@ -164,4 +176,5 @@ export {
   getUserByUsernameQuery,
   createNewChat,
   getActiveChatMessages,
+  getConnections,
 };

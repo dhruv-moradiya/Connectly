@@ -11,12 +11,14 @@ import userChatsReducer from "./chats/user-chats-slice";
 import { socketReducer } from "./socket/socket.slice";
 import { socketMiddleware } from "./socket/socket.middleware";
 import { activeChatReducer } from "./active-chat/active-chat-slice";
+import { connectionsReducer } from "./connections/connections-slice";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     userChats: userChatsReducer,
     activeChat: activeChatReducer,
+    connections: connectionsReducer,
     socket: socketReducer,
   },
   middleware: (getDefaultMiddleware) =>

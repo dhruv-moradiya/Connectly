@@ -29,6 +29,7 @@ type TClientToServerEvents = {
     chatId: string;
     content: string;
     _id: string;
+    replyTo?: string;
   }) => void;
   [SocketEvents.JOIN_ROOM]: (data: { chatId: string }) => void;
   [SocketEvents.LEAVE_ROOM]: (data: { chatId: string }) => void;

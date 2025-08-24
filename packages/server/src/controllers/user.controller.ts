@@ -489,6 +489,60 @@ const getUserByUsernameQuery = asyncHandler(
   }
 );
 
+const getDirectConnections = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.user._id;
+
+    const chatRooms = await ChatRoom.aggregate([
+      {
+        $match: {
+          "participants.user": new mongoose.Types.ObjectId(userId),
+          isGroup: false,
+        },
+      },
+      {
+        $unwind: "$participants",
+      },
+      {
+        $match: {
+          "participants.user": {
+            $ne: new mongoose.Types.ObjectId(userId),
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "participants.user",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $project: {
+          _id: "$user._id",
+          username: "$user.username",
+          email: "$user.email",
+          avatar: "$user.avatar",
+        },
+      },
+    ]);
+
+    res.status(HttpStatus.OK).json(
+      new ApiResponse(
+        HttpStatus.OK,
+        "Direct connections fetched successfully",
+        {
+          connections: chatRooms,
+        }
+      )
+    );
+  }
+);
+
 const getAllUserData = async (): Promise<IUserPreiveForCache[]> => {
   try {
     const users = await User.find()
@@ -510,4 +564,5 @@ export {
   getCurrentUser,
   getUserByUsernameQuery,
   getAllUserData,
+  getDirectConnections,
 };

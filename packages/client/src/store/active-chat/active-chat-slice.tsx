@@ -36,9 +36,6 @@ function updateMessageStatus(
   );
 }
 
-/**
- * Thunk to fetch messages for active chat
- */
 export const getActiveChatMessagesThunk = createAsyncThunk<
   { messages: IMessage[]; totalPages: number; currentPage: number },
   { chatId: string; page: number; limit: number },

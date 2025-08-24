@@ -18,6 +18,7 @@ import {
   disconnectConnection,
 } from "./store/socket/socket.slice";
 import AppIcon from "./components/common/app-icon";
+import { getConnectionThunk } from "./store/connections/connections-slice";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
@@ -54,6 +55,7 @@ function App() {
     if (!isLoading && isAuthenticated) {
       console.log("User is authenticated, creating socket connection...");
       dispatch(createConnection());
+      dispatch(getConnectionThunk());
     }
 
     return () => {

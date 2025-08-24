@@ -78,7 +78,7 @@ export default function ChatMessages() {
             >
               {"showDateSeparator" in groupedMessages[virtualRow.index] && (
                 <div className={cn("flex justify-center my-4")}>
-                  <div className="bg-primary/10 text-primary text-xs px-2 py-1 rounded-full shadow-sm">
+                  <div className="bg-primary/5 text-xs px-1 py-0.5 rounded-md border select-none">
                     {
                       (
                         groupedMessages[virtualRow.index] as {
@@ -94,10 +94,7 @@ export default function ChatMessages() {
                 ref={(el: HTMLDivElement | null) => {
                   if (el) bubbleRefs.current[virtualRow.index] = el;
                 }}
-                messageId={messages[virtualRow.index]._id}
-                isSender={messages[virtualRow.index].sender._id === user._id}
-                content={messages[virtualRow.index].content}
-                deliveryStatus={messages[virtualRow.index].deliveryStatus}
+                message={groupedMessages[virtualRow.index]}
               />
             </div>
           ))}

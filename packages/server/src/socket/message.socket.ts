@@ -55,10 +55,7 @@ async function notifyParticipants(
 }
 
 // Main handler
-async function handleMessageSent(
-  socket: Socket,
-  data: IMessageentBody & { createdAt: Date }
-) {
+async function handleMessageSent(socket: Socket, data: IMessageentBody) {
   if (!validateSocketData(messageSentSchema, data, socket)) return;
 
   // Queue message for processing

@@ -12,6 +12,7 @@ import { memo, useEffect, useState } from "react";
 import StepSelectMembers from "./step-select-members";
 import StepGroupInfo from "./step-group-info";
 import StepGroupSettings from "./step-group-settings";
+import { useAppSelector } from "@/store/store";
 
 export type TFormData = {
   groupName: string;
@@ -31,7 +32,6 @@ export type TFormUser = {
   avatar: string;
 };
 
-// Mock user data
 const users = [
   {
     id: "1",
@@ -57,14 +57,15 @@ const users = [
 ];
 
 function GroupChatForm() {
+  const [open, setOpen] = useState(false);
   const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState<TFormData>({
-    allowMessagePinning: true,
+    allowMessagePinning: false,
     allowReactions: true,
-    editGroupInfo: true,
+    editGroupInfo: false,
     groupName: "",
     image: null,
-    invitePermissions: "everyone",
+    invitePermissions: "admin",
     sendNewMessages: true,
     selectedUsers: [],
   });
@@ -75,10 +76,20 @@ function GroupChatForm() {
 
   useEffect(() => {
     setStep(1);
-  }, []);
+    setFormData({
+      allowMessagePinning: false,
+      allowReactions: true,
+      editGroupInfo: false,
+      groupName: "",
+      image: null,
+      invitePermissions: "everyone",
+      sendNewMessages: true,
+      selectedUsers: [],
+    });
+  }, [open]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" className="size-7">
           <UsersRound size={16} />
@@ -105,7 +116,6 @@ function GroupChatForm() {
 
         {step === 1 && (
           <StepSelectMembers
-            users={users}
             selectedUserIds={formData.selectedUsers}
             onChange={(users) =>
               setFormData({ ...formData, selectedUsers: users })
