@@ -12,7 +12,6 @@ import { memo, useEffect, useState } from "react";
 import StepSelectMembers from "./step-select-members";
 import StepGroupInfo from "./step-group-info";
 import StepGroupSettings from "./step-group-settings";
-import { useAppSelector } from "@/store/store";
 
 export type TFormData = {
   groupName: string;
