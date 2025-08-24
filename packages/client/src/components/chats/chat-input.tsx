@@ -37,13 +37,14 @@ const ChatInput = memo(function ChatInput() {
         username: user.username,
         avatar: user.avatar,
       },
-      ...(interactionMode === InteractionMode.REPLY &&
-        selectedMessage.length > 0 && {
-          replyTo: selectedMessage[0]._id,
-        }),
+      replyTo:
+        interactionMode === InteractionMode.REPLY && selectedMessage.length > 0
+          ? {
+              _id: selectedMessage[0]._id,
+              content: selectedMessage[0].content,
+            }
+          : null,
     };
-
-    console.log("New Message:", newMessage);
 
     dispatch(sendMessage(newMessage));
     setMessageText("");

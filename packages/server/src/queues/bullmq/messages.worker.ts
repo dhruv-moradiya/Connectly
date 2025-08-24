@@ -13,7 +13,7 @@ interface IMessagesaveInDBJobType {
   content: string;
   sender: string;
   deliveryStatus: TMessageDeliveryStatus;
-  replyTo?: string;
+  replyTo: { _id: string; content: string } | null;
 }
 
 const messagesWorker = new Worker(
@@ -35,7 +35,7 @@ const messagesWorker = new Worker(
           sender,
           chat: chatId,
           content,
-          ...(replyTo && { replyTo }),
+          ...(replyTo && { replyTo: replyTo._id }),
         });
         await saveMessageAsLastMessage(chatId, _id);
 

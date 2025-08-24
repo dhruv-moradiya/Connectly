@@ -48,6 +48,23 @@ export default function ChatMessages() {
     // },
   });
 
+  const scrollToMessage = useCallback(
+    (messageId: string) => {
+      const index = messages.findIndex((m) => m._id === messageId);
+      if (index !== -1) {
+        virtualizer.scrollToIndex(index, { align: "center" });
+        const bubble = bubbleRefs.current[index];
+        if (bubble) {
+          bubble.classList.add("bubble-highlight");
+          setTimeout(() => {
+            bubble.classList.remove("bubble-highlight");
+          }, 2000);
+        }
+      }
+    },
+    [messages, virtualizer]
+  );
+
   const items = virtualizer.getVirtualItems();
 
   usePointerSwipe(onReplyTrigger);
@@ -95,6 +112,7 @@ export default function ChatMessages() {
                   if (el) bubbleRefs.current[virtualRow.index] = el;
                 }}
                 message={groupedMessages[virtualRow.index]}
+                scrollToMessage={scrollToMessage}
               />
             </div>
           ))}

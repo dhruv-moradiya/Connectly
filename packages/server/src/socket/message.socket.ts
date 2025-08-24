@@ -1,16 +1,14 @@
 import { Socket } from "socket.io";
 import { SocketEvents } from "../constants";
 import { messagesQueue } from "../queues/bullmq/messages.queue";
-import {
-  messageSentSchema,
-  type IMessageentBody,
-} from "../schemas/socket.schema";
+import { messageSentSchema } from "../schemas/socket.schema";
 import { validateSocketData } from "../utils/validateRequest";
 import {
   handleGroupChat,
   handlePrivateChat,
   isGroupChat,
 } from "../utils/helperFunctions";
+import { IMessageSentBody } from "@/types/type";
 
 // Utility: Execute async function safely with error handling
 async function safeExec<T>(
@@ -35,7 +33,7 @@ function emitSocketError(socket: Socket, message: string) {
 // Notify all participants in the chat room
 async function notifyParticipants(
   chatId: string,
-  message: IMessageentBody,
+  message: IMessageSentBody,
   socket: Socket
 ) {
   const { _id: senderId, username, avatar } = socket.user;
@@ -55,8 +53,11 @@ async function notifyParticipants(
 }
 
 // Main handler
-async function handleMessageSent(socket: Socket, data: IMessageentBody) {
-  if (!validateSocketData(messageSentSchema, data, socket)) return;
+async function handleMessageSent(socket: Socket, data: IMessageSentBody) {
+  if (!validateSocketData(messageSentSchema, data, socket)) {
+    console.log("Invalid message data:", data);
+    return;
+  }
 
   // Queue message for processing
   await safeExec(
@@ -80,7 +81,7 @@ async function handleMessageSent(socket: Socket, data: IMessageentBody) {
 
 // Socket registration
 const messageSocket = (socket: Socket) => {
-  socket.on(SocketEvents.MESSAGE_SENT, (data: IMessageentBody) => {
+  socket.on(SocketEvents.MESSAGE_SENT, (data: IMessageSentBody) => {
     handleMessageSent(socket, { ...data, createdAt: new Date() }).catch(
       (err) => {
         emitSocketError(socket, `Unexpected error: ${err.message}`);

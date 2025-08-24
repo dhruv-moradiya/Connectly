@@ -1,6 +1,8 @@
 import { type Socket } from "socket.io-client";
 import type {
   IChatPreview,
+  IMessage,
+  IReplyMessage,
   TMessageSenderDetails,
   TMessageType,
 } from "./api-response.type";
@@ -17,7 +19,6 @@ type TServerToClientEvents = {
   [SocketEvents.JOIN_ROOM_SUCCESS]: (data: IJoinRoomSuccess) => void;
   [SocketEvents.LEAVE_ROOM_ERROR]: (data: string) => void;
   [SocketEvents.LEAVE_ROOM_SUCCESS]: (data: string) => void;
-
   [SocketEvents.RECONNECT_ATTEMPT]: (attemptNumber: number) => void;
   [SocketEvents.RECONNECT]: (attemptNumber: number) => void;
   [SocketEvents.RECONNECT_ERROR]: (err: string) => void;
@@ -26,10 +27,10 @@ type TServerToClientEvents = {
 
 type TClientToServerEvents = {
   [SocketEvents.MESSAGE_SENT]: (data: {
+    _id: string;
     chatId: string;
     content: string;
-    _id: string;
-    replyTo?: string;
+    replyTo: IReplyMessage | null;
   }) => void;
   [SocketEvents.JOIN_ROOM]: (data: { chatId: string }) => void;
   [SocketEvents.LEAVE_ROOM]: (data: { chatId: string }) => void;
@@ -78,8 +79,9 @@ type TLastMessage = {
 
 export interface ActionPayloadMap {
   [ActionType.SEND_MESSAGE]: {
-    content: string;
     _id: string;
+    content: string;
+    replyTo: IReplyMessage | null;
   };
   [ActionType.SET_ACTIVE_CHAT]: string;
   [ActionType.CLEAR_ACTIVE_CHAT]: string;

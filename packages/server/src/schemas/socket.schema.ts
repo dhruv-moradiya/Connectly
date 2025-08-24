@@ -13,7 +13,12 @@ const messageSentSchema = z.object({
     required_error: "Message Content is required",
     invalid_type_error: "Message Content must be a string",
   }),
-  replyTo: z.string().optional(),
+  replyTo: z
+    .object({
+      _id: z.string(),
+      content: z.string(),
+    })
+    .nullable(),
   attachments: z
     .array(
       z.object({
@@ -26,7 +31,3 @@ const messageSentSchema = z.object({
 });
 
 export { messageSentSchema };
-
-export type IMessageentBody = z.infer<typeof messageSentSchema> & {
-  createdAt: Date;
-};

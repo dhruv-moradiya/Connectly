@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
-// import { IOtpSchema } from "../types/type";
 
 import { type IOtpSchema } from "@monorepo/shared/src/types/otp.types";
 

@@ -1,4 +1,3 @@
-import type { IMessageentBody } from "../schemas/socket.schema";
 import { generateRedisKeys } from ".";
 import { redisConnection } from "../db/redis";
 import type { Socket } from "socket.io";
@@ -7,6 +6,7 @@ import MessageModel from "../models/message.model";
 import { messagesQueue } from "../queues/bullmq/messages.queue";
 import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
 import ChatRoom from "../models/chat.model";
+import { IMessageSentBody } from "@/types/type";
 
 interface IMessagesaveInDBJobType {
   _id: string;
@@ -40,13 +40,10 @@ async function enqueueMessageStatusUpdate(data: IMessagesaveInDBJobType) {
 
 async function saveMessageAsLastMessage(chatId: string, messageId: string) {
   try {
-    console.log("chatId :>> ", chatId);
-    console.log("messageId :>> ", messageId);
     await ChatRoom.updateOne(
       { _id: chatId },
       { $set: { lastMessage: messageId } }
     );
-    console.log("Last message saved successfully");
   } catch (error) {
     console.error("Error saving message as last message: ", error);
     throw new Error("Failed to update last message"); // rethrow with cleaner msg
@@ -55,19 +52,17 @@ async function saveMessageAsLastMessage(chatId: string, messageId: string) {
 
 async function handlePrivateChat(
   chatId: string,
-  message: IMessageentBody,
+  message: IMessageSentBody,
   socket: Socket
 ) {
   const senderId = socket.user._id;
 
   const receiverId = await getPrivateReceiverId(chatId, senderId);
-  console.log("receiverId :>> ", receiverId);
   if (!receiverId) return;
 
   const isOnline = await redisConnection.get(
     generateRedisKeys.onlineStatus(receiverId)
   );
-  console.log("isOnline :>> ", isOnline);
 
   if (isOnline !== "true") {
     console.log("Private: Receiver offline");

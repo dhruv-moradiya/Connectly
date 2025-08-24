@@ -14,8 +14,21 @@
   width: 100% !important;
 }
 
+.bubble-highlight {
+  animation: highlightAnim 2s ease-in-out;
+}
+
 .slide-in-right {
   animation: slideInRight 0.2s ease-out forwards;
+}
+
+@keyframes highlightAnim {
+  0% {
+    background-color: oklch(61.713% 0.13752 39.023 / 0.104);
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 @keyframes slideInRight {

@@ -10,22 +10,24 @@ import { useAppSelector } from "@/store/store";
 
 interface ChatBubbleProps {
   message: IMessage;
+  scrollToMessage: (messageId: string) => void;
 }
 
 const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
-  ({ message }, ref) => {
+  ({ message, scrollToMessage }, ref) => {
     const user = useAppSelector((state) => state.auth.user);
 
     const isSender = message.sender._id === user?._id;
 
     return (
-      <div
-        className={cn(
-          "flex items-center px-3 rounded-md hover:bg-primary/5 duration-200 my-0.5"
-        )}
-      >
+      <div className={cn("flex items-center px-3 rounded-md my-0.5")}>
         {/* <Checkbox /> */}
-        <DraggableBubble message={message} isSender={isSender} ref={ref}>
+        <DraggableBubble
+          message={message}
+          isSender={isSender}
+          scrollToMessage={scrollToMessage}
+          ref={ref}
+        >
           <div className="text-sm">{message.content}</div>
           <div className="shrink-0 flex gap-0 justify-end items-end">
             <span className="text-[10px] text-muted ml-2 self-end justify-end translate-y-1">
