@@ -152,7 +152,8 @@ export const useDraggableBubble = (
 };
 
 export function usePointerSwipe(
-  onReplyTrigger?: ReplyCb,
+  scrollToMessage: (messageId: string) => void,
+  onReplyTrigger: ReplyCb,
   containerSelector = ".chat-container"
 ) {
   const draggablesRef = useRef<Map<HTMLElement, Draggable>>(new Map());
@@ -167,10 +168,10 @@ export function usePointerSwipe(
       ) as HTMLElement;
       if (!bubble) return;
 
-      // Already has a draggable? skip
+      let moved: boolean;
+
       if (draggablesRef.current.has(bubble)) return;
 
-      // ✅ Create draggable immediately
       const [draggable] = Draggable.create(bubble, {
         type: "x",
         bounds: { minX: 0, maxX: 100 },
@@ -191,6 +192,7 @@ export function usePointerSwipe(
         },
 
         onDragStart() {
+          moved = true;
           gsap.to(bubble, { scale: 0.95, duration: 0.2, ease: "power1.inOut" });
           bubble.style.userSelect = "none";
         },
@@ -210,9 +212,15 @@ export function usePointerSwipe(
           const arrow = bubble.querySelector(".chat-bubble-arrow");
           if (arrow) gsap.to(arrow, { opacity: 0, scale: 0, duration: 0.15 });
 
-          if (passed) {
-            console.log("Reply to", bubble.id);
-            onReplyTrigger?.(bubble.id);
+          if (moved) {
+            if (passed) {
+              onReplyTrigger?.(bubble.id);
+            } else {
+              scrollToMessage(
+                bubble.querySelector(".reply-to-message")?.getAttribute("id") ??
+                  ""
+              );
+            }
           }
         },
       });

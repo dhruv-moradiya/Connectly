@@ -18,7 +18,7 @@ const Chat = () => {
   useActiveChatSetUp(chatId as string);
 
   return (
-    <div className="w-full h-[calc(100vh-64px)] p-2 flex flex-col relative overflow-x-hidden">
+    <div className="w-full h-[calc(100vh-44.8px)] flex flex-col relative overflow-x-hidden">
       {isLoading && (
         <div className="w-full h-full flex items-center justify-center">
           <AppIcon />

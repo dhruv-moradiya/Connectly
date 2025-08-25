@@ -32,7 +32,7 @@ const Layout = () => {
     >
       <AppSidebar />
       <SidebarInset>
-        <header className="bg-background sticky top-0 flex shrink-0 items-center justify-between gap-2 border-b p-4">
+        <header className="bg-background sticky top-0 flex shrink-0 items-center justify-between gap-2 border-b p-2">
           <div className="flex items-center">
             <SidebarTrigger className="-ml-1" />
             <Separator

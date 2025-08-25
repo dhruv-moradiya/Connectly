@@ -114,7 +114,9 @@ const DraggableBubble = forwardRef<HTMLDivElement, DraggableBubbleProps>(
 
         {message.replyTo && (
           <div
+            id={message.replyTo._id}
             className={cn(
+              "reply-to-message",
               "w-full rounded-md px-2 py-1 cursor-pointer",
               isSender
                 ? "bg-orange-900/20 text-white border-l-4 border-orange-700 pl-2"

@@ -15,7 +15,7 @@
 }
 
 .bubble-highlight {
-  animation: highlightAnim 2s ease-in-out;
+  animation: highlightAnim 4s ease-in-out;
 }
 
 .slide-in-right {

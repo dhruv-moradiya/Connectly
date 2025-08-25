@@ -1,7 +1,6 @@
 import { type Socket } from "socket.io-client";
 import type {
   IChatPreview,
-  IMessage,
   IReplyMessage,
   TMessageSenderDetails,
   TMessageType,

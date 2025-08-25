@@ -7,6 +7,7 @@ import type {
 import { cn } from "@/lib/utils";
 import { forwardRef } from "react";
 import { useAppSelector } from "@/store/store";
+import { useChatMessage } from "@/hooks/use-chat-message";
 
 interface ChatBubbleProps {
   message: IMessage;
@@ -15,6 +16,7 @@ interface ChatBubbleProps {
 
 const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
   ({ message, scrollToMessage }, ref) => {
+    const { handleQuerySearch } = useChatMessage();
     const user = useAppSelector((state) => state.auth.user);
 
     const isSender = message.sender._id === user?._id;
@@ -28,7 +30,7 @@ const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
           scrollToMessage={scrollToMessage}
           ref={ref}
         >
-          <div className="text-sm">{message.content}</div>
+          <p className="text-sm">{handleQuerySearch(message.content)}</p>
           <div className="shrink-0 flex gap-0 justify-end items-end">
             <span className="text-[10px] text-muted ml-2 self-end justify-end translate-y-1">
               12:34 PM
