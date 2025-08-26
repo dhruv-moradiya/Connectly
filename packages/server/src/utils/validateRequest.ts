@@ -18,9 +18,18 @@ function validateRequest<T>(
     };
   }
 
+  const result = schema.safeParse(data);
+
+  if (!result.success) {
+    return {
+      success: false as const,
+      error: result.error.flatten().fieldErrors,
+    };
+  }
+
   return {
     success: true as const,
-    data: schema.parse(data),
+    data: result.data,
   };
 }
 

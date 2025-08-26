@@ -40,7 +40,10 @@ const ChatRoomSchema = new Schema<IChatRoomDocument>(
   {
     name: { type: String, trim: true },
     description: { type: String, trim: true },
-    groupIcon: { type: String, trim: true },
+    groupIcon: {
+      url: String,
+      publicId: String,
+    },
 
     isGroup: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },

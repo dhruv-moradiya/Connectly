@@ -167,7 +167,21 @@ const getConnections = async () => {
   }
 };
 
+const createGroupChat = async (data: any) => {
+  try {
+    const response = await apiClient.post("/chat/group", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log("response", response);
+  } catch (error) {
+    throw errorHandler(error);
+  }
+};
+
 export {
+  createGroupChat,
   registerUser,
   verifyOtp,
   loginUser,

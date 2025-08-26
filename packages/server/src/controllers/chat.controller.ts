@@ -25,7 +25,8 @@ import ChatRoom from "../models/chat.model";
 import User from "../models/user.model";
 import type { IChatRoomForCache } from "@monorepo/shared/src/types/chat.types";
 import { redisConnection } from "../db/redis";
-import { generateRedisKeys } from "../utils";
+import { generateRedisKeys, getCloudinaryFolder } from "../utils";
+import { uploadFilesToCloudinary } from "../utils/cloudinary";
 
 async function cacheRooms(rooms: IChatRoomForCache[]) {
   for (const room of rooms) {
@@ -199,12 +200,15 @@ const createGroupChat = asyncHandler(
     const validationResult = validateRequest(createGroupChatSchema, req.body);
 
     if (!validationResult.success) {
-      return next(
-        new ApiError(
-          "Invalid group chat data. Please review the fields and try again.",
-          HttpStatus.BAD_REQUEST
-        )
-      );
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(
+          new ApiResponse(
+            HttpStatus.BAD_REQUEST,
+            "Some of the details you entered are not valid. Please check the group name, description, and participants, then try again.",
+            validationResult.error
+          )
+        );
     }
 
     const { userIds, name, description } = req.body;
@@ -217,33 +221,39 @@ const createGroupChat = asyncHandler(
     );
 
     if (!areAllIdsValid) {
-      return next(
-        new ApiError(
-          "One or more provided user IDs are invalid.",
-          HttpStatus.BAD_REQUEST
-        )
-      );
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(
+          new ApiResponse(
+            HttpStatus.BAD_REQUEST,
+            "One or more participant IDs are invalid. Please make sure you’re inviting valid users."
+          )
+        );
     }
 
     // Ensure user count constraints
     if (userIds.length < 2 || userIds.length > 10) {
-      return next(
-        new ApiError(
-          "A group chat must include between 2 and 10 participants (excluding you).",
-          HttpStatus.BAD_REQUEST
-        )
-      );
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(
+          new ApiResponse(
+            HttpStatus.BAD_REQUEST,
+            "A group chat must include at least 2 and no more than 10 participants (not counting you)."
+          )
+        );
     }
 
     // Check for duplicates
     const hasDuplicates = new Set(allUserIds).size !== allUserIds.length;
     if (hasDuplicates) {
-      return next(
-        new ApiError(
-          "Duplicate user IDs detected. Please ensure all participant IDs are unique.",
-          HttpStatus.BAD_REQUEST
-        )
-      );
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(
+          new ApiResponse(
+            HttpStatus.BAD_REQUEST,
+            "Some participants are listed more than once. Please remove duplicates and try again."
+          )
+        );
     }
 
     // Check if chat with same participants already exists
@@ -270,13 +280,17 @@ const createGroupChat = asyncHandler(
     console.log("existingChat :>> ", existingChat);
 
     if (existingChat.length > 0) {
-      return next(
-        new ApiError(
-          "A group chat with these participants already exists.",
-          HttpStatus.BAD_REQUEST
-        )
-      );
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(
+          new ApiResponse(
+            HttpStatus.BAD_REQUEST,
+            "A group chat with the same participants already exists. You can continue your conversation there."
+          )
+        );
     }
+
+    const file = req.files as Express.Multer.File[];
 
     // Generate participant entries
     const generateParticipantEntries = (): {
@@ -310,12 +324,53 @@ const createGroupChat = asyncHandler(
     });
 
     if (!newGroupChat) {
-      return next(
-        new ApiError(
-          "Unable to create group chat at the moment. Please try again later.",
-          HttpStatus.INTERNAL_SERVER_ERROR
-        )
-      );
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json(
+          new ApiResponse(
+            HttpStatus.BAD_REQUEST,
+            "We couldn’t create your group chat right now. Please try again in a moment."
+          )
+        );
+    }
+
+    if (file.length) {
+      try {
+        const data = await uploadFilesToCloudinary({
+          files: file,
+          folderNames: [
+            getCloudinaryFolder("groupChat", String(newGroupChat._id)),
+          ],
+        });
+
+        if (data && data.length > 0) {
+          newGroupChat.groupIcon = {
+            url: data[0].original,
+            publicId: data[0].metaData.publicId,
+          };
+
+          await newGroupChat.save();
+        }
+      } catch (error) {
+        console.error("File upload failed:", error);
+
+        return res.status(HttpStatus.CREATED).json(
+          new ApiResponse(
+            HttpStatus.CREATED,
+            "Group chat created successfully, but the group icon could not be uploaded. You can try updating it later.",
+            {
+              chatId: newGroupChat._id,
+            }
+          )
+        );
+      }
+    } else {
+      newGroupChat.groupIcon = {
+        url: "",
+        publicId: "",
+      };
+
+      await newGroupChat.save();
     }
 
     res.status(HttpStatus.CREATED).json(

@@ -7,15 +7,16 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { UsersRound } from "lucide-react";
+import { Loader, UsersRound } from "lucide-react";
 import { memo, useEffect, useState } from "react";
 import StepSelectMembers from "./step-select-members";
 import StepGroupInfo from "./step-group-info";
 import StepGroupSettings from "./step-group-settings";
+import { createGroupChat } from "../../../api";
 
 export type TFormData = {
   groupName: string;
-  image: FileList | null;
+  image: File | null;
   selectedUsers: string[];
   allowReactions: boolean;
   allowMessagePinning: boolean;
@@ -58,6 +59,7 @@ const users = [
 function GroupChatForm() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<number>(1);
+  const [isSubmiting, setIsSubmiting] = useState(false);
   const [formData, setFormData] = useState<TFormData>({
     allowMessagePinning: false,
     allowReactions: true,
@@ -69,8 +71,35 @@ function GroupChatForm() {
     selectedUsers: [],
   });
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     console.log(formData);
+
+    try {
+      setIsSubmiting(true);
+      const data = new FormData();
+      data.append("name", formData.groupName);
+      data.append("description", "");
+      data.append("invitePermission", formData.invitePermissions);
+      data.append("allowReactions", String(formData.allowReactions));
+      data.append("allowMessagePinning", String(formData.allowMessagePinning));
+      data.append("editGroupInfo", String(formData.editGroupInfo));
+      data.append("sendNewMessages", String(formData.sendNewMessages));
+
+      // append array properly
+      formData.selectedUsers.forEach((id: string) => {
+        data.append("userIds[]", id);
+      });
+
+      data.append("groupImage", formData.image as File);
+
+      const response = await createGroupChat(data);
+
+      console.log("response", response);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setIsSubmiting(false);
+    }
   };
 
   useEffect(() => {
@@ -162,8 +191,13 @@ function GroupChatForm() {
               type="button"
               className="transition-all duration-200 hover:scale-105"
               onClick={onSubmit}
+              disabled={isSubmiting}
             >
-              Create
+              {isSubmiting ? (
+                <Loader size={18} className="animation-spin" />
+              ) : (
+                "Create"
+              )}
             </Button>
           )}
         </div>

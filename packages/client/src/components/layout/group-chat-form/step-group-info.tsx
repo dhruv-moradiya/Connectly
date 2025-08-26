@@ -60,14 +60,19 @@ export default function StepGroupInfo({
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) =>
-                setFormData({ ...formData, image: e.target.files })
-              }
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    image: e.target.files![0],
+                  }));
+                }
+              }}
             />
           </label>
-          {formData.image && formData.image.length > 0 && (
+          {formData.image && (
             <span className="text-xs text-muted-foreground">
-              {formData.image[0]?.name}
+              Image uploaded.
             </span>
           )}
         </div>

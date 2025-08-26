@@ -13,6 +13,7 @@ import {
   updateParticipantRole,
 } from "../controllers/chat.controller";
 import verifyToken from "../middlewares/auth.middleware";
+import { upload } from "../middlewares/multer.middleware";
 
 const router = express.Router();
 
@@ -22,7 +23,12 @@ router.post("/", verifyToken, createNewChatBetweenTwoUsers);
 
 router.get("/", verifyToken, getCurrentUserChats);
 
-router.post("/group", verifyToken, createGroupChat);
+router.post(
+  "/group",
+  verifyToken,
+  upload.array("groupImage", 1),
+  createGroupChat
+);
 
 router.patch("/:chatId/name", verifyToken, renameGroupChat);
 

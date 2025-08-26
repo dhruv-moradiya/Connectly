@@ -70,6 +70,18 @@ const createGroupChatSchema = z.object({
     invalid_type_error: "Group name must be a string",
   }),
   description: z.string().optional(),
+  // groupImage: fileSchema({
+  //   maxSizeMB: 5,
+  //   allowedMimeTypes: ["image/png", "image/jpeg", "image/webp"],
+  // }),
+  invitePermission: z.enum(["admin", "everyone"], {
+    required_error: "Invite permission is required.",
+    invalid_type_error: "Provide either 'admin' or 'everyone'.",
+  }),
+  allowReactions: z.enum(["true", "false"]),
+  allowMessagePinning: z.enum(["true", "false"]),
+  editGroupInfo: z.enum(["true", "false"]),
+  sendNewMessages: z.enum(["true", "false"]),
 });
 
 const renameGroupChatSchema = z.object({

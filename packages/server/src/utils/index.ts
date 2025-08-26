@@ -1,4 +1,5 @@
 import { type Response } from "express";
+import { IssueData, z } from "zod";
 
 interface SetAuthCookiesOptions {
   res: Response;
@@ -47,3 +48,50 @@ export const generateRedisKeys = {
   roomParticipants: (roomId: string) => `room:${roomId}:participants`,
   roomDetails: (roomId: string) => `room:${roomId}:details`,
 };
+
+export function getCloudinaryFolder(
+  type: "user" | "groupChat" | "message",
+  id: string
+) {
+  switch (type) {
+    case "user":
+      return `connectly/users/${id}/profile`;
+    case "groupChat":
+      return `connectly/groupChats/${id}`;
+    case "message":
+      return `connectly/messages/${id}/attachments`;
+    default:
+      return "misc";
+  }
+}
+
+type FileOptions = {
+  maxSizeMB?: number; // e.g. 10
+  allowedMimeTypes?: string[]; // e.g. ["image/png","image/jpeg","application/pdf"]
+};
+
+export const fileSchema = ({
+  maxSizeMB = 10,
+  allowedMimeTypes = [],
+}: FileOptions = {}) =>
+  z
+    .instanceof(File, { message: "Please select a file." })
+    .superRefine((file, ctx) => {
+      if (file.size === 0) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Empty file." });
+      }
+      const maxBytes = maxSizeMB * 1024 * 1024;
+      if (file.size > maxBytes) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_big,
+          type: "array",
+          message: `File must be ≤ ${maxSizeMB} MB.`,
+        } as IssueData);
+      }
+      if (allowedMimeTypes.length && !allowedMimeTypes.includes(file.type)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `Unsupported type: ${file.type || "unknown"}.`,
+        });
+      }
+    });

@@ -59,7 +59,10 @@ interface ISettings {
 interface IChatRoomSchema {
   name: string;
   description: string;
-  groupIcon: string;
+  groupIcon: {
+    url: string;
+    publicId: string;
+  };
   createdBy: Types.ObjectId;
   isGroup: boolean;
 
