@@ -18,10 +18,14 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Bell } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { toggleTheme } from "@/store/theme/theme-slice";
+import { Bell, Moon, Sun } from "lucide-react";
 import { Outlet } from "react-router-dom";
 
 const Layout = () => {
+  const dispatch = useAppDispatch();
+  const { theme } = useAppSelector((state) => state.theme);
   return (
     <SidebarProvider
       style={
@@ -59,6 +63,17 @@ const Layout = () => {
 
             <Button variant={"ghost"} size={"icon"} className="size-7">
               <Bell size={16} />
+            </Button>
+
+            <Button
+              variant={"ghost"}
+              size={"icon"}
+              className="size-7"
+              onClick={() => {
+                dispatch(toggleTheme());
+              }}
+            >
+              {theme === "light" ? <Sun /> : <Moon />}
             </Button>
 
             <SocketConnection />

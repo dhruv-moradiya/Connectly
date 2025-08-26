@@ -709,6 +709,7 @@ const getCurrentUserChats = asyncHandler(
         $project: {
           _id: 1,
           isGroup: 1,
+          groupIcon: 1,
           name: 1,
           unreadCount: 1,
           participants: 1,
@@ -741,6 +742,7 @@ const getCurrentUserChats = asyncHandler(
         $project: {
           _id: 1,
           isGroup: 1,
+          groupIcon: 1,
           name: 1,
           unreadCount: 1,
           lastMessage: 1,
@@ -757,6 +759,7 @@ const getCurrentUserChats = asyncHandler(
         $group: {
           _id: "$_id",
           isGroup: { $first: "$isGroup" },
+          groupIcon: { $first: "$groupIcon" },
           name: { $first: "$name" },
           unreadCount: { $first: "$unreadCount" },
           participants: { $push: "$participant" },
@@ -781,6 +784,7 @@ const getCurrentUserChats = asyncHandler(
         $project: {
           _id: 1,
           isGroup: 1,
+          groupIcon: 1,
           name: 1,
           unreadCount: 1,
           participants: 1,

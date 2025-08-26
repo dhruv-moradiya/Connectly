@@ -19,6 +19,7 @@ import {
 } from "./store/socket/socket.slice";
 import AppIcon from "./components/common/app-icon";
 import { getConnectionThunk } from "./store/connections/connections-slice";
+import { useTheme } from "./hooks/use-theme";
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
@@ -35,6 +36,8 @@ function App() {
   const location = useLocation();
   const dispatch = useAppDispatch();
 
+  useTheme();
+
   const { isLoading, isAuthenticated } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
@@ -49,6 +52,7 @@ function App() {
     if (!isPublic) {
       dispatch(getCurrentUserThunk());
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

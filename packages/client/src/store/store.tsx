@@ -12,9 +12,11 @@ import { socketReducer } from "./socket/socket.slice";
 import { socketMiddleware } from "./socket/socket.middleware";
 import { activeChatReducer } from "./active-chat/active-chat-slice";
 import { connectionsReducer } from "./connections/connections-slice";
+import { themeReducer } from "./theme/theme-slice";
 
 const store = configureStore({
   reducer: {
+    theme: themeReducer,
     auth: authReducer,
     userChats: userChatsReducer,
     activeChat: activeChatReducer,

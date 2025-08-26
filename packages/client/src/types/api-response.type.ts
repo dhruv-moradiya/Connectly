@@ -46,10 +46,10 @@ interface IChatPreview {
   _id: string;
   name: string;
   isGroup: boolean;
-  groupImage: {
+  groupIcon: {
     publicId: string;
     url: string;
-  };
+  } | null;
   unreadCount: [];
   participants: IUserPreview[];
   lastMessage: IMessage;

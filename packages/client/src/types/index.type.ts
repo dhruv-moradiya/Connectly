@@ -1,3 +1,5 @@
+type TTheme = "dark" | "light" | "system";
+
 enum InteractionMode {
   NONE = "none",
   DELETE = "delete",
@@ -7,4 +9,5 @@ enum InteractionMode {
   drag = "drag",
 }
 
+export { type TTheme };
 export { InteractionMode };

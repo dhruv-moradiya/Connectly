@@ -3,12 +3,13 @@ import { memo, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 import { sendMessage } from "@/store/active-chat/active-chat-slice";
 import { cn, getSenderName, isCurrentUser } from "@/lib/utils";
-import { Plus, Send, Smile, X } from "lucide-react";
+import { Mic, Plus, Send, Smile, X } from "lucide-react";
 import type { IMessage } from "@/types/api-response.type";
 import { usePanelExpand } from "@/hooks/use-panel-expand";
 import { useChatMessage } from "@/hooks/use-chat-message";
 import { InteractionMode } from "@/types/index.type";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "../ui/textarea";
 
 /* -------------------- Main Chat Input -------------------- */
 const ChatInput = memo(function ChatInput() {
@@ -64,10 +65,11 @@ const ChatInput = memo(function ChatInput() {
     ) {
       openPanel();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMessage, interactionMode]);
 
   return (
-    <div className="relative flex flex-col items-center bg-white rounded-md p-1">
+    <div className="relative w-full flex flex-col items-center rounded-md p-1 dark:bg-dark">
       <div
         ref={panelRef}
         className={cn(
@@ -113,7 +115,7 @@ const ChatInput = memo(function ChatInput() {
           />
 
           <InputButton type="submit" icon={<Send size={20} />} />
-          {/* <InputButton icon={<Mic size={20} />} onClick={() => {}} /> */}
+          <InputButton icon={<Mic size={20} />} onClick={() => {}} />
         </form>
       </div>
     </div>
@@ -148,8 +150,8 @@ const MessageTextarea = ({
   onChange,
   onKeyDown,
 }: MessageTextareaProps) => (
-  <textarea
-    className={cn("flex-1 outline-none p-2 resize-none")}
+  <Textarea
+    className={cn("flex-1 outline-none p-2 resize-none min-h-8")}
     name="message"
     id="message"
     rows={1}

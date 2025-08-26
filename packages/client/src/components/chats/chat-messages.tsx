@@ -30,6 +30,7 @@ export default function ChatMessages() {
       setInteractionMode(InteractionMode.REPLY);
       setSelectedMessage([message!]);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [messages]
   );
 
@@ -147,7 +148,6 @@ export default function ChatMessages() {
                     if (el) bubbleRefs.current[virtualRow.index] = el;
                   }}
                   message={groupedMessages[virtualRow.index]}
-                  scrollToMessage={scrollToMessage}
                 />
               </div>
             ))}

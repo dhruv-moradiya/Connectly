@@ -40,7 +40,7 @@ export function getChatDisplayMeta(
     const name = chat.name || "Unnamed Group";
     return {
       displayName: name,
-      avatarUrl: GROUP_AVATAR_URL,
+      avatarUrl: chat.groupIcon ? chat.groupIcon.url : GROUP_AVATAR_URL,
       fallback: name[0]?.toUpperCase() || "G",
     };
   }
