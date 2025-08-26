@@ -46,6 +46,10 @@ interface IChatPreview {
   _id: string;
   name: string;
   isGroup: boolean;
+  groupImage: {
+    publicId: string;
+    url: string;
+  };
   unreadCount: [];
   participants: IUserPreview[];
   lastMessage: IMessage;
