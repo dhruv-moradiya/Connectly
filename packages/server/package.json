@@ -31,6 +31,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "cross-env": "^10.0.0",
     "@monorepo/shared": "1.0.0",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.55.0",
