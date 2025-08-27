@@ -114,7 +114,7 @@ const createNewUser = asyncHandler(
 
       // 5. Send email verification
       await sendEmailVerificationEmail({
-        to: "dmoradiya443@gmail.com",
+        to: email,
         username,
         otp,
         otpValidity: 10, // minutes or however you're measuring
