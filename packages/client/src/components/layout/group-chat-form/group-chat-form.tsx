@@ -6,6 +6,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Loader, UsersRound } from "lucide-react";
 import { memo, useEffect, useState } from "react";
@@ -119,9 +124,19 @@ function GroupChatForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-7">
-          <UsersRound size={16} />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              onClick={() => setOpen(true)}
+            >
+              <UsersRound size={16} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Create group</TooltipContent>
+        </Tooltip>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg transition-all duration-300">

@@ -6,6 +6,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, XIcon, UserPlusIcon } from "lucide-react";
 import { useState } from "react";
@@ -35,6 +40,7 @@ const mockRequests: FriendRequest[] = [
 ];
 
 const FriendRequestsDialog = () => {
+  const [open, setOpen] = useState(false);
   const [requests, setRequests] = useState<FriendRequest[]>(mockRequests);
 
   const handleAction = (id: string, accepted: boolean) => {
@@ -43,11 +49,23 @@ const FriendRequestsDialog = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-7">
-          <UserPlusIcon className="w-5 h-5" />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              onClick={() => setOpen(true)}
+            >
+              <Button variant="ghost" size="icon" className="size-7">
+                <UserPlusIcon className="w-5 h-5" />
+              </Button>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Friend requests</TooltipContent>
+        </Tooltip>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md transition-all duration-300">
         <DialogHeader>

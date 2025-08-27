@@ -235,7 +235,9 @@ export function usePointerSwipe(
     return () => {
       container.removeEventListener("pointerdown", handlePointerDown);
       draggablesRef.current.forEach((d) => d.kill());
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       draggablesRef.current.clear();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerSelector]);
 }

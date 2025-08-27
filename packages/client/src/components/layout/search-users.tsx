@@ -6,6 +6,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Search, UserPlus, Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -83,9 +88,21 @@ const SearchUsers = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="size-7">
-          <Search size={16} />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              onClick={() => setIsOpen(true)}
+            >
+              <Button variant="ghost" size="icon" className="size-7">
+                <Search size={16} />
+              </Button>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Search users</TooltipContent>
+        </Tooltip>
       </DialogTrigger>
       <DialogContent
         className={cn(

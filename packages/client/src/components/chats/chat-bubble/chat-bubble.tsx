@@ -11,10 +11,11 @@ import { useChatMessage } from "@/hooks/use-chat-message";
 
 interface ChatBubbleProps {
   message: IMessage;
+  isGroupChat: boolean;
 }
 
 const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
-  ({ message }, ref) => {
+  ({ message, isGroupChat }, ref) => {
     const { handleQuerySearch } = useChatMessage();
     const user = useAppSelector((state) => state.auth.user);
 
@@ -23,7 +24,12 @@ const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
     return (
       <div className={cn("flex items-center px-3 rounded-md my-0.5")}>
         {/* <Checkbox /> */}
-        <DraggableBubble message={message} isSender={isSender} ref={ref}>
+        <DraggableBubble
+          message={message}
+          isSender={isSender}
+          isGroupChat={isGroupChat}
+          ref={ref}
+        >
           <p className="text-sm">{handleQuerySearch(message.content)}</p>
           <div className="shrink-0 flex gap-0 justify-end items-end">
             <span

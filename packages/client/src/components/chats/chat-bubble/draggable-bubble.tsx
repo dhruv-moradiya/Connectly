@@ -10,11 +10,12 @@ import ReplyToContent from "./reply-to-content";
 interface DraggableBubbleProps {
   isSender: boolean;
   message: IMessage;
+  isGroupChat: boolean;
   children: React.ReactNode;
 }
 
 const DraggableBubble = forwardRef<HTMLDivElement, DraggableBubbleProps>(
-  ({ message, isSender, children }, ref) => {
+  ({ message, isSender, isGroupChat, children }, ref) => {
     const arrowRef = useRef<HTMLDivElement>(null);
     const chatBubbleMenuRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +66,12 @@ const DraggableBubble = forwardRef<HTMLDivElement, DraggableBubbleProps>(
             )}
           />
         </div>
+
+        {isGroupChat && !isSender && (
+          <h3 className="font-semibold text-xs mb-1">
+            {message.sender.username}
+          </h3>
+        )}
 
         {children}
 

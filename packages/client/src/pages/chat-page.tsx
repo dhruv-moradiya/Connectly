@@ -10,6 +10,10 @@ import { useActiveChatSetUp } from "@/hooks/use-active-chat";
 
 const Chat = () => {
   const { chatId } = useParams();
+  const isGroupChat =
+    useAppSelector(
+      (state) => state.userChats.chats.find((c) => c._id === chatId)?.isGroup
+    ) ?? false;
 
   const isLoading = useAppSelector(
     (state) => state.activeChat.fetchingInitialData
@@ -26,7 +30,7 @@ const Chat = () => {
       )}
       {!isLoading && (
         <ChatMessageProvider>
-          <ChatMessages />
+          <ChatMessages isGroupChat={isGroupChat} />
 
           <ChatInput />
         </ChatMessageProvider>

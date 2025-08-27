@@ -70,3 +70,42 @@ export function getSenderName(
     ? "You"
     : message.sender.username;
 }
+
+// Get header image for chat (group or individual)
+export function getHeaderImage(
+  chatData: IChatPreview | undefined,
+  user: TUserAuth | null
+) {
+  if (!chatData) return null;
+
+  if (chatData.isGroup) {
+    return chatData.groupIcon?.url || null;
+  }
+
+  return chatData.participants.find((p) => p._id !== user?._id)?.avatar || null;
+}
+
+export function getHeaderName(
+  chatData: IChatPreview | undefined,
+  user: TUserAuth | null
+) {
+  if (!chatData) return null;
+
+  if (!chatData.isGroup) {
+    return (
+      chatData.participants.find((p) => p._id !== user?._id)?.username || null
+    );
+  }
+
+  return chatData.name || null;
+}
+
+export function getCurrentChatParticipants(chatData: IChatPreview | undefined) {
+  if (!chatData) return [];
+
+  if (!chatData.isGroup) {
+    return chatData.participants;
+  }
+
+  return chatData.participants;
+}

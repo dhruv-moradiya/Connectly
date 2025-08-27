@@ -16,6 +16,7 @@ const ChatInput = memo(function ChatInput() {
   const dispatch = useAppDispatch();
   const panelRef = useRef<HTMLDivElement>(null);
   const user = useAppSelector((state) => state.auth.user);
+  const theme = useAppSelector((state) => state.theme.theme);
 
   const [messageText, setMessageText] = useState("");
   const { selectedMessage, interactionMode } = useChatMessage();
@@ -69,15 +70,18 @@ const ChatInput = memo(function ChatInput() {
   }, [selectedMessage, interactionMode]);
 
   return (
-    <div className="relative w-full flex flex-col items-center rounded-md p-1 dark:bg-dark">
+    <div className="relative w-full bg-background flex flex-col items-center p-1 border-t border-accent gap-2">
       <div
         ref={panelRef}
         className={cn(
           "w-full pl-4 py-1 overflow-hidden flex items-center justify-between border-l-4 rounded-md",
           isCurrentUser(selectedMessage[0], user)
-            ? "border-primary bg-primary/10"
-            : "border-zinc-600 bg-secondary",
-          showPanel ? "py-1" : "py-0"
+            ? "border-primary"
+            : "border-zinc-600",
+          showPanel ? "py-1" : "py-0",
+          theme === "dark"
+            ? "border-zinc-600 bg-zinc-800"
+            : "border-zinc-300 bg-primary/10"
         )}
       >
         <div className="flex flex-col gap-1">

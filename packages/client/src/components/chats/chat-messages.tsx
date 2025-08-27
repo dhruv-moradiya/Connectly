@@ -7,17 +7,18 @@ import { InteractionMode } from "@/types/index.type";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useGroupMessages } from "@/hooks/use-group-messages";
 import { cn } from "@/lib/utils";
-import { EllipsisVertical, Phone, Search } from "lucide-react";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import ChatHeader from "./chat-header";
 
-export default function ChatMessages() {
+export default function ChatMessages({
+  isGroupChat,
+}: {
+  isGroupChat: boolean;
+}) {
   const parentRef = useRef<HTMLDivElement>(null);
   const bubbleRefs = useRef<HTMLDivElement[]>([]);
 
   const user = useAppSelector((state) => state.auth.user);
-  const { setInteractionMode, setSelectedMessage, setQuery, query } =
-    useChatMessage();
+  const { setInteractionMode, setSelectedMessage } = useChatMessage();
 
   const { messages } = useAppSelector((state) => state.activeChat);
 
@@ -82,32 +83,7 @@ export default function ChatMessages() {
 
   return (
     <>
-      <div className="flex items-center justify-between shadow-xs py-1 px-2">
-        <div className="flex gap-2 items-center">
-          <div className="size-10 rounded-md bg-red-100"></div>
-          <div className="text-xs text-muted-foreground flex flex-col">
-            <span>Username</span>
-            <span>Last seen at 12:40 pm</span>
-          </div>
-        </div>
-        <div className="flex gap-1 items-center">
-          <Input
-            id="query"
-            placeholder="Search..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <Button variant={"ghost"} size={"sm"}>
-            <Phone />
-          </Button>
-          <Button variant={"ghost"} size={"sm"}>
-            <Search />
-          </Button>
-          <Button variant={"ghost"} size={"sm"}>
-            <EllipsisVertical />
-          </Button>
-        </div>
-      </div>
+      <ChatHeader isGroupChat={isGroupChat} />
       <div
         ref={parentRef}
         className="h-full w-full overflow-y-auto overflow-x-hidden"
@@ -147,6 +123,7 @@ export default function ChatMessages() {
                   ref={(el: HTMLDivElement | null) => {
                     if (el) bubbleRefs.current[virtualRow.index] = el;
                   }}
+                  isGroupChat={isGroupChat}
                   message={groupedMessages[virtualRow.index]}
                 />
               </div>
