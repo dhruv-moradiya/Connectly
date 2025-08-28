@@ -10,7 +10,7 @@ interface IUserSchema {
   friends: Types.ObjectId[];
   friendRequests: Types.ObjectId[];
   blockedUsers: Types.ObjectId[];
-  last_seen: Date;
+  lastSeen: Date;
   createdAt: Date;
   updatedAt: Date;
   refreshToken: string;

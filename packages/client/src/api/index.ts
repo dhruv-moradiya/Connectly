@@ -6,43 +6,98 @@ import type {
   IGetCurrentUser,
   IGetUsersByUsernameQuery,
   IUserChats,
+  IUserLogout,
 } from "@/types/api-response.type";
 import type {
   IEmailVerifyResponse,
   ILoginUserResponse,
   IUserRegistrationResponse,
 } from "@/types/auth-type";
-import axios, { AxiosError, type AxiosResponse } from "axios";
+import axios, {
+  AxiosError,
+  type AxiosResponse,
+  type AxiosRequestConfig,
+} from "axios";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_APP_SERVER_URL,
-  withCredentials: true,
+  withCredentials: true, // cookies included
   timeout: 10000,
 });
 
-apiClient.interceptors.request.use(
-  function (config) {
-    const token = localStorage.getItem("token");
-    config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  },
-  function (error) {
-    return Promise.reject(error);
-  }
-);
+interface FailedRequest {
+  resolve: (token: string | null) => void;
+  reject: (error: unknown) => void;
+}
+
+let isRefreshing = false;
+let failedQueue: FailedRequest[] = [];
+
+const processQueue = (error: unknown, token: string | null = null): void => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
 apiClient.interceptors.response.use(
-  function (response) {
-    return response;
-  },
-  async function (error) {
-    if (error.response.status === 401) {
-      localStorage.removeItem("token");
-      const response = await apiClient.get("/");
-      localStorage.setItem("token", response.data.token);
-      error.config.headers.Authorization = `Bearer ${response.data.token}`;
-      return axios(error.config);
+  (response: AxiosResponse) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Queue the request until refresh is done
+        return new Promise<AxiosResponse>((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token) => {
+              if (token && originalRequest.headers) {
+                originalRequest.headers["Authorization"] = `Bearer ${token}`;
+              }
+              resolve(apiClient(originalRequest));
+            },
+            reject,
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Call refresh endpoint
+        const res = await apiClient.post<{ accessToken: string }>(
+          "/refresh-access-token"
+        );
+
+        const newAccessToken = res.data.accessToken;
+
+        // Update default Authorization header
+        apiClient.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${newAccessToken}`;
+
+        processQueue(null, newAccessToken);
+
+        if (originalRequest.headers) {
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        }
+
+        return apiClient(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -87,6 +142,17 @@ const loginUser = async (data: TLoginSchemaType) => {
     );
     return response.data;
   } catch (error: unknown) {
+    throw errorHandler(error);
+  }
+};
+
+const logoutUser = async () => {
+  try {
+    const response: AxiosResponse<IUserLogout> = await apiClient.get(
+      "/user/log-out"
+    );
+    return response.data;
+  } catch (error) {
     throw errorHandler(error);
   }
 };
@@ -185,6 +251,7 @@ export {
   registerUser,
   verifyOtp,
   loginUser,
+  logoutUser,
   getCurrentUser,
   getUserChats,
   getUserByUsernameQuery,

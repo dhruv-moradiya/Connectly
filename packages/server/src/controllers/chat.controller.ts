@@ -392,7 +392,7 @@ const renameGroupChat = asyncHandler(
     if (!validation.success) {
       return next(
         new ApiError(
-          "Invalid input: Group chat name is required and must meet the validation criteria.",
+          "Group chat name is required and must meet the validation criteria.",
           HttpStatus.BAD_REQUEST
         )
       );
@@ -422,8 +422,8 @@ const renameGroupChat = asyncHandler(
     if (existingChat.createdBy.toString() !== authenticatedUserId) {
       return next(
         new ApiError(
-          "Unauthorized: Only the creator of the chat can rename it.",
-          HttpStatus.UNAUTHORIZED
+          "Only the creator of the chat can rename it.",
+          HttpStatus.FORBIDDEN
         )
       );
     }
@@ -493,7 +493,7 @@ const updateGroupChatDescription = asyncHandler(
       return next(
         new ApiError(
           "Unauthorized: Only the creator of the chat can update it.",
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.FORBIDDEN
         )
       );
     }

@@ -63,7 +63,7 @@ const UserSchema = new Schema<IUserSchemaDocument>(
         ref: "User",
       },
     ],
-    last_seen: Date,
+    lastSeen: Date,
     refreshToken: {
       type: String,
       default: "",

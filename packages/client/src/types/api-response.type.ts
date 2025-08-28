@@ -93,7 +93,12 @@ interface IConnections extends IBaseType {
   };
 }
 
+interface IUserLogout extends IBaseType {
+  data: {};
+}
+
 export {
+  type IUserLogout,
   type IUserPreview,
   type IGetCurrentUser,
   type IUserChats,

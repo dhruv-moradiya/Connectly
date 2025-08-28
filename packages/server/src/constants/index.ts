@@ -81,19 +81,24 @@ const HttpStatus = {
   NOT_MODIFIED: 304,
 
   // 4xx Client Errors
-  BAD_REQUEST: 400,
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
-  NOT_FOUND: 404,
-  CONFLICT: 409,
-  UNPROCESSABLE_ENTITY: 422,
+  BAD_REQUEST: 400, // Invalid input, malformed request
+  UNAUTHORIZED: 401, // Not authenticated
+  FORBIDDEN: 403, // Authenticated but not authorized
+  NOT_FOUND: 404, // Resource not found
+  METHOD_NOT_ALLOWED: 405, // HTTP method not supported
+  CONFLICT: 409, // Resource conflict (e.g., duplicate)
+  GONE: 410, // Resource permanently deleted
+  PAYLOAD_TOO_LARGE: 413, // File/data too large
+  UNSUPPORTED_MEDIA_TYPE: 415, // Wrong content type
+  UNPROCESSABLE_ENTITY: 422, // Validation errors
+  TOO_MANY_REQUESTS: 429, // Rate limiting
 
   // 5xx Server Errors
-  INTERNAL_SERVER_ERROR: 500,
-  NOT_IMPLEMENTED: 501,
-  BAD_GATEWAY: 502,
-  SERVICE_UNAVAILABLE: 503,
-  GATEWAY_TIMEOUT: 504,
+  INTERNAL_SERVER_ERROR: 500, // Generic server error
+  NOT_IMPLEMENTED: 501, // Not supported
+  BAD_GATEWAY: 502, // Invalid upstream response
+  SERVICE_UNAVAILABLE: 503, // Server unavailable / maintenance
+  GATEWAY_TIMEOUT: 504, // Upstream server timeout
 } as const;
 
 const SocketEvents = {

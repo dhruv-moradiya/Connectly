@@ -35,6 +35,10 @@ const authSlice = createSlice({
     setCurrentUser: (state, action: PayloadAction<TUserAuth>) => {
       state.user = action.payload;
     },
+
+    logoutReducer: (state) => {
+      (state.user = null), (state.isAuthenticated = false);
+    },
   },
   extraReducers(builder) {
     builder.addCase(emailVerifyThunk.pending, (state) => {
@@ -124,4 +128,4 @@ const authSlice = createSlice({
 
 const authReducer = authSlice.reducer;
 export default authReducer;
-export const { setCurrentUser } = authSlice.actions;
+export const { setCurrentUser, logoutReducer } = authSlice.actions;

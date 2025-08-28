@@ -25,11 +25,28 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useAppSelector } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import { handleApiError } from "@/lib/handle-api-error";
+import { logoutUser } from "@/api";
+import { logoutReducer } from "@/store/auth/auth-slice";
+import { useNavigate } from "react-router-dom";
 
 export function NavUser() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const { isMobile } = useSidebar();
+
+  const handleLogout = async () => {
+    try {
+      const response = await logoutUser();
+      navigate("/auth/sign-in");
+      dispatch(logoutReducer());
+      console.log("response", response);
+    } catch (error) {
+      handleApiError(error, "", "Logout error");
+    }
+  };
 
   if (!user) return null;
 
@@ -94,7 +111,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

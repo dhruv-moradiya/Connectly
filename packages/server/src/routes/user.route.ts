@@ -6,6 +6,7 @@ import {
   getDirectConnections,
   getUserByUsernameQuery,
   loginUser,
+  logoutUser,
   refreshAccessToken,
   verifyOtp,
 } from "../controllers/user.controller";
@@ -16,6 +17,8 @@ const router = express.Router();
 router.post("/create", createNewUser);
 
 router.post("/login", loginUser);
+
+router.get("/log-out", verifyToken, logoutUser);
 
 router.post("/verify-otp", verifyOtp);
 

@@ -307,7 +307,7 @@ const verifyOtp = asyncHandler(
 
     // 5. Update user and OTP record
     user.isEmailVerified = true;
-    user.last_seen = new Date();
+    user.lastSeen = new Date();
     otpRecord.isUsed = true;
 
     await user.save();
@@ -543,6 +543,54 @@ const getDirectConnections = asyncHandler(
   }
 );
 
+const logoutUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const cookies = req.cookies;
+
+      if (!cookies || !cookies.refreshToken) {
+        return res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json(new ApiResponse(401, "No refresh token cookie provided", {}));
+      }
+
+      const user = await User.findOne({
+        refreshToken: cookies.refreshToken.trim(),
+      });
+      if (!user) {
+        return res
+          .status(HttpStatus.FORBIDDEN)
+          .json(new ApiResponse(403, "Invalid or expired refresh token", {}));
+      }
+
+      user.refreshToken = "";
+      user.lastSeen = new Date();
+      await user.save();
+
+      return res
+        .status(200)
+        .clearCookie("accessToken", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        })
+        .clearCookie("refreshToken", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        })
+        .json(new ApiResponse(200, "User logged out successfully", {}));
+    } catch (error) {
+      console.error("Logout Error:", error);
+      return res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json(
+          new ApiResponse(500, "Something went wrong while logging out", {})
+        );
+    }
+  }
+);
+
 const getAllUserData = async (): Promise<IUserPreiveForCache[]> => {
   try {
     const users = await User.find()
@@ -565,4 +613,5 @@ export {
   getUserByUsernameQuery,
   getAllUserData,
   getDirectConnections,
+  logoutUser,
 };

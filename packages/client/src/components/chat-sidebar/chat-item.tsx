@@ -51,7 +51,7 @@ export default function ChatItem({ chat }: ChatItemProps) {
         "hover:bg-sidebar-hover hover:text-sidebar-hover-foreground",
         "focus:bg-sidebar-focus focus:text-sidebar-focus-foreground",
         isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
-        isMobileScreen && "border-b p-3"
+        isMobileScreen && "border-b-secondary p-3"
       )}
     >
       <Avatar className="size-10 rounded-lg">
