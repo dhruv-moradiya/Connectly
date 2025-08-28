@@ -195,9 +195,9 @@ export default function ChatMessages({
           </h3>
 
           <div className="space-y-2">
-            {[1, 2, 3, 4].map((p, idx) => (
+            {[1, 2, 3, 4].map((p) => (
               <div
-                key={idx}
+                key={p}
                 className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 transition"
               >
                 <div className="size-10 rounded-full overflow-hidden">
@@ -208,11 +208,9 @@ export default function ChatMessages({
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-sm font-medium">
-                    Username {idx + 1}
-                  </span>
+                  <span className="text-sm font-medium">Username {p + 1}</span>
                   <span className="text-xs text-muted-foreground">
-                    user{idx + 1}@example.com
+                    user{p + 1}@example.com
                   </span>
                 </div>
               </div>
