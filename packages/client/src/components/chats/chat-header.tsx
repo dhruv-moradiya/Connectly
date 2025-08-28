@@ -24,7 +24,7 @@ import { useAppSelector } from "@/store/store";
 import { getHeaderImage, getHeaderName } from "@/lib/utils";
 
 const ChatHeader = ({ isGroupChat }: { isGroupChat: boolean }) => {
-  const { setQuery, query } = useChatMessage();
+  const { setQuery, query, setIsSidebarOpen } = useChatMessage();
 
   const { chatId } = useAppSelector((state) => state.activeChat);
   const { user } = useAppSelector((state) => state.auth);
@@ -71,7 +71,7 @@ const ChatHeader = ({ isGroupChat }: { isGroupChat: boolean }) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsSidebarOpen(true)}>
                 <Info />
                 {isGroupChat ? "Group info" : "Contact info"}
               </DropdownMenuItem>

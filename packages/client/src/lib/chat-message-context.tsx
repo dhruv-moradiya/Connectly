@@ -7,10 +7,12 @@ interface ChatMessageContextType {
   selectedMessage: IMessage[];
   interactionMode: InteractionMode;
   query: string;
+  isSidebarOpen: boolean;
 
   setSelectedMessage: React.Dispatch<React.SetStateAction<IMessage[]>>;
   setInteractionMode: React.Dispatch<React.SetStateAction<InteractionMode>>;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
+  setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 
   handleQuerySearch: (text: string) => ReactNode;
 }
@@ -22,6 +24,7 @@ const ChatMessageProvider = ({ children }: { children: ReactNode }) => {
   const [interactionMode, setInteractionMode] = useState<InteractionMode>(
     InteractionMode.NONE
   );
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
 
   const handleQuerySearch = (text: string) => {
@@ -50,6 +53,8 @@ const ChatMessageProvider = ({ children }: { children: ReactNode }) => {
     query,
     setQuery,
     handleQuerySearch,
+    isSidebarOpen,
+    setIsSidebarOpen,
   };
 
   return (

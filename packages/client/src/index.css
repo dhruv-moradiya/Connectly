@@ -194,6 +194,27 @@ body {
   color: lightcoral !important;
 }
 
+@utility scrollbar {
+  /* Firefox support */
+  scrollbar-width: thin;
+  scrollbar-color: var(--chart-5) var(--background);
+
+  /* Webkit browsers */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: var(--background);
+    border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--chart-5) / 0.1);
+    border-radius: 100px;
+  }
+}
+
 @layer utilities {
   .animate-fade-in {
     @apply opacity-0 translate-y-2;
