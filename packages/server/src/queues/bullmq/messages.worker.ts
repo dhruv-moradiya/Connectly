@@ -1,53 +1,48 @@
-import { Worker } from "bullmq";
+// ---------- worker.ts ----------
+import { Job, Worker } from "bullmq";
 import { redisConnection } from "../../db/redis";
-import MessageModel from "../../models/message.model";
-import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
-import {
-  saveMessageAsLastMessage,
-  updateDeliveryStatus,
-} from "../../utils/helperFunctions";
+import { MessageJobEnum, IJobMap, TMessageJobType } from "../../types/message-queue.type";
+import { messageJobServiceInstance } from "../../services/message-job.service";
 
-interface IMessagesaveInDBJobType {
-  _id: string;
-  chatId: string;
-  content: string;
-  sender: string;
-  deliveryStatus: TMessageDeliveryStatus;
-  replyTo: { _id: string; content: string } | null;
-}
-
-const messagesWorker = new Worker(
+const messagesWorker = new Worker<TMessageJobType>(
   "messages",
-  async (job) => {
-    const {
-      _id,
-      sender,
-      chatId,
-      content,
-      deliveryStatus,
-      replyTo,
-    }: IMessagesaveInDBJobType = job.data;
+  async (job: Job<any>) => {
+    switch (job.name) {
+      case MessageJobEnum.SAVE_MESSAGE: {
+   
 
-    switch (deliveryStatus) {
-      case "sent":
-        await MessageModel.create({
-          _id,
-          sender,
-          chat: chatId,
-          content,
-          ...(replyTo && { replyTo: replyTo._id }),
-        });
-        await saveMessageAsLastMessage(chatId, _id);
-
+        await messageJobServiceInstance.saveMessageInDB(
+          job.data as IJobMap[MessageJobEnum.SAVE_MESSAGE]
+        );
         break;
+      }
 
-      case "delivered":
-      case "seen":
-        await updateDeliveryStatus(_id, deliveryStatus);
+      case MessageJobEnum.UPDATE_DELIVERY_STATUS: {
+      
+        await messageJobServiceInstance.updateDeliveryStatus(
+          job.data as IJobMap[MessageJobEnum.UPDATE_DELIVERY_STATUS]
+        );
         break;
+      }
 
-      default:
-        console.warn(`Unknown delivery status: ${deliveryStatus}`);
+      case MessageJobEnum.DELETE_SINGLE_MESSAGE: {
+        // await messageJobServiceInstance.deleteSingle(
+        //   job.data as JobMap[MessageJobEnum.DELETE_SINGLE_MESSAGE]
+        // );
+        break;
+      }
+
+      case MessageJobEnum.DELETE_MULTIPLE_MESSAGE: {
+        // await messageJobServiceInstance.deleteMultiple(
+        //   job.data as JobMap[MessageJobEnum.DELETE_MULTIPLE_MESSAGE]
+        // );
+        break;
+      }
+
+      default: {
+        // const _exhaustive: never = job;
+        throw new Error(`Unhandled job type: ${(job as any).name}`);
+      }
     }
   },
   { connection: redisConnection }

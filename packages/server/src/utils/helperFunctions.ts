@@ -7,6 +7,7 @@ import { messagesQueue } from "../queues/bullmq/messages.queue";
 import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
 import ChatRoom from "../models/chat.model";
 import { IMessageSentBody } from "@/types/type";
+import { MessageJobEnum } from "@/types/message-queue.type";
 
 interface IMessagesaveInDBJobType {
   _id: string;
@@ -52,7 +53,7 @@ async function getGroupReceiversIds(
 }
 
 async function enqueueMessageStatusUpdate(data: IMessagesaveInDBJobType) {
-  await messagesQueue.add("messages", data);
+  await messagesQueue.add(MessageJobEnum.UPDATE_DELIVERY_STATUS, {_id: data._id, status: data.deliveryStatus})
 }
 
 async function saveMessageAsLastMessage(chatId: string, messageId: string) {
@@ -63,7 +64,7 @@ async function saveMessageAsLastMessage(chatId: string, messageId: string) {
     );
   } catch (error) {
     console.error("Error saving message as last message: ", error);
-    throw new Error("Failed to update last message"); // rethrow with cleaner msg
+    throw new Error("Failed to update last message");
   }
 }
 

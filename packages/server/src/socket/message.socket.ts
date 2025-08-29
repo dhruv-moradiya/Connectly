@@ -9,6 +9,7 @@ import {
   isGroupChat,
 } from "../utils/helperFunctions";
 import { IMessageSentBody } from "@/types/type";
+import { MessageJobEnum } from "@/types/message-queue.type";
 
 // Utility: Execute async function safely with error handling
 async function safeExec<T>(
@@ -62,10 +63,12 @@ async function handleMessageSent(socket: Socket, data: IMessageSentBody) {
   // Queue message for processing
   await safeExec(
     () =>
-      messagesQueue.add("messages", {
-        ...data,
+      messagesQueue.add(MessageJobEnum.SAVE_MESSAGE, {
+        _id: data._id,
+        chatId: data.chatId,
+        content: data.content,
+        replyTo: data.replyTo,
         sender: socket.user._id,
-        deliveryStatus: "sent",
       }),
     socket,
     "Error queuing message"

@@ -17,7 +17,7 @@ interface IMessageSentBody {
   chatId: string;
   content: string;
   replyTo: IReplyMessage | null;
-  attachments?: IAttachment[];
+  // attachments?: IAttachment[];
   createdAt: Date;
 }
 

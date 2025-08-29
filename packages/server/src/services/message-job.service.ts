@@ -1,16 +1,9 @@
 import ChatRoom from "@/models/chat.model";
 import MessageModel from "@/models/message.model";
-import { IMessageSentBody } from "@/types/type";
+import { IMessagesaveInDBJobType, IUpdateDeliveryStatusJob } from "@/types/message-queue.type";
 import { handleJobError } from "@/utils";
 import { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
 
-interface IMessagesaveInDBJobType {
-  _id: string;
-  chatId: string;
-  content: string;
-  sender: string;
-  replyTo: { _id: string; content: string } | null;
-}
 
 class MessageJobService {
   private async saveMessageAsLastMessage(chatId: string, messageId: string) {
@@ -48,7 +41,7 @@ class MessageJobService {
     }
   }
 
-  async updateDeliveryStatus(_id: string, status: TMessageDeliveryStatus) {
+  async updateDeliveryStatus({_id, status}:IUpdateDeliveryStatusJob["data"]) {
     try {
       await MessageModel.updateOne(
         { _id: _id },
