@@ -10,8 +10,8 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useCallback, useRef } from "react";
 import ChatHeader from "./chat-header";
 import MessageRow from "./message-row";
-import ScrollToBottomButton from "./scroll-to-bottom-button";
 import ChatInput from "./chat-input";
+import ChatSidebar from "./chat-sidebar";
 
 export default function ChatMessages({
   isGroupChat,
@@ -22,8 +22,12 @@ export default function ChatMessages({
   const bubbleRefs = useRef<HTMLDivElement[]>([]);
 
   const user = useAppSelector((state) => state.auth.user);
-  const { setInteractionMode, setSelectedMessage, isSidebarOpen } =
-    useChatMessage();
+  const {
+    interactionMode,
+    setInteractionMode,
+    setSelectedMessage,
+    isSidebarOpen,
+  } = useChatMessage();
   const { messages } = useAppSelector((state) => state.activeChat);
   const { groupedMessages } = useGroupMessages({ messages });
 
@@ -52,7 +56,7 @@ export default function ChatMessages({
   if (!user) return null;
 
   return (
-    <div className="grid grid-cols-12 h-[calc(100vh-46px)] w-full">
+    <div className="grid grid-cols-12 h-[calc(100vh-46px)] w-full overflow-hidden">
       <div
         className={cn(
           "flex flex-col",
@@ -64,7 +68,12 @@ export default function ChatMessages({
 
         <div
           ref={parentRef}
-          className="scrollbar h-[calc(100vh-150px)] overflow-x-hidden overflow-y-scroll w-full flex justify-center"
+          className={cn(
+            "scrollbar h-[calc(100vh-222px)] overflow-x-hidden overflow-y-scroll w-full flex justify-center transition-all duration-500",
+            interactionMode === InteractionMode.REPLY
+              ? "h-[calc(100vh-222px)]"
+              : "h-[calc(100vh-150px)]"
+          )}
         >
           <div
             className="relative w-full sm:max-w-2xl lg:max-w-4xl px-2 sm:px-4"
@@ -92,6 +101,7 @@ export default function ChatMessages({
 
         <ChatInput />
       </div>
+      <ChatSidebar />
     </div>
   );
 }

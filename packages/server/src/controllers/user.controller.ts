@@ -557,6 +557,7 @@ const logoutUser = asyncHandler(
       const user = await User.findOne({
         refreshToken: cookies.refreshToken.trim(),
       });
+
       if (!user) {
         return res
           .status(HttpStatus.FORBIDDEN)

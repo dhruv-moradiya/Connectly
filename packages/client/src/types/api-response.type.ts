@@ -46,6 +46,7 @@ interface IChatPreview {
   _id: string;
   name: string;
   isGroup: boolean;
+  createdBy: string;
   groupIcon: {
     publicId: string;
     url: string;

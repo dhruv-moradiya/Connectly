@@ -54,6 +54,11 @@ import messageRoute from "./routes/message.route";
 
 import { messagesWorker } from "./queues/bullmq/messages.worker";
 import { globalErrorHandler } from "./middlewares/globalError.middleware";
+import { IChatRoomForCache } from "@monorepo/shared/src/types/chat.types";
+import { generateRedisKeys } from "./utils";
+import { IUserPreiveForCache } from "@monorepo/shared/src/types/user.types";
+import { getAllUserData } from "./controllers/user.controller";
+import { getRoomDetails } from "./controllers/chat.controller";
 
 // Register API routes
 app.use("/api/user", userRouter);
@@ -85,7 +90,38 @@ redisConnection.on("error", (err) => {
   console.error("Redis connection error:", err);
 });
 
-console.log("Environment:", environment);
+async function cacheUsers(users: IUserPreiveForCache[]) {
+  for (const user of users) {
+    await redisConnection.hset(generateRedisKeys.user(user._id.toString()), {
+      username: user.username,
+      email: user.email,
+      avatar: user.avatar,
+      isEmailVerified: user.isEmailVerified,
+      bio: user.bio,
+    });
+  }
+}
+
+async function cacheRooms(rooms: IChatRoomForCache[]) {
+  for (const room of rooms) {
+    const { _id, participants, ...roomDetails } = room;
+
+    // Cache room details (optional)
+    await redisConnection.hset(
+      generateRedisKeys.roomDetails(_id.toString()),
+      roomDetails
+    );
+
+    // Cache participants with role
+    for (const participant of participants) {
+      await redisConnection.hset(
+        generateRedisKeys.roomParticipants(_id.toString()),
+        participant.user.toString(), // Use user ID as field
+        JSON.stringify({ role: participant.role }) // Store role as JSON
+      );
+    }
+  }
+}
 
 // Function to reset the BullMQ message queue on server start
 const resetQueue = async () => {
@@ -99,6 +135,12 @@ const resetQueue = async () => {
 // Reset the queue before starting the app
 (async () => {
   await resetQueue();
+  const users = await getAllUserData();
+  const rooms = await getRoomDetails();
+
+  if (users) await cacheUsers(users);
+  if (rooms) await cacheRooms(rooms as unknown as IChatRoomForCache[]);
+  console.log("✅ Redis cache initialized with user and room data.");
 })();
 
 // Global error handler middleware

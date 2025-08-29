@@ -1,3 +1,5 @@
+import type { IMessage, IUserPreview } from "./api-response.type";
+
 type TTheme = "dark" | "light" | "system";
 
 enum InteractionMode {
@@ -9,5 +11,22 @@ enum InteractionMode {
   drag = "drag",
 }
 
-export { type TTheme };
+interface IActiveChatDetails {
+  _id: string;
+  participants: IUserPreview[];
+  isCurrentuseradmin: boolean;
+  createdBy: string;
+  groupIcon: {
+    publicId: string;
+    url: string;
+  } | null;
+  isGroup: boolean;
+  lastMessage: IMessage;
+  headerName: string;
+  unreadCount: [];
+  avatarUrl: string;
+  fallback: string;
+}
+
+export { type TTheme, type IActiveChatDetails };
 export { InteractionMode };

@@ -46,7 +46,7 @@ async function notifyParticipants(
 
   const isGroup = await isGroupChat(chatId);
   if (isGroup) {
-    await handleGroupChat();
+    await handleGroupChat(chatId, message, socket);
   } else {
     await handlePrivateChat(chatId, message, socket);
   }

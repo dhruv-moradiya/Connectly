@@ -1,5 +1,7 @@
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
+import { useChatMessage } from "./use-chat-message";
+import { InteractionMode } from "@/types/index.type";
 
 const usePanelExpand = ({
   panelRef,
@@ -7,6 +9,7 @@ const usePanelExpand = ({
   panelRef: React.RefObject<HTMLElement> | null;
 }) => {
   const [showPanel, setShowPanel] = useState(false);
+  const { setInteractionMode } = useChatMessage();
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -45,7 +48,10 @@ const usePanelExpand = ({
     }
   }, [showPanel, panelRef]);
 
-  const closePanel = () => setShowPanel(false);
+  const closePanel = () => {
+    setShowPanel(false);
+    setInteractionMode(InteractionMode.NONE);
+  };
   const openPanel = () => setShowPanel(true);
 
   return {

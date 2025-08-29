@@ -5,7 +5,7 @@ import AppIcon from "@/components/common/app-icon";
 import ChatMessages from "@/components/chats/chat-messages";
 import { ChatMessageProvider } from "@/lib/chat-message-context";
 
-import { useActiveChatSetUp } from "@/hooks/use-active-chat";
+import { useActiveChatSetUp } from "@/hooks/use-active-chat-setup";
 
 const Chat = () => {
   const { chatId } = useParams();
