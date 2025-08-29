@@ -9,6 +9,9 @@ interface IAttachment {
   name: string;
 }
 
+/**
+ * Based on "message_sent" event new message will create send in queue to save in DB as well as used in further process for manage delivery status
+ */
 interface IMessageSentBody {
   _id: string;
   chatId: string;

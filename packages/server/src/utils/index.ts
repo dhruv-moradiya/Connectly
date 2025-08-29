@@ -8,6 +8,11 @@ interface SetAuthCookiesOptions {
   isProd?: boolean;
 }
 
+type FileOptions = {
+  maxSizeMB?: number; // e.g. 10
+  allowedMimeTypes?: string[]; // e.g. ["image/png","image/jpeg","application/pdf"]
+};
+
 export const setAuthCookies = ({
   res,
   accessToken,
@@ -65,10 +70,22 @@ export function getCloudinaryFolder(
   }
 }
 
-type FileOptions = {
-  maxSizeMB?: number; // e.g. 10
-  allowedMimeTypes?: string[]; // e.g. ["image/png","image/jpeg","application/pdf"]
-};
+export function handleJobError(
+  error: unknown,
+  contextMessage: string,
+  rethrowMessage = "Job failed"
+): never {
+  if (error instanceof Error) {
+    console.error(`[Job Error] ${contextMessage}: ${error.message}`);
+    if (error.stack) {
+      console.error(error.stack);
+    }
+  } else {
+    console.error(`[Job Error] ${contextMessage}:`, error);
+  }
+
+  throw new Error(rethrowMessage);
+}
 
 export const fileSchema = ({
   maxSizeMB = 10,
