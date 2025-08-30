@@ -12,7 +12,7 @@ interface IMessageSchema {
 
   seenBy: {
     user: Types.ObjectId;
-    seen_at: Date;
+    seenAt: Date;
   }[];
 
   type:

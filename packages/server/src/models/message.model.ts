@@ -32,7 +32,7 @@ const MessageSchema = new Schema<IMessagechemaDocument>(
     seenBy: [
       {
         user: { type: Schema.Types.ObjectId, ref: "User" },
-        seen_at: { type: Date },
+        seenAt: { type: Date },
       },
     ],
 

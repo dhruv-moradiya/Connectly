@@ -34,6 +34,7 @@ const SocketEvents = {
   MESSAGE_SAVED: "message_saved",
   MESSAGE_DELIVERED: "message_delivered",
   MESSAGE_SEEN: "message_seen",
+  MESSAGE_SEEN_BY: "message_seen_by",
 
   LAST_MESSAGE: "last_message",
 

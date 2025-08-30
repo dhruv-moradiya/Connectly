@@ -8,6 +8,7 @@ import type { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.
 import ChatRoom from "../models/chat.model";
 import { IMessageSentBody } from "@/types/type";
 import { MessageJobEnum } from "@/types/message-queue.type";
+import mongoose from "mongoose";
 
 interface IMessagesaveInDBJobType {
   _id: string;
@@ -53,7 +54,10 @@ async function getGroupReceiversIds(
 }
 
 async function enqueueMessageStatusUpdate(data: IMessagesaveInDBJobType) {
-  await messagesQueue.add(MessageJobEnum.UPDATE_DELIVERY_STATUS, {_id: data._id, status: data.deliveryStatus})
+  await messagesQueue.add(MessageJobEnum.UPDATE_DELIVERY_STATUS, {
+    _id: data._id,
+    status: data.deliveryStatus,
+  });
 }
 
 async function saveMessageAsLastMessage(chatId: string, messageId: string) {
@@ -124,6 +128,9 @@ async function handleGroupChat(
   const messageSeenUsers: {
     _id: string;
     date: Date;
+    avatar: string;
+    username: string;
+    email: string;
   }[] = [];
 
   for (const id of receiverIds) {
@@ -142,11 +149,8 @@ async function handleGroupChat(
       console.log("Receiver ID :>> ", id);
 
       if (activeRoom === chatId) {
-        const deliveryStatus = activeRoom === chatId ? "seen" : "delivered";
-        const event =
-          deliveryStatus === "seen"
-            ? SocketEvents.MESSAGE_SEEN
-            : SocketEvents.MESSAGE_DELIVERED;
+        const deliveryStatus = "seen";
+        const event = SocketEvents.MESSAGE_SEEN;
 
         const key = generateRedisKeys.user(id);
         console.log("key :>> ", key);
@@ -163,23 +167,44 @@ async function handleGroupChat(
         messageSeenUsers.push({
           _id: id,
           date: new Date(),
-        });
-
-        socket.emit(SocketEvents.MESSAGE_SEEN_BY, {
-          _id: id,
           avatar: receiverDetails.avatar,
           email: receiverDetails.email,
           username: receiverDetails.username,
         });
       } else {
         console.log("Group: Receiver is in another room");
-        // TODO: push notification
+
+        const _deliveryStatus = "delivered";
+        const _event = SocketEvents.MESSAGE_SEEN;
+
+        const key = generateRedisKeys.user(id);
+
+        const _receiverDetails = await redisConnection.hgetall(
+          generateRedisKeys.user(id)
+        );
+
+        // TODO: Push notification and increase inread count messages
       }
     }
   }
 
   if (messageSeenUsers.length) {
     // TODO: Update in DB 'seenBy' flag.
+    socket.emit(SocketEvents.MESSAGE_SEEN_BY, messageSeenUsers);
+    await MessageModel.updateOne(
+      { _id: new mongoose.Types.ObjectId(message._id) },
+      {
+        $addToSet: {
+          seenBy: {
+            $each: messageSeenUsers.map((user) => ({
+              _id: user._id,
+              seenAt: new Date(),
+            })),
+          },
+        },
+      }
+    );
+
     console.log("Update in DB 'seenBy' flag.");
   }
 }

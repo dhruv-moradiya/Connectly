@@ -105,6 +105,10 @@ const SOCKET_LISTENERS = (store: MiddlewareAPI) => ({
     store.dispatch(updateLastMessageReducer(data));
   },
 
+  [SocketEvents.MESSAGE_SEEN_BY]: (data: { _id: string; seetAt: string }[]) => {
+    console.log("data MESSAGE_SEEN_BY :>> ", data);
+  },
+
   // Add more events here...
 });
 
