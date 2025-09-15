@@ -1,10 +1,16 @@
+import { memo } from "react";
 import { cn } from "@/lib/utils";
 import { Image, Info, Users, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { useChatMessage } from "@/hooks/use-chat-message";
+import { useActiveChatDetails } from "@/hooks/use-active-chat-details";
 
 const ChatSidebar = () => {
+  const roomData = useActiveChatDetails();
   const { isSidebarOpen, setIsSidebarOpen } = useChatMessage();
+
+  if (!roomData) return <div>No room data avilable</div>;
+
   return (
     <div
       className={cn(
@@ -16,7 +22,7 @@ const ChatSidebar = () => {
       {/* Header */}
       <div className="flex items-center justify-between pb-2 border-b">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Info size={20} /> Contact Info
+          <Info size={20} /> {roomData.isGroup ? "Group Info" : "Contact Info"}
         </h2>
         <Button
           variant="ghost"
@@ -31,12 +37,12 @@ const ChatSidebar = () => {
       <div className="flex flex-col items-center gap-2 py-4 border-b">
         <div className="size-28 rounded-full overflow-hidden shadow">
           <img
-            src="https://res.cloudinary.com/dpji4qfnu/image/upload/v1756202079/connectly/groupChats/68ad845d3bf3420696eaaa5e/x0wk0t60edqqn5gqzziq.jpg"
+            src={roomData.avatarUrl}
             alt="Profile avatar"
             className="w-full h-full object-cover"
           />
         </div>
-        <h3 className="text-lg font-semibold">Group Name</h3>
+        <h3 className="text-lg font-semibold">{roomData.headerName}</h3>
         <p className="text-sm text-muted-foreground text-center px-2">
           This is the group description where users can write about the purpose
           of the group or rules.
@@ -50,23 +56,21 @@ const ChatSidebar = () => {
         </h3>
 
         <div className="space-y-2">
-          {[1, 2, 3, 4].map((_p, idx) => (
+          {roomData.participants.map((p, idx) => (
             <div
               key={idx}
               className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 transition"
             >
               <div className="size-10 rounded-full overflow-hidden">
                 <img
-                  src="https://res.cloudinary.com/dpji4qfnu/image/upload/v1756202079/connectly/groupChats/68ad845d3bf3420696eaaa5e/x0wk0t60edqqn5gqzziq.jpg"
-                  alt="User avatar"
+                  src={p.avatar}
+                  alt={p.username}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">Username {idx + 1}</span>
-                <span className="text-xs text-muted-foreground">
-                  user{idx + 1}@example.com
-                </span>
+                <span className="text-sm font-medium">{p.username}</span>
+                <span className="text-xs text-muted-foreground">{p.email}</span>
               </div>
             </div>
           ))}
@@ -97,4 +101,4 @@ const ChatSidebar = () => {
   );
 };
 
-export default ChatSidebar;
+export default memo(ChatSidebar);

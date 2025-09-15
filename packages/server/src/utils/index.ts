@@ -87,6 +87,23 @@ export function handleJobError(
   throw new Error(rethrowMessage);
 }
 
+export function handleError(
+  error: unknown,
+  contextMessage: string,
+  rethrowMessage = "Operation failed"
+): never {
+  if (error instanceof Error) {
+    console.error(`[Error] ${contextMessage}: ${error.message}`);
+    if (error.stack) {
+      console.error(error.stack);
+    }
+  } else {
+    console.error(`[Error] ${contextMessage}:`, error);
+  }
+
+  throw new Error(rethrowMessage);
+}
+
 export const fileSchema = ({
   maxSizeMB = 10,
   allowedMimeTypes = [],

@@ -1,11 +1,15 @@
 import ChatRoom from "@/models/chat.model";
 import MessageModel from "@/models/message.model";
-import { IMessagesaveInDBJobType, IUpdateDeliveryStatusJob } from "@/types/message-queue.type";
+import {
+  IMessagesaveInDBJobType,
+  IUpdateDeliveryStatusJob,
+} from "@/types/message-queue.type";
 import { handleJobError } from "@/utils";
-import { TMessageDeliveryStatus } from "@monorepo/shared/src/types/message.types";
 
-
-class MessageJobService {
+/**
+ * Worker ni andar na logic add karvu te mate
+ */
+class MessageWorkerService {
   private async saveMessageAsLastMessage(chatId: string, messageId: string) {
     try {
       await ChatRoom.updateOne(
@@ -41,7 +45,10 @@ class MessageJobService {
     }
   }
 
-  async updateDeliveryStatus({_id, status}:IUpdateDeliveryStatusJob["data"]) {
+  async updateDeliveryStatus({
+    _id,
+    status,
+  }: IUpdateDeliveryStatusJob["data"]) {
     try {
       await MessageModel.updateOne(
         { _id: _id },
@@ -57,5 +64,5 @@ class MessageJobService {
   }
 }
 
-const messageJobServiceInstance = new MessageJobService();
-export { MessageJobService, messageJobServiceInstance };
+const messageWorkerServiceInstance = new MessageWorkerService();
+export { MessageWorkerService, messageWorkerServiceInstance };

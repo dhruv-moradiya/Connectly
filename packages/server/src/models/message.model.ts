@@ -17,6 +17,14 @@ interface IMessagechemaDocument extends IMessageSchema, Document {
   // addReply: (message: Types.ObjectId) => Promise<void>;
 }
 
+const SeenBySchema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    seenAt: { type: Date, default: Date.now },
+  },
+  { _id: false } // ✅ disables _id for each seenBy entry
+);
+
 const MessageSchema = new Schema<IMessagechemaDocument>(
   {
     _id: {
@@ -29,12 +37,7 @@ const MessageSchema = new Schema<IMessagechemaDocument>(
 
     content: { type: String, default: "" },
 
-    seenBy: [
-      {
-        user: { type: Schema.Types.ObjectId, ref: "User" },
-        seenAt: { type: Date },
-      },
-    ],
+    seenBy: { type: [SeenBySchema], default: [] },
 
     deliveryStatus: {
       type: String,

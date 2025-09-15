@@ -296,12 +296,12 @@ const createGroupChat = asyncHandler(
     const generateParticipantEntries = (): {
       user: mongoose.Types.ObjectId;
       role: "admin" | "member";
-      invited_by: mongoose.Types.ObjectId;
+      invitedBy: mongoose.Types.ObjectId;
     }[] =>
       allUserIds.map((id) => ({
         user: new mongoose.Types.ObjectId(id),
         role: id === currentUserId ? "admin" : "member",
-        invited_by: new mongoose.Types.ObjectId(currentUserId),
+        invitedBy: new mongoose.Types.ObjectId(currentUserId),
       }));
 
     // Create audit log
@@ -611,17 +611,53 @@ const addParticipants = asyncHandler(
       );
     }
 
-    await chatModel.findByIdAndUpdate(chatId, {
-      $push: {
-        participants: {
-          $each: newParticipantIds.map((id) => ({
-            user: new mongoose.Types.ObjectId(id),
-            role: "member",
-            invitedBy: new mongoose.Types.ObjectId(req.user._id),
-          })),
+    const updatedChatData = await chatModel.findByIdAndUpdate(
+      chatId,
+      {
+        $push: {
+          participants: {
+            $each: newParticipantIds.map((id) => ({
+              user: new mongoose.Types.ObjectId(id),
+              role: "member",
+              invitedBy: new mongoose.Types.ObjectId(req.user._id),
+            })),
+          },
         },
       },
-    });
+      { new: true }
+    );
+
+    if (!updatedChatData) {
+      return next(
+        new ApiError(
+          "Failed to add participants to the group. Please try again later.",
+          HttpStatus.INTERNAL_SERVER_ERROR
+        )
+      );
+    }
+
+    const dataToEmit = {
+      _id: updatedChatData._id,
+      name: updatedChatData.name,
+      isGroup: updatedChatData.isGroup,
+      participants: updatedChatData.participants,
+      unreadCount: updatedChatData.unreadCount,
+      lastMessage: updatedChatData.lastMessage,
+    };
+
+    console.log(
+      "updatedChatData.participants.map((p) => p.user) :>> ",
+      updatedChatData.participants.map((p) => p.user)
+    );
+
+    req.app
+      .get("io")
+      .to(updatedChatData.participants.map((p) => p.user.toString()))
+      .emit(SocketEvents.CHAT_MEMBERS_ADDED, {
+        data: dataToEmit,
+        message: "New chat created successfully.",
+        success: true,
+      });
 
     res
       .status(HttpStatus.OK)
@@ -714,6 +750,7 @@ const getCurrentUserChats = asyncHandler(
           unreadCount: 1,
           participants: 1,
           lastMessage: 1,
+          createdBy: 1,
         },
       },
       {
@@ -746,6 +783,7 @@ const getCurrentUserChats = asyncHandler(
           name: 1,
           unreadCount: 1,
           lastMessage: 1,
+          createdBy: 1,
           participant: {
             _id: "$userData._id",
             username: "$userData.username",
@@ -764,6 +802,7 @@ const getCurrentUserChats = asyncHandler(
           unreadCount: { $first: "$unreadCount" },
           participants: { $push: "$participant" },
           lastMessage: { $first: "$lastMessage" },
+          createdBy: { $first: "$createdBy" },
         },
       },
       {
@@ -788,6 +827,7 @@ const getCurrentUserChats = asyncHandler(
           name: 1,
           unreadCount: 1,
           participants: 1,
+          createdBy: 1,
           lastMessage: {
             _id: "$lastMessage._id",
             sender: "$lastMessage.sender",

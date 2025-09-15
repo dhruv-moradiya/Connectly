@@ -47,19 +47,17 @@ const MessageRow = ({
       ref={measureElement}
       className="relative"
     >
-      {"showDateSeparator" in msg && (
-        <DateSeparator
-          date={(msg as { dateSeparator: string }).dateSeparator}
+      {"showDateSeparator" in msg ? (
+        <DateSeparator date={msg.dateSeparator} />
+      ) : (
+        <ChatBubble
+          ref={(el: HTMLDivElement | null) => {
+            if (el) bubbleRefs.current[virtualRow.index] = el;
+          }}
+          isGroupChat={isGroupChat}
+          message={msg}
         />
       )}
-
-      <ChatBubble
-        ref={(el: HTMLDivElement | null) => {
-          if (el) bubbleRefs.current[virtualRow.index] = el;
-        }}
-        isGroupChat={isGroupChat}
-        message={msg}
-      />
     </div>
   );
 };

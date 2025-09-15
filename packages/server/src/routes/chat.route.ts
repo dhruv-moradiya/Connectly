@@ -36,7 +36,7 @@ router.patch("/:chatId/description", verifyToken, updateGroupChatDescription);
 
 // Participants / Roles
 
-router.patch("/:chatId/participants", verifyToken, addParticipants);
+router.patch("/:chatId/add-participants", verifyToken, addParticipants);
 
 router.patch("/:chatId/participants/:userId", verifyToken, removeParticipant);
 

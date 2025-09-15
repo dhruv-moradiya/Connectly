@@ -10,7 +10,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useCallback, useRef } from "react";
 import ChatHeader from "./chat-header";
 import MessageRow from "./message-row";
-import ChatInput from "./chat-input";
+import ChatInput from "./chat-input/chat-input";
 import ChatSidebar from "./chat-sidebar";
 
 export default function ChatMessages({

@@ -1,11 +1,16 @@
 import { AxiosError } from "axios";
 import { getActiveChatMessages } from "@/api";
-import type { IActiveChatMessages, IMessage } from "@/types/api-response.type";
+import type {
+  IActiveChatMessages,
+  IMessage,
+  IMessageSeenUser,
+} from "@/types/api-response.type";
 import {
   createAsyncThunk,
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
+import type { TMessageSeenUsersSocketData } from "@/types/middleware.type";
 
 interface IActiveChatState {
   fetchingInitialData: boolean;
@@ -63,6 +68,11 @@ export const getActiveChatMessagesThunk = createAsyncThunk<
   }
 );
 
+type TMessageSeenByPayload = {
+  users: IMessageSeenUser[];
+  messageId: string;
+};
+
 const activeChatSlice = createSlice({
   name: "activeChat",
   initialState,
@@ -84,6 +94,7 @@ const activeChatSlice = createSlice({
 
     // When we receive new message it will be added to the beginning of the list
     messageReceivedReducer(state, action: PayloadAction<IMessage>) {
+      console.log("NEW MESSAGE", action.payload);
       state.messages = [...state.messages, action.payload];
     },
 
@@ -108,6 +119,21 @@ const activeChatSlice = createSlice({
       updateMessageStatus(state, {
         ...action,
         payload: { ...action.payload, status: "seen" },
+      });
+    },
+    messageSeenByUserReducer: (
+      state,
+      action: PayloadAction<TMessageSeenByPayload>
+    ) => {
+      state.messages = state.messages.map((message) => {
+        if (message._id === action.payload.messageId) {
+          return {
+            ...message,
+            seenBy: [...message.seenBy, ...action.payload.users],
+          };
+        } else {
+          return message;
+        }
       });
     },
   },
@@ -138,5 +164,6 @@ export const {
   messageSentSuccess,
   messageDeliveredSuccess,
   messageSeenSuccess,
+  messageSeenByUserReducer,
 } = activeChatSlice.actions;
 export const activeChatReducer = activeChatSlice.reducer;

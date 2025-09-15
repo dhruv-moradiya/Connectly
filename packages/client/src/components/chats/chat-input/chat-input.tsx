@@ -9,7 +9,9 @@ import { usePanelExpand } from "@/hooks/use-panel-expand";
 import { useChatMessage } from "@/hooks/use-chat-message";
 import { InteractionMode } from "@/types/index.type";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "../ui/textarea";
+import { Textarea } from "../../ui/textarea";
+import AudioRecordButton from "./audio-record-button";
+import AttachmentButton from "./attachment-button";
 
 /* -------------------- Main Chat Input -------------------- */
 const ChatInput = memo(function ChatInput() {
@@ -46,6 +48,7 @@ const ChatInput = memo(function ChatInput() {
               content: selectedMessage[0].content,
             }
           : null,
+      seenBy: [],
     };
 
     dispatch(sendMessage(newMessage));
@@ -104,8 +107,8 @@ const ChatInput = memo(function ChatInput() {
         </Button>
       </div>
 
-      <div className="w-full flex items-center gap-1">
-        <InputButton icon={<Plus size={20} />} />
+      <div className="w-full flex items-center gap-1 relative">
+        <AttachmentButton />
         <InputButton icon={<Smile size={20} />} />
 
         <form
@@ -119,7 +122,7 @@ const ChatInput = memo(function ChatInput() {
           />
 
           <InputButton type="submit" icon={<Send size={20} />} />
-          <InputButton icon={<Mic size={20} />} onClick={() => {}} />
+          <AudioRecordButton />
         </form>
       </div>
     </div>

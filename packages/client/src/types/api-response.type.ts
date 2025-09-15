@@ -22,6 +22,9 @@ interface IReplyMessage {
   content: string;
 }
 
+interface IMessageSeenUser extends IUserPreview {
+  seenAt: string;
+}
 interface IMessage {
   _id: string;
   content: string;
@@ -30,6 +33,7 @@ interface IMessage {
   type: TMessageType;
   sender: TMessageSenderDetails;
   replyTo: IReplyMessage | null;
+  seenBy: IMessageSeenUser[];
 }
 
 // User preview short details about user
@@ -37,7 +41,7 @@ interface IUserPreview {
   _id: string;
   username: string;
   avatar: string;
-  role: string;
+  // role: string;
   email: string;
 }
 
@@ -98,7 +102,14 @@ interface IUserLogout extends IBaseType {
   data: {};
 }
 
+interface ICreateGroupChat extends IBaseType {
+  data: {
+    chatId: string;
+  };
+}
+
 export {
+  type IBaseType,
   type IUserLogout,
   type IUserPreview,
   type IGetCurrentUser,
@@ -113,4 +124,6 @@ export {
   type TMessageType,
   type IConnections,
   type IReplyMessage,
+  type ICreateGroupChat,
+  type IMessageSeenUser,
 };

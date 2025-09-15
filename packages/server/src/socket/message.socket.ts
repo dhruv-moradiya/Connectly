@@ -10,6 +10,7 @@ import {
 } from "../utils/helperFunctions";
 import { IMessageSentBody } from "@/types/type";
 import { MessageJobEnum } from "@/types/message-queue.type";
+import { messageSocketServiceInstace } from "@/services/message-socket.service";
 
 // Utility: Execute async function safely with error handling
 async function safeExec<T>(
@@ -42,14 +43,26 @@ async function notifyParticipants(
   // Emit message to room (excluding sender)
   socket.to(chatId).emit(SocketEvents.MESSAGE_RECEIVED, {
     ...message,
+    seenBy: [],
     sender: { _id: senderId, username, avatar },
   });
 
   const isGroup = await isGroupChat(chatId);
   if (isGroup) {
-    await handleGroupChat(chatId, message, socket);
+    // await handleGroupChat(chatId, message, socket);
+
+    await messageSocketServiceInstace.handleGroupChatSocket(
+      chatId,
+      message,
+      socket
+    );
   } else {
-    await handlePrivateChat(chatId, message, socket);
+    // await handlePrivateChat(chatId, message, socket);
+    await messageSocketServiceInstace.handlePrivateChatSocket(
+      chatId,
+      message,
+      socket
+    );
   }
 }
 

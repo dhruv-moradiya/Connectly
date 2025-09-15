@@ -18,6 +18,8 @@ import StepSelectMembers from "./step-select-members";
 import StepGroupInfo from "./step-group-info";
 import StepGroupSettings from "./step-group-settings";
 import { createGroupChat } from "../../../api";
+import { handleApiError } from "@/lib/handle-api-error";
+import { showToast } from "@/lib/utils";
 
 export type TFormData = {
   groupName: string;
@@ -90,7 +92,6 @@ function GroupChatForm() {
       data.append("editGroupInfo", String(formData.editGroupInfo));
       data.append("sendNewMessages", String(formData.sendNewMessages));
 
-      // append array properly
       formData.selectedUsers.forEach((id: string) => {
         data.append("userIds[]", id);
       });
@@ -99,9 +100,10 @@ function GroupChatForm() {
 
       const response = await createGroupChat(data);
 
-      console.log("response", response);
+      showToast("", response.data.chatId, "success");
     } catch (error) {
       console.log("error", error);
+      handleApiError(error, "Something went worng while creating groupchat");
     } finally {
       setIsSubmiting(false);
     }

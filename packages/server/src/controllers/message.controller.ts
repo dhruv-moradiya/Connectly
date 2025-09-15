@@ -76,12 +76,10 @@ const getMessages = asyncHandler(
       {
         $facet: {
           messages: [
-            {
-              $skip: skip,
-            },
-            {
-              $limit: limit,
-            },
+            { $skip: skip },
+            { $limit: limit },
+
+            // Lookup sender
             {
               $lookup: {
                 from: "users",
@@ -90,6 +88,8 @@ const getMessages = asyncHandler(
                 as: "sender",
               },
             },
+
+            // Lookup replyTo
             {
               $lookup: {
                 from: "messages",
@@ -110,28 +110,76 @@ const getMessages = asyncHandler(
                 },
               },
             },
+
+            // Unwind sender
             { $unwind: { path: "$sender", preserveNullAndEmptyArrays: true } },
+
+            // Lookup seenBy users
+            {
+              $lookup: {
+                from: "users",
+                localField: "seenBy.user",
+                foreignField: "_id",
+                as: "seenByUsers",
+              },
+            },
+            {
+              $addFields: {
+                seenBy: {
+                  $map: {
+                    input: "$seenBy",
+                    as: "s",
+                    in: {
+                      $mergeObjects: [
+                        {
+                          seenAt: "$$s.seenAt",
+                        },
+                        {
+                          $arrayElemAt: [
+                            {
+                              $map: {
+                                input: {
+                                  $filter: {
+                                    input: "$seenByUsers",
+                                    cond: { $eq: ["$$this._id", "$$s.user"] },
+                                  },
+                                },
+                                as: "u",
+                                in: {
+                                  _id: "$$u._id",
+                                  username: "$$u.username",
+                                  avatar: "$$u.avatar",
+                                  email: "$$u.email",
+                                },
+                              },
+                            },
+                            0,
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+
+            // Final project
             {
               $project: {
                 _id: 1,
-                sender: {
-                  _id: 1,
-                  username: 1,
-                  avatar: 1,
-                },
+                sender: { _id: 1, username: 1, avatar: 1 },
                 deliveryStatus: 1,
                 content: 1,
                 createdAt: 1,
                 replyTo: 1,
                 type: 1,
+                seenBy: 1,
               },
             },
           ],
-          totalMessages: [
-            {
-              $count: "total",
-            },
-          ],
+
+          // Count for pagination
+          totalMessages: [{ $count: "total" }],
         },
       },
       {

@@ -104,6 +104,8 @@ const createNewUser = asyncHandler(
       // 4. Generate OTP
       const otp = await generateNewOtp();
 
+      console.log("New OTP for email verification :>> ", otp);
+
       const newOtp = new Otp({
         email,
         otp,

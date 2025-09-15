@@ -1,23 +1,43 @@
 import { type Socket } from "socket.io-client";
 import type {
   IChatPreview,
+  IMessage,
+  IMessageSeenUser,
   IReplyMessage,
   TMessageSenderDetails,
   TMessageType,
 } from "./api-response.type";
 import type { ActionType, SocketEvents } from "@/lib/constants";
 
+export interface TMessageSeenUsersSocketData extends IMessageSeenUser {
+  messageId: string;
+}
+
 type TServerToClientEvents = {
   [SocketEvents.WELCOME]: (data: { message: string }) => void;
+  [SocketEvents.CONNECT_ERROR]: (data: { message: string }) => void;
+  [SocketEvents.DISCONNECT]: (reason: string) => void;
+
   [SocketEvents.CHAT_CREATED]: (data: TChatCreatedEventReceived) => void;
+
   [SocketEvents.MESSAGE_RECEIVED]: (
-    data: TMessageReceivedEventReceived
+    // data: TMessageReceivedEventReceived
+    data: IMessage
   ) => void;
   [SocketEvents.MESSAGE_SENT]: (data: TMessageReceivedEventReceived) => void;
+  [SocketEvents.MESSAGE_DELIVERED]: (data: { _id: string }) => void;
+  [SocketEvents.MESSAGE_SEEN]: (data: { _id: string }) => void;
+  [SocketEvents.LAST_MESSAGE]: (
+    // data: TMessageReceivedEventReceived
+    data: IMessage
+  ) => void;
+  [SocketEvents.MESSAGE_SEEN_BY]: (data: TMessageSeenUsersSocketData[]) => void;
+
   [SocketEvents.JOIN_ROOM_ERROR]: (data: IJoinRoomError) => void;
   [SocketEvents.JOIN_ROOM_SUCCESS]: (data: IJoinRoomSuccess) => void;
   [SocketEvents.LEAVE_ROOM_ERROR]: (data: string) => void;
   [SocketEvents.LEAVE_ROOM_SUCCESS]: (data: string) => void;
+
   [SocketEvents.RECONNECT_ATTEMPT]: (attemptNumber: number) => void;
   [SocketEvents.RECONNECT]: (attemptNumber: number) => void;
   [SocketEvents.RECONNECT_ERROR]: (err: string) => void;
@@ -61,8 +81,8 @@ type TChatCreatedEventReceived = {
 };
 
 type TMessageReceivedEventReceived = {
-  chatId: string;
   _id: string;
+  chatId: string;
   content: string;
   sender: TMessageSenderDetails;
   type: TMessageType;

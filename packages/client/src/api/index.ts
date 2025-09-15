@@ -1,7 +1,9 @@
 import type { TLoginSchemaType, TSignupSchemaType } from "@/lib/schema";
 import type {
   IActiveChatMessages,
+  IBaseType,
   IConnections,
+  ICreateGroupChat,
   ICreateNewChat,
   IGetCurrentUser,
   IGetUsersByUsernameQuery,
@@ -233,14 +235,34 @@ const getConnections = async () => {
   }
 };
 
-const createGroupChat = async (data: any) => {
+const createGroupChat = async (data: FormData) => {
   try {
-    const response = await apiClient.post("/chat/group", data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    console.log("response", response);
+    const response: AxiosResponse<ICreateGroupChat> = await apiClient.post(
+      "/chat/group",
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw errorHandler(error);
+  }
+};
+
+const addUserInGroupChat = async (data: {
+  userIds: string[];
+  chatId: string;
+}) => {
+  try {
+    const response: AxiosResponse<IBaseType> = await apiClient.patch(
+      `/chat/${data.chatId}/add-participants`,
+      { userIds: data.userIds }
+    );
+
+    return response.data;
   } catch (error) {
     throw errorHandler(error);
   }
@@ -258,4 +280,5 @@ export {
   createNewChat,
   getActiveChatMessages,
   getConnections,
+  addUserInGroupChat,
 };
