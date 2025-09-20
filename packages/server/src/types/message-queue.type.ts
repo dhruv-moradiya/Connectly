@@ -7,7 +7,7 @@ enum MessageJobEnum {
   DELETE_MULTIPLE_MESSAGE = "delete_multiple_message",
 }
 
- interface IJobMap {
+interface IJobMap {
   [MessageJobEnum.SAVE_MESSAGE]: IMessagesaveInDBJobType;
   [MessageJobEnum.UPDATE_DELIVERY_STATUS]: {
     _id: string;
@@ -16,8 +16,6 @@ enum MessageJobEnum {
   [MessageJobEnum.DELETE_SINGLE_MESSAGE]: { _id: string };
   [MessageJobEnum.DELETE_MULTIPLE_MESSAGE]: { ids: string[] };
 }
-
-
 
 interface IMessagesaveInDBJobType {
   _id: string;
@@ -29,7 +27,7 @@ interface IMessagesaveInDBJobType {
 
 interface ISaveMessageJob {
   name: MessageJobEnum.SAVE_MESSAGE;
-  data: IMessagesaveInDBJobType
+  data: IMessagesaveInDBJobType;
 }
 
 interface IUpdateDeliveryStatusJob {

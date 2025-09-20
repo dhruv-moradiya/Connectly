@@ -40,6 +40,7 @@ const MessageRow = ({
   measureElement,
 }: IMessageRowProps) => {
   const msg = groupedMessages[virtualRow.index];
+  console.log("msg :>> ", msg);
   return (
     <div
       key={virtualRow.key}

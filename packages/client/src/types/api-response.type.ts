@@ -99,7 +99,7 @@ interface IConnections extends IBaseType {
 }
 
 interface IUserLogout extends IBaseType {
-  data: {};
+  data: null
 }
 
 interface ICreateGroupChat extends IBaseType {

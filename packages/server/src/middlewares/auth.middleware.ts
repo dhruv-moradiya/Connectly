@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/apiError";
 import { type NextFunction, type Request, type Response } from "express";
+import { logger } from "@/utils";
 
 interface DecodedUser {
   _id: string;
@@ -27,7 +28,7 @@ const verifyToken = (
 
   const secret = process.env.JWT_ACCESS_SECRET;
   if (!secret) {
-    console.error("JWT_ACCESS_SECRET not defined in environment variables.");
+    logger.error("JWT_ACCESS_SECRET not defined in environment variables.");
     next(new ApiError("Internal server error, please try again later", 500));
     return;
   }
@@ -43,7 +44,7 @@ const verifyToken = (
     req.user = decoded;
     next();
   } catch (error: any) {
-    console.error("Token verification error:", error.message);
+    logger.error({ err: error.message }, "Token verification error");
     next(new ApiError("Invalid token payload. Please log in again.", 401));
     next(error);
   }

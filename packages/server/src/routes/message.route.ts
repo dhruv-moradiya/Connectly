@@ -6,6 +6,7 @@ import {
   editMessage,
   getCallLog,
   getMessages,
+  getSignatureURLREQ,
   markAsSeen,
   pinMessage,
   reactToMessage,
@@ -14,10 +15,22 @@ import {
   unpinMessage,
   uploadAttachment,
 } from "../controllers/message.controller";
+import { getSignatureURL } from "@/utils/cloudinary";
+import { ApiResponse } from "@/utils/apiResponse";
 
 const router = express.Router();
 
 router.post("/", verifyToken, sendMessage);
+
+router.get("/get-signature-url", async (_req, res, _next) => {
+  console.log("WORK");
+  const data = await getSignatureURL({
+    chatId: "!2",
+    messageId: "12",
+  });
+
+  return res.end(data);
+});
 
 router.get("/:chatId", verifyToken, getMessages);
 

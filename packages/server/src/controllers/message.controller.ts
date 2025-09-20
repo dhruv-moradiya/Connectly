@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiResponse } from "../utils/apiResponse";
 import mongoose from "mongoose";
 import MessageModel from "../models/message.model";
+import { getSignatureURL } from "@/utils/cloudinary";
 
 const sendMessage = asyncHandler(
   async (_req: Request, res: Response, _next: NextFunction) => {
@@ -296,6 +297,22 @@ const getCallLog = asyncHandler(
   }
 );
 
+const getSignatureURLREQ = asyncHandler(
+  async (_req: Request, res: Response, _next: NextFunction) => {
+    console.log("WORK");
+    const data = await getSignatureURL({
+      chatId: "!2",
+      messageId: "12",
+    });
+
+    res.end(data);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "Call log retrieved successfully."));
+  }
+);
+
 export {
   sendMessage,
   getMessages,
@@ -309,4 +326,5 @@ export {
   removeFavoriteMessage,
   uploadAttachment,
   getCallLog,
+  getSignatureURLREQ,
 };

@@ -5,7 +5,7 @@ import { Socket } from "socket.io";
 import { redisConnection } from "../db/redis";
 import { IMessageSentBody } from "../types/type";
 import { SocketEvents } from "../constants/index";
-import { generateRedisKeys, handleError } from "../utils/index";
+import { generateRedisKeys, handleError, logger } from "../utils/index";
 import { JobQueueService } from "../services/job-queue-service";
 
 // ---------- Helpers (Low-level Redis/Data utilities) ----------
@@ -82,16 +82,20 @@ class PrivateChatHandler {
       chatId,
       senderId
     );
+    logger.debug({ receiverId }, "receiverId");
     if (!receiverId) return;
 
     const isOnline = await UserStatusService.isOnline(receiverId);
     if (!isOnline) {
-      console.log("Private: Receiver offline");
+      logger.info("Private: Receiver offline");
+      return;
     }
 
     const activeRoom = await UserStatusService.getActiveRoom(receiverId);
+    logger.debug({ activeRoom }, "activeRoom");
+
     if (activeRoom !== chatId) {
-      console.log("Private: Receiver is in other room");
+      logger.info("Private: Receiver is in other room");
     }
 
     const deliveryStatus = activeRoom === chatId ? "seen" : "delivered";

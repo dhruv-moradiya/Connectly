@@ -5,6 +5,7 @@ dotenv.config({ path: ".env" });
 
 import { httpServer } from "./app";
 import connectDB from "./db";
+import { logger } from "./utils";
 
 async function startServer() {
   try {
@@ -12,10 +13,10 @@ async function startServer() {
     const PORT = process.env.PORT || 3000;
 
     httpServer.listen(PORT, async () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
+      logger.info(`🚀 Server running at http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("❌ Database connection failed:", err);
+    logger.error({ err }, "❌ Database connection failed");
     process.exit(1);
   }
 }

@@ -55,7 +55,7 @@ import messageRoute from "./routes/message.route";
 import { messagesWorker } from "./queues/bullmq/messages.worker";
 import { globalErrorHandler } from "./middlewares/globalError.middleware";
 import { IChatRoomForCache } from "@monorepo/shared/src/types/chat.types";
-import { generateRedisKeys } from "./utils";
+import { generateRedisKeys, logger } from "./utils";
 import { IUserPreiveForCache } from "@monorepo/shared/src/types/user.types";
 import { getAllUserData } from "./controllers/user.controller";
 import { getRoomDetails } from "./controllers/chat.controller";
@@ -67,14 +67,14 @@ app.use("/api/message", messageRoute);
 
 // Listen for job completion and failure events from the messages worker
 messagesWorker.on("completed", (job) => {
-  console.log(`Job ${job.id} completed successfully`);
+  logger.info({ job: job.id }, "completed successfully");
 });
 
 messagesWorker.on("failed", (job, err) => {
   if (job) {
-    console.error(`Job ${job.id} failed with error:`, err);
+    logger.error({ job: job.id, err }, "Job failed");
   } else {
-    console.error(`A job failed with error:`, err);
+    logger.error({ err }, "A job failed");
   }
 });
 
@@ -83,11 +83,11 @@ initializeSocket(io);
 
 // Redis connection event handlers
 redisConnection.on("connect", () => {
-  console.log("Redis connected successfully");
+  logger.info("Redis connected successfully");
 });
 
 redisConnection.on("error", (err) => {
-  console.error("Redis connection error:", err);
+  logger.error({ err }, "Redis connection error");
 });
 
 async function cacheUsers(users: IUserPreiveForCache[]) {
@@ -116,8 +116,8 @@ async function cacheRooms(rooms: IChatRoomForCache[]) {
     for (const participant of participants) {
       await redisConnection.hset(
         generateRedisKeys.roomParticipants(_id.toString()),
-        participant.user.toString(), // Use user ID as field
-        JSON.stringify({ role: participant.role }) // Store role as JSON
+        participant.user.toString(),
+        JSON.stringify({ role: participant.role })
       );
     }
   }
@@ -129,7 +129,7 @@ const resetQueue = async () => {
   await queue.drain(true); // removes all jobs
   await queue.obliterate({ force: true }); // wipes all data
   await redisConnection.flushdb();
-  console.log("🧹 Queue reset");
+  logger.info("Queue reset");
 };
 
 // Reset the queue before starting the app
@@ -140,7 +140,7 @@ const resetQueue = async () => {
 
   if (users) await cacheUsers(users);
   if (rooms) await cacheRooms(rooms as unknown as IChatRoomForCache[]);
-  console.log("✅ Redis cache initialized with user and room data.");
+  logger.info("Redis cache initialized with user and room data.");
 })();
 
 // Global error handler middleware
@@ -148,7 +148,7 @@ app.use(globalErrorHandler);
 
 // Serve static files in production
 if (environment === "production") {
-  console.log("Serving static files in production");
+  logger.info("Serving static files in production");
   const distPath = path.join(__dirname, "../../client/dist");
 
   app.use(express.static(distPath));
@@ -157,7 +157,7 @@ if (environment === "production") {
     res.sendFile(path.join(distPath, "index.html"));
   });
 } else {
-  console.log("Serving static files in development");
+  logger.info("Serving static files in development");
 }
 
 // Export the app and HTTP server for use elsewhere (e.g., server entry point)

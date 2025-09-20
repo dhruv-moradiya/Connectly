@@ -1,4 +1,3 @@
-// ---------- worker.ts ----------
 import { Job, Worker } from "bullmq";
 import { redisConnection } from "../../db/redis";
 import {

@@ -59,7 +59,7 @@ export default function ChatMessages({
     <div className="grid grid-cols-12 h-[calc(100vh-46px)] w-full overflow-hidden">
       <div
         className={cn(
-          "flex flex-col",
+          "h-full flex flex-col",
           "col-span-12",
           isSidebarOpen ? "md:col-span-9" : "md:col-span-12"
         )}

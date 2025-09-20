@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import type { Server, Socket } from "socket.io";
 
 import { SocketEvents } from "../constants";
-import { generateRedisKeys } from "../utils";
+import { generateRedisKeys, logger } from "../utils";
 import { redisConnection } from "../db/redis";
 import { SocketResponse } from "../utils/apiResponse";
 import { messageSocket } from "../socket/message.socket";
@@ -46,17 +46,19 @@ const handleSocketJoinRoom = (socket: Socket) => {
       new SocketResponse("Joined room successfully", true, { chatId })
     );
 
-    // Track active rooms in Redis (Set instead of single value)
+    // Track active rooms in Redis
     await redisConnection.set(
       generateRedisKeys.activeRomm(socket.user._id),
       chatId
     );
 
-    // Update messages
     try {
       await updateMessageStatus(chatId, socket.user._id);
     } catch (err) {
-      console.error("Message update failed:", err);
+      logger.error(
+        { err, chatId, userId: socket.user._id },
+        "Message update failed"
+      );
     }
   });
 };
@@ -69,13 +71,21 @@ const handleSocketLeaveRoom = (socket: Socket) => {
 };
 
 export const initializeSocket = (io: Server) => {
-  console.log("🚀 Socket server is running.");
+  logger.info("Socket server is running.");
+
   // Attach auth middleware BEFORE any connections
   io.use(socketAuthMiddleware);
 
   // Handle authenticated connections
   io.on(SocketEvents.CONNECTION, (socket) => {
-    console.log(`⚡ User connected: ${socket.user.username} (${socket.id})`);
+    logger.info(
+      {
+        socketId: socket.id,
+        userId: socket.user._id,
+        username: socket.user.username,
+      },
+      "User connected"
+    );
 
     // Register event handlers
     messageSocket(socket);
@@ -91,15 +101,19 @@ export const initializeSocket = (io: Server) => {
     });
 
     handleSocketJoinRoom(socket);
-
     handleSocketLeaveRoom(socket);
 
     socket.on(SocketEvents.DISCONNECT, () => {
       socket.disconnect();
       redisConnection.del(generateRedisKeys.onlineStatus(socket.user._id));
       redisConnection.del(generateRedisKeys.activeRomm(socket.user._id));
-      console.log(
-        `⚡ User disconnected: ${socket.user.username} (${socket.id})`
+      logger.info(
+        {
+          socketId: socket.id,
+          userId: socket.user._id,
+          username: socket.user.username,
+        },
+        "User disconnected"
       );
     });
   });

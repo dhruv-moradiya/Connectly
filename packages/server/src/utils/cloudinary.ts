@@ -69,4 +69,21 @@ const uploadFilesToCloudinary = async ({
   }
 };
 
-export { uploadFilesToCloudinary };
+const getSignatureURL = async ({
+  chatId = "12",
+  messageId = "12",
+}: {
+  chatId: string;
+  messageId: string;
+}) => {
+  const responses = await cloudinary.utils.api_sign_request(
+    {
+      folder: `${chatId}/${messageId}`,
+    },
+    process.env.CLOUDINARY_API_SECRET ?? ""
+  );
+  console.log("responses :>> ", responses);
+  return responses;
+};
+
+export { uploadFilesToCloudinary, getSignatureURL };

@@ -108,7 +108,7 @@ const ChatInput = memo(function ChatInput() {
       </div>
 
       <div className="w-full flex items-center gap-1 relative">
-        <AttachmentButton />
+        {/* <AttachmentButton /> */}
         <InputButton icon={<Smile size={20} />} />
 
         <form
@@ -121,8 +121,8 @@ const ChatInput = memo(function ChatInput() {
             onKeyDown={handleKeyDown}
           />
 
-          <InputButton type="submit" icon={<Send size={20} />} />
-          <AudioRecordButton />
+          {/* <InputButton type="submit" icon={<Send size={20} />} /> */}
+          {/* <AudioRecordButton /> */}
         </form>
       </div>
     </div>

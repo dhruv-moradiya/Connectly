@@ -1,5 +1,5 @@
 import { redisConnection } from "../db/redis";
-import { generateRedisKeys } from "../utils";
+import { generateRedisKeys, logger } from "../utils";
 import jwt from "jsonwebtoken";
 
 import { Socket } from "socket.io";
@@ -24,7 +24,10 @@ export const socketAuthMiddleware = (
 ) => {
   try {
     if (!socket.handshake.headers.cookie) {
-      console.log("❌ No cookie found in socket handshake headers.");
+      logger.warn(
+        { socketId: socket.id },
+        "No cookie found in socket handshake headers."
+      );
       return next(
         new Error("Authentication error: Missing cookies in request.")
       );
@@ -39,7 +42,7 @@ export const socketAuthMiddleware = (
     const token = cookies.accessToken;
 
     if (!token) {
-      console.log("❌ No access token found in cookies.");
+      logger.warn({ socketId: socket.id }, "No access token found in cookies.");
       return next(
         new Error("Authentication error: Missing access token in cookies.")
       );
@@ -61,10 +64,13 @@ export const socketAuthMiddleware = (
     redisConnection.set(generateRedisKeys.onlineStatus(decoded._id), "true");
 
     socket.user = decoded;
-    console.log(`✅ Authenticated user: ${decoded.username}`);
+    logger.info(
+      { socketId: socket.id, userId: decoded._id, username: decoded.username },
+      "Authenticated user"
+    );
     next();
   } catch (err: any) {
-    console.log("❌ JWT verification failed:", err.message);
+    logger.error({ socketId: socket.id, err }, "JWT verification failed");
     next(new Error(`Authentication error: ${err.message || "Invalid token."}`));
   }
 };

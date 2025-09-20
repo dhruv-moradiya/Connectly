@@ -12,7 +12,7 @@ import { ApiResponse } from "../utils/apiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
 import { validateRequest } from "../utils/validateRequest";
 import { sendEmailVerificationEmail } from "../utils/emails";
-import { formatErrorMessages, setAuthCookies } from "../utils";
+import { formatErrorMessages, logger, setAuthCookies } from "../utils";
 
 import {
   createNewUserSchema,
